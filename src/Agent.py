@@ -162,12 +162,12 @@ class Agent:
         # each Series represents the unique moves for the turn for a player color, W1 for example.
         uniq_mov_list = []
         # this loop will make an array of pandas series, add 1 to make it 1 through total columns (inclusive)
-        for i in range(1, self.settings.num_columns + 1):
+        for i in range(1, self.settings.num_turns_per_player + 1):
             uniq_mov_list.append(chess_data.loc[:, self.color + str(i)].value_counts())
 
         uniq_mov_list = pd.concat(uniq_mov_list)        
         uniq_mov_list = uniq_mov_list.index.drop_duplicates(keep = 'first')
-        turns_list = chess_data.loc[:, self.color + '1': self.color + str(self.settings.num_columns): 2].columns
+        turns_list = chess_data.loc[:, self.color + '1': self.color + str(self.settings.num_turns_per_player): 2].columns
         q_table = pd.DataFrame(columns = turns_list, index = uniq_mov_list)
         for col in q_table.columns:
             q_table[col].values[:] = 0

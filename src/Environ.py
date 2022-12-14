@@ -1,22 +1,32 @@
 import chess
+import Settings
 
 class Environ:
-    """
-        This class manages the chessboard and determines what the state is.
+    """ This class manages the chessboard and determines what the state is.
         The class passes the state to the agent. 
-        
-        after the agent(s) is trained, this class will be used to manage the chessboard.
     """
     def __init__(self, chess_data):
+        """
+            :param chess_data, this is a pandas dataframe. It is the chess games database.
+                   The format of the chess_data is extremely important.
+                   see this link for an explanation: 
+                   https://github.com/abecsumb/DataScienceProject/blob/main/Chess_Data_Preparation.ipynb
+            :param board, This is an object. It comes from the python chess module
+            :param turn_list, this is a list that is utilized to keep track of the current turn (W1, B1 ... W50, B50) 
+            :param turn_index, increment this as each player makes a move. 
+        """
         self.chess_data = chess_data 
         self.board = chess.Board()
-        self.turn_list = self.chess_data.columns[1:101].tolist()
-        self.turn_index = 0     
+        self.settings = Settings()
+        # turn_list and turn_index work together to track the current turn (a string like this, 'W1')
+        # num_turns_per_player, so multiply by 2, then to make sure we get all moves, add 1.
+        # the 1 corresponds to 'W1'
+        self.turn_list = self.chess_data.columns[1 : self.settings.num_turns_per_player * 2 + 1].tolist()
+        self.turn_index = 0
 
 
     def get_curr_state(self):
-        """ the environ class is responsible for determining the state at all times
-            all changes to the chessboard and the state are handled by a method of the environ class
+        """ returns the dictionary that describes the curr state of the board, and the curr turn
             :param none
             :return a dictionary that defines the current state that an agent will act on
         """
@@ -26,6 +36,8 @@ class Environ:
     def update_curr_state(self):
         """ current state is the current turn and the legal moves at that turn 
             the state is updated each time a chess_move str is loaded to the chessboard.
+            each time a move is made, the curr state needs to be updated
+            only the index needs to be updated here. The board is updated by other methods.
         """
         self.turn_index += 1
 
@@ -58,13 +70,16 @@ class Environ:
     
 
     def pop_chessboard(self):
-        """ pops the most recent move applied to the chessboard"""
+        """ pops the most recent move applied to the chessboard 
+            this method is used during agent training
+        """
         self.board.pop()
 
 
     def load_chessboard_for_Q_est(self, analysis_results):
         """ method should only be called during training. this will load the 
-            chessboard using a Move.uci string.
+            chessboard using a Move.uci string. This method works in tandem
+            with the Stockfish analysis during training
             :pre analysis of proposed board condition has already been done
             :post board is loaded with black's anticipated move
             :param q_est_board_analysis_results, 
@@ -79,8 +94,9 @@ class Environ:
             print('failed to add antiipated move')
             return False
     
+
     def reset_environ(self):
-        """ resets environ, call each time after a game ends, and after training period is over.
+        """ resets environ, call each time a game ends.
             :param none
             :return none
         """

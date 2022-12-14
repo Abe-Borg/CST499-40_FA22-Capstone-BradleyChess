@@ -96,8 +96,7 @@ class Bradley:
             :param none
             :return bool, False means the game is over
         """
-        # num_columns is the max moves for each player.
-        if self.environ.board.is_game_over() or self.environ.turn_index >= self.settings.num_columns * 2 - 1:
+        if self.environ.board.is_game_over() or self.environ.turn_index >= self.settings.num_turns_per_player * 2 - 1:
             return False
         else:
             return True
@@ -250,7 +249,7 @@ class Bradley:
                 self.environ.load_chessboard(opp_curr_action['chess_move_str'])
                 self.environ.update_curr_state()
 
-                if self.environ.turn_index >= self.settings.num_columns * 2:
+                if self.environ.turn_index >= self.settings.num_turns_per_player * 2:
                     # index has reached max value, this will only happen for Black at B75 turn, 
                     # White won't ever have this problem.
                     break
