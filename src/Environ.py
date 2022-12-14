@@ -10,7 +10,7 @@ class Environ:
     def __init__(self, chess_data):
         self.chess_data = chess_data 
         self.board = chess.Board()
-        self.turn_list = self.chess_data.columns[5:155].tolist()
+        self.turn_list = self.chess_data.columns[1:101].tolist()
         self.turn_index = 0     
 
 
