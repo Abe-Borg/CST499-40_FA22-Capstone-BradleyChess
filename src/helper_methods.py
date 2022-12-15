@@ -1,14 +1,20 @@
 import Bradley as imman
 import pandas as pd
 
-def init_agent(chess_data, color = 'W'):
-    bubs = imman.Bradley(chess_data, color)
+def init_bradley(chess_data):
+    bubs = imman.Bradley(chess_data)
     return bubs
 
 
-def play_game(bubs):
+def play_game(bubs, rl_agent_color):
+    """ use this method to play against a human player 
+    """
     W_turn = True
     turn_num = bubs.get_curr_turn()
+    if rl_agent_color == 'W':
+        rl_agent = bubs.W_rl_agent
+    else:
+        rl_agent = bubs.B_rl_agent
     
     while bubs.game_on():
         if W_turn:
@@ -18,9 +24,9 @@ def play_game(bubs):
         
         print(f'\nCurrent turn is :  {turn_num}')
         
-        if bubs.get_rl_agent_color() == player_turn:
+        if rl_agent.color == player_turn:
             print('=== RL AGENT\'S TURN ===')
-            chess_move = bubs.rl_agent_chess_move()
+            chess_move = bubs.rl_agent_chess_move(rl_agent)
             chess_move_str = chess_move['chess_move_str']
             print(f'RL agent played {chess_move_str}\n')
         else:
@@ -39,57 +45,57 @@ def play_game(bubs):
     print(f'The game ended because of: {bubs.get_game_termination_reason()}')
 
 
-def agent_vs_agent(bubs, imman):
+def agent_vs_agent(bubs):
     W_turn = True
     turn_num = bubs.get_curr_turn()
     
-    while bubs.game_on():
-        if W_turn:
-            player_turn = 'W'
-        else:
-            player_turn = 'B'
-        
+    while bubs.game_on():        
         # bubs's turn
         print(f'\nCurrent turn:  {turn_num}')
-        if bubs.get_rl_agent_color() == player_turn:
-            chess_move_bubs = bubs.rl_agent_chess_move()
-            bubs_chess_move_str = chess_move_bubs['chess_move_str']
-            bubs_chess_move_src = chess_move_bubs['move_source']
-            print(f'Bubs played {bubs_chess_move_str} - from source: {bubs_chess_move_src}\n')
-            print(bubs.environ.board)
-            imman.recv_opp_move(bubs_chess_move_str)
+        chess_move_bubs = bubs.rl_agent_chess_move('W')
+        bubs_chess_move_str = chess_move_bubs['chess_move_str']
+        print(f'Bubs played {bubs_chess_move_str}\n')
 
         # imman's turn
-        else:
-            chess_move_imman = imman.rl_agent_chess_move()
-            imman_chess_move_str = chess_move_imman['chess_move_str']
-            imman_chess_move_src = chess_move_imman['move_source']
-            print(f'Imman played {imman_chess_move_str} - from source: {imman_chess_move_src}\n')
-            print(imman.environ.board)
-            bubs.recv_opp_move(imman_chess_move_str)
+        chess_move_imman = bubs.rl_agent_chess_move('B')
+        imman_chess_move_str = chess_move_imman['chess_move_str']
+        print(f'Imman played {imman_chess_move_str}\n')
+        bubs.recv_opp_move(imman_chess_move_str)
+
+        print(bubs.environ.board)
         
         turn_num = bubs.get_curr_turn()
         W_turn = not W_turn # simple flag to switch the turn to B or vice-versa
     
+    print('Game is over, chessboard looks like this:\n\n')
     print(bubs.environ.board)
     print('\n\n')
-    print(imman.environ.board)
-    print(f'Game is over, result is: {bubs.get_game_outcome()}')
-    print(f'The game ended because of: {bubs.get_game_termination_reason()}')
+    print(f'Game result is: {bubs.get_game_outcome()}')
+    print(f'Game ended because of: {bubs.get_game_termination_reason()}')
 
 
-def pikl_q_table(bubs, q_table_path):
-    bubs.rl_agent.Q_table.to_pickle(q_table_path, compression = 'zip')
+def pikl_q_table(bubs, rl_agent_color, q_table_path):
+    """ make sure to get input the correct q_table_path for each agent """
+    if rl_agent_color == 'W':
+        rl_agent = bubs.W_rl_agent
+    else:
+        rl_agent = bubs.B_rl_agent
+
+    rl_agent.Q_table.to_pickle(q_table_path, compression = 'zip')
 
 
-def pikl_chess_data(bubs, chess_data_filepath):
-    bubs.chess_data.to_pickle(chess_data_filepath, compression = 'zip')
+def bootstrap_agent(bubs, rl_agent_color, existing_q_table_path):
+    """ assigns an agents q table to an existing q table.
+        make sure the q table you pass matches the color of the agent.
+        Use this method when retraining an agent or when you want agents
+        to play against a human or each other.
 
-
-def bootstrap_agent(bubs, existing_q_table_path):
-    """skip training the agent by assigning its q table to an existing q table.
-        make sure the q table you pass matches the color of the agent you are going
-        to play as. 
+        It's very important to pass in the correct q table path
     """
-    bubs.rl_agent.Q_table = pd.read_pickle(existing_q_table_path, compression = 'zip')
-    bubs.rl_agent.is_trained = True
+    if rl_agent_color == 'W':
+        rl_agent = bubs.W_rl_agent
+    else:
+        rl_agent = bubs.B_rl_agent
+
+    rl_agent.Q_table = pd.read_pickle(existing_q_table_path, compression = 'zip')
+    rl_agent.is_trained = True

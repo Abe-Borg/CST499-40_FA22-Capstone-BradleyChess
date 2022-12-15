@@ -12,26 +12,26 @@ class Bradley:
         this class trains the agent and helps to manage the chessboard during play between the comp and the
         user. This is a composite class with members of the Environ class and the Agent class
     """
-    def __init__(self, chess_data, rl_agent_color = 'W'):    
+    def __init__(self, chess_data):
         self.chess_data = chess_data
         self.settings = Settings.Settings()
-        self.environ = Environ.Environ(self.chess_data)        
-        self.rl_agent = Agent.Agent(rl_agent_color, self.chess_data)        
-        
-        self.opp_agent_color = self.get_opp_agent_color(rl_agent_color)
-        self.is_opp_agent = True
-        self.opp_simple_agent = Agent.Agent(self.opp_agent_color, self.chess_data, self.is_opp_agent)
+        self.environ = Environ.Environ(self.chess_data)   
+        self.W_rl_agent = Agent.Agent('W', self.chess_data)             
+        self.B_rl_agent = Agent.Agent('B', self.chess_data)
 
-        # # stockfish is used to analyze positions during training
+        # stockfish is used to analyze positions during training
+        # this is how we estimate the q value at each position, and also 
+        # for anticipated next position
         self.engine = chess.engine.SimpleEngine.popen_uci(self.settings.stockfish_filepath)
-        self.num_moves_to_return = 1
-        self.depth_limit = 8
+        self.num_moves_to_return = 1 # we only want to look ahead one move, that's the anticipated q value at next state, and next action
+        self.depth_limit = 8 # this number has a massive inpact on how long it takes to analyze a position and it really doesn't help to go beyond 8.
         self.time_limit = None
         self.search_limit = chess.engine.Limit(depth = self.depth_limit, time = self.time_limit)
 
 
     def recv_opp_move(self, chess_move):                                                                                 
-        """ receives opp chess move and send it to the environ so that the chessboard can be loaded w/ opponent move.
+        """ receives opp chess move and sends it to the environ so 
+            that the chessboard can be loaded w/ opponent move.
             this method assumes that the incoming chess move is valid and playable.
             :param chess_move this is the str input, which comes from the human player
             :return bool, True for successful move input
@@ -45,15 +45,19 @@ class Bradley:
             return False
             
 
-    def rl_agent_chess_move(self):
+    def rl_agent_chess_move(self, rl_agent_color):
         """ this method will do two things, load up the environ.chessboard with the agent's action (chess_move)
             and return the string of the agent's chess move
-            We can also use this method to play against a simple agent that is not trained.
             :param none
             :return a dictionary with the chess move str as one of the items
         """
+        if rl_agent_color == 'W':
+            rl_agent = self.W_rl_agent
+        else:
+            rl_agent = self.B_rl_agent
+        
         curr_state = self.environ.get_curr_state()
-        chess_move = self.rl_agent.choose_action(curr_state)
+        chess_move = rl_agent.choose_action(curr_state) # choose_action returns a dictionary
         self.environ.load_chessboard(chess_move['chess_move_str'])
         self.environ.update_curr_state()
         return chess_move
@@ -61,7 +65,7 @@ class Bradley:
 
     def get_fen_str(self):
         """ call this at each point in the chess game for the fen 
-            string. The FEN string can be used to reconstruct a chessboard.
+            string. The FEN string can be used to reconstruct a chessboard position
             The FEN string will change each time a move is made.
             :param none
             :return a string that represents a board state, something like this,
@@ -91,8 +95,8 @@ class Bradley:
 
     def game_on(self):
         """ method determines when the game is over 
-            game can end if, python chess board determines the game is over, 
-            or if the game is at 75 moves per player
+            game can end if python chess board determines the game is over, 
+            or if the game is at num_turns_per_player * 2 - 1 moves per player
             :param none
             :return bool, False means the game is over
         """
@@ -123,7 +127,7 @@ class Bradley:
         """ method will return the winner, loser, or draw for a chess game
             :param none
             :return chess.Outcome class, this class has a result() method that returns 1-0, 0-1 or 1/2-1/2 
-                or false if failure
+            or false if failure
         """
         try:
             return self.environ.board.outcome().result()
@@ -154,18 +158,25 @@ class Bradley:
         return self.environ.board
 
     
-    def train_rl_agent(self, training_results_filepath):
-        """ trains the agent and then sets is_trained flag to True.
-            the algorithm used for training is SARSA. an opposing agent object
-            is utililzed to train the main rl_agent
+    def train_rl_agents(self, training_results_filepath):
+        """ trains the agents and then sets their is_trained flag to True.
+            the algorithm used for training is SARSA. Two rl agents train each other
             A chess game can end at multiple places during training, so we need to 
             check for end-game conditions throughout this method.
 
-            The agent is trained by playing games from a database exactly as
-            shown, and learning from that. Then the agent is trained again, but this time
-            it makes its own decisions.
+            The agents are trained by playing games from a database exactly as
+            shown, and learning from that. Then the agents are trained again (in another method), 
+            but this time they makes their own decisions. A White or Black agent can be trained.
 
-            :param num_games, how long to train the agent
+            This training regimen first trains the agents to play a good positional game.
+            Then when the agents are retrained, the agents behaviour can be fine-tuned
+            by adjusting hyperparameters.
+
+            In the current implementation, training takes a very long time. To train both
+            agents on 100k games, it takes 1 week. That can probably be faster, but I 
+            just don't know how to speed it up. It could be a limitation of Python.
+
+            :param: results doc filepath
             :return none
         """ 
         training_results = open(training_results_filepath, 'a')
@@ -278,7 +289,7 @@ class Bradley:
         training_results.close()   
         self.reset_environ()
 
-    def continue_training_rl_agent(self, training_results_filepath, num_games):
+    def continue_training_rl_agents(self, training_results_filepath, num_games):
         """ continues to train the agent
             :param num_games, how long to train the agent
             :return none
