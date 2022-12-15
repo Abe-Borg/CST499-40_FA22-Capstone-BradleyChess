@@ -182,12 +182,12 @@ class Bradley:
         training_results = open(training_results_filepath, 'a')
 
         # init Qval to get things started.
-        curr_Qval = self.settings.initial_q_val
+        W_curr_Qval = self.settings.initial_q_val
+        B_curr_Qval = self.settings.initial_q_val
 
         # for each game in the training data set.
         for game_num in self.chess_data.index:
             num_chess_moves = self.chess_data.at[game_num, 'Num Moves']
-
             training_results.write(f'\n\n\n Start of {game_num} training\n\n') 
 
             #initialize environment to provide a state, s
@@ -195,88 +195,128 @@ class Bradley:
 
             # this loop plays through one game.
             while curr_state['turn_index'] < num_chess_moves:
-                ##### RL AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
+                ##### WHITE AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
                 # choose action a from state s, using policy
-                curr_action = self.rl_agent.choose_action(curr_state, game_num)
-                chess_move = curr_action['chess_move_str']
+                W_curr_action = self.W_rl_agent.choose_action(curr_state, game_num)
+                W_chess_move = W_curr_action['chess_move_str']
                 curr_turn = curr_state['curr_turn']
 
-                ### ASSIGN POINTS TO Q_TABLE
+                ### ASSIGN POINTS TO Q_TABLE FOR WHITE
                 # on the first turn for white, this would assign to W1 col at chess_move row.
                 # on W's second turn, this would be Q_next which is calculated on the first loop.
                 try:
-                    self.rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
+                    self.W_rl_agent.change_Q_table_pts(W_chess_move, curr_turn, W_curr_Qval)
                 except KeyError: 
                     # chess move is not represented in the Q table, update Q table and try again.
-                    self.rl_agent.update_Q_table(chess_move)
-                    self.rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
+                    self.W_rl_agent.update_Q_table(W_chess_move)
+                    self.W_rl_agent.change_Q_table_pts(W_chess_move, curr_turn, W_curr_Qval)
 
-                ##### RL AGENT PLAYS MOVE #####
+                ##### WHITE AGENT PLAYS SELECTED MOVE #####
                 # take action a, observe r, s', and load chessboard
-                self.environ.load_chessboard(chess_move)
+                self.environ.load_chessboard(W_chess_move)
                 self.environ.update_curr_state()
 
                 # the state changes each time a move is made, so get curr state again.                
                 curr_state = self.environ.get_curr_state()
 
-                analysis_results = self.analyze_board_state(self.get_chessboard(), True)
+                # false means we don't care about the anticipated next move
+                analysis_results = self.analyze_board_state(self.get_chessboard(), False)
                 if analysis_results['mate_score'] is None:
-                    reward = analysis_results['centipawn_score']
-                else:
-                    reward = analysis_results['mate_score'] * self.settings.mate_score_factor
+                    W_reward = analysis_results['centipawn_score']
+                else: # there is an impending checkmate
+                    W_reward = analysis_results['mate_score'] * self.settings.mate_score_factor
                 
                 # check if game ended after W's move
                 if curr_state['turn_index'] >= num_chess_moves:
                     break
                 else: # game continues
-                    ##### AGENT CHOOSES NEXT ACTION, BUT DOES NOT PLAY IT !!! #####
+                    ##### WHITE AGENT CHOOSES NEXT ACTION, BUT DOES NOT PLAY IT !!! #####
                     # observe next_state, s' (this would be after the player picks a move
                     # and choose action a'
 
                     # W just played a move. the board has changed, if stockfish analyzes the board, 
-                    # it will give points for White, based on Whites latest move.
+                    # it will give points for White, based on White's latest move.
                     # We also need the points for the ANTICIPATED next state, 
                     # given the ACTICIPATED next action. In this case, the anticipated response from Black.
 
                     # analysis returns an array of dicts. in our analysis, we only consider the first dict returned by 
                     # the stockfish analysis.                    
-                    analysis_results = self.analyze_board_state(self.get_chessboard())                    
+                    analysis_results = self.analyze_board_state(self.get_chessboard())               
                     self.environ.load_chessboard_for_Q_est(analysis_results) # anticipated next action is a str like, 'e6f2'
                     
-                    est_Qval_analysis = self.analyze_board_state(self.get_chessboard(), True)
+                    W_est_Qval_analysis = self.analyze_board_state(self.get_chessboard(), False) # we want the points, and the anticipated next move
                     
                     # get pts for est_Qval 
-                    if est_Qval_analysis['mate_score'] is None:
-                        est_Qval = est_Qval_analysis['centipawn_score']
-                    else:
-                        est_Qval = est_Qval_analysis['mate_score'] * self.settings.mate_score_factor
+                    if W_est_Qval_analysis['mate_score'] is None:
+                        W_est_Qval = W_est_Qval_analysis['centipawn_score']
+                    else: # there is an impending checkmate
+                        W_est_Qval = W_est_Qval_analysis['mate_score'] * self.settings.mate_score_factor
     
                     # IMPORTANT STEP!!! pop the chessboard of last move, we are estimating board states, not
                     # playing a move.
                     self.environ.pop_chessboard()
 
-                ##### OPPONENT AGENT PICKS AND PLAYS MOVE #####
-                opp_curr_action = self.opp_simple_agent.choose_action(curr_state, game_num)                
-                self.environ.load_chessboard(opp_curr_action['chess_move_str'])
+                ##### BLACK AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
+                B_curr_action = self.B_rl_agent.choose_action(curr_state, game_num)
+                B_chess_move = B_curr_action['chess_move_str']
+                curr_turn = curr_state['curr_turn']
+
+                ### ASSIGN POINTS TO Q_TABLE FOR BLACK
+                try:
+                    self.B_rl_agent.change_Q_table_pts(B_chess_move, curr_turn, B_curr_Qval)
+                except KeyError: 
+                    # chess move is not represented in the Q table, update Q table and try again.
+                    self.B_rl_agent.update_Q_table(B_chess_move)
+                    self.B_rl_agent.change_Q_table_pts(B_chess_move, curr_turn, B_curr_Qval)
+
+                ##### BLACK AGENT PLAYS SELECTED MOVE #####
+                # take action a, observe r, s', and load chessboard
+                self.environ.load_chessboard(B_chess_move)
                 self.environ.update_curr_state()
 
+                # the state changes each time a move is made, so get curr state again.                
+                curr_state = self.environ.get_curr_state()
+
+                # false means we don't care about the anticipated next move
+                analysis_results = self.analyze_board_state(self.get_chessboard(), False)
+                if analysis_results['mate_score'] is None:
+                    B_reward = analysis_results['centipawn_score']
+                else: # there is an impending checkmate
+                    B_reward = analysis_results['mate_score'] * self.settings.mate_score_factor
+
                 if self.environ.turn_index >= self.settings.num_turns_per_player * 2:
-                    # index has reached max value, this will only happen for Black at B75 turn, 
+                    # index has reached max value, this will only happen for Black at Black's final max turn, 
                     # White won't ever have this problem.
                     break
 
-                curr_state = self.environ.get_curr_state()
+                # check if game ended after B's move
                 if curr_state['turn_index'] >= num_chess_moves:
                     break
                 else: # game continues
-                    # CRITICAL STEP, this is the SARSA algorithm
-                    next_Qval = curr_Qval + self.rl_agent.settings.learn_rate * (reward + ((self.rl_agent.settings.discount_factor * est_Qval) - curr_Qval))
+                    ##### AGENT CHOOSES NEXT ACTION, BUT DOES NOT PLAY IT !!! #####
+                    analysis_results = self.analyze_board_state(self.get_chessboard())               
+                    self.environ.load_chessboard_for_Q_est(analysis_results) # anticipated next action is a str like, 'e6f2'
+                    
+                    B_est_Qval_analysis = self.analyze_board_state(self.get_chessboard(), False) # we want the points, and the anticipated next move
+                    
+                    # get pts for est_Qval 
+                    if B_est_Qval_analysis['mate_score'] is None:
+                        B_est_Qval = B_est_Qval_analysis['centipawn_score']
+                    else: # there is an impending checkmate
+                        B_est_Qval = B_est_Qval_analysis['mate_score'] * self.settings.mate_score_factor
+                    self.environ.pop_chessboard()
 
-                    # on the next turn, this Q value will be added to the Q table. so if this is the end of the first round,
-                    # next round it will be W2 and then we assign the q value at W2 col
-                    curr_Qval = next_Qval
-                    # this is the next state, s'  the next action, a' is handled at the beginning of the while loop
-                    curr_state = self.environ.get_curr_state()
+                # CRITICAL STEP, this is the main part of the SARSA algorithm. Do this for both agents
+                W_next_Qval = W_curr_Qval + self.W_rl_agent.settings.learn_rate * (W_reward + ((self.W_rl_agent.settings.discount_factor * W_est_Qval) - W_curr_Qval))
+                B_next_Qval = B_curr_Qval + self.B_rl_agent.settings.learn_rate * (B_reward + ((self.B_rl_agent.settings.discount_factor * B_est_Qval) - B_curr_Qval))
+
+                # on the next turn, this Q value will be added to the Q table. so if this is the end of the first round,
+                # next round it will be W2 and then we assign the q value at W2 col
+                W_curr_Qval = W_next_Qval
+                B_curr_Qval = B_next_Qval
+
+                # this is the next state, s'  the next action, a' is handled at the beginning of the while loop
+                curr_state = self.environ.get_curr_state()
 
             # reset environ to prepare for the next game
             training_results.write(f'Game {game_num} is over.\n')
@@ -285,7 +325,9 @@ class Bradley:
             self.reset_environ()
         
         # training is complete
-        self.rl_agent.is_trained = True
+        self.W_rl_agent.is_trained = True
+        self.B_rl_agent.is_trained = True
+
         training_results.close()   
         self.reset_environ()
 
@@ -297,7 +339,8 @@ class Bradley:
         training_results = open(training_results_filepath, 'a')
 
         # init Qval to get things started.
-        curr_Qval = self.settings.initial_q_val
+        W_curr_Qval = self.settings.initial_q_val
+        B_curr_Qval = self.settings.initial_q_val
 
         # for each game in the training data set.
         for curr_training_game in range(num_games):
@@ -308,82 +351,86 @@ class Bradley:
 
             # this loop plays through one game.
             while self.game_on():
-                ##### RL AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
-                # choose action a from state s, using policy
-                curr_action = self.rl_agent.choose_action(curr_state)
-                chess_move = curr_action['chess_move_str']
+                ##### WHITE AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
+                W_curr_action = self.W_rl_agent.choose_action(curr_state)
+                W_chess_move = W_curr_action['chess_move_str']
                 curr_turn = curr_state['curr_turn']
 
-                ### ASSIGN POINTS TO Q_TABLE
-                # on the first turn for white, this would assign to W1 col at chess_move row.
-                # on W's second turn, this would be Q_next which is calculated on the first loop.
+                ### ASSIGN POINTS TO Q_TABLE FOR WHITE
                 try:
-                    self.rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
+                    self.W_rl_agent.change_Q_table_pts(W_chess_move, curr_turn, W_curr_Qval)
                 except KeyError: 
-                    # chess move is not represented in the Q table, update Q table and try again.
-                    self.rl_agent.update_Q_table(chess_move)
-                    self.rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
+                    self.W_rl_agent.update_Q_table(W_chess_move)
+                    self.W_rl_agent.change_Q_table_pts(W_chess_move, curr_turn, W_curr_Qval)
 
-                ##### RL AGENT PLAYS MOVE #####
-                # take action a, observe r, s', and load chessboard
-                self.environ.load_chessboard(chess_move)
-                self.environ.update_curr_state()
-
-                # the state changes each time a move is made, so get curr state again.                
+                ##### WHITE AGENT PLAYS SELECTED MOVE #####
+                self.environ.load_chessboard(W_chess_move)
+                self.environ.update_curr_state()              
                 curr_state = self.environ.get_curr_state()
-                reward = self.get_reward(chess_move)
+                W_reward = self.get_reward(W_chess_move)
                 
-                # check if game ended after W's move
                 if self.game_on():
-                    ##### AGENT CHOOSES NEXT ACTION, BUT DOES NOT PLAY IT !!! #####
-                    # observe next_state, s' (this would be after the player picks a move
-                    # and choose action a'
-
-                    # W just played a move. the board has changed, if stockfish analyzes the board, 
-                    # it will give points for White, based on Whites latest move.
-                    # We also need the points for the ANTICIPATED next state, 
-                    # given the ACTICIPATED next action. In this case, the anticipated response from Black.
-
-                    # analysis returns an array of dicts. in our analysis, we only consider the first dict returned by 
-                    # the stockfish analysis.
-                    analysis_results = self.analyze_board_state(self.get_chessboard())                    
-                    self.environ.load_chessboard_for_Q_est(analysis_results) # anticipated next action is a str like, 'e6f2'
+                    ##### WHITE AGENT CHOOSES NEXT ACTION, BUT DOES NOT PLAY IT !!! #####                
+                    analysis_results = self.analyze_board_state(self.get_chessboard())               
+                    self.environ.load_chessboard_for_Q_est(analysis_results)
+                    W_est_Qval_analysis = self.analyze_board_state(self.get_chessboard(), False)
                     
-                    is_for_est_Qval_analysis = True
-                    est_Qval_analysis = self.analyze_board_state(self.get_chessboard(), is_for_est_Qval_analysis)
-                    
-                    # get pts for est_Qval 
-                    if est_Qval_analysis['mate_score'] is None:
-                        est_Qval = est_Qval_analysis['centipawn_score']
+                    if W_est_Qval_analysis['mate_score'] is None:
+                        W_est_Qval = W_est_Qval_analysis['centipawn_score']
                     else:
-                        est_Qval = est_Qval_analysis['mate_score'] * self.settings.mate_score_factor
-    
-                    # IMPORTANT STEP!!! pop the chessboard of last move, we are estimating board states, not
-                    # playing a move.
-                    self.environ.pop_chessboard()
+                        W_est_Qval = W_est_Qval_analysis['mate_score'] * self.settings.mate_score_factor
                     
-                else: # game ended
+                    self.environ.pop_chessboard()
+                else:
                     break
 
-                ##### OPPONENT AGENT PICKS AND PLAYS MOVE #####
-                opp_curr_action = self.opp_simple_agent.choose_action(curr_state, 'curr_game place holder', self.rl_agent.is_trained)        
-                self.environ.load_chessboard(opp_curr_action['chess_move_str'])
+                ##### BLACK AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
+                B_curr_action = self.B_rl_agent.choose_action(curr_state)
+                B_chess_move = B_curr_action['chess_move_str']
+                curr_turn = curr_state['curr_turn']
+
+                ### ASSIGN POINTS TO Q_TABLE FOR BLACK
+                try:
+                    self.B_rl_agent.change_Q_table_pts(B_chess_move, curr_turn, B_curr_Qval)
+                except KeyError: 
+                    self.B_rl_agent.update_Q_table(B_chess_move)
+                    self.B_rl_agent.change_Q_table_pts(B_chess_move, curr_turn, B_curr_Qval)
+
+                ##### BLACK AGENT PLAYS SELECTED MOVE #####
+                self.environ.load_chessboard(B_chess_move)
                 self.environ.update_curr_state()
                 curr_state = self.environ.get_curr_state()
+                B_reward = self.get_reward(B_chess_move)
 
-                # check if game ended after opponent's move
-                if self.game_on():
-                    # CRITICAL STEP, this is the SARSA algorithm
-                    next_Qval = curr_Qval + self.rl_agent.settings.learn_rate * (reward + ((self.rl_agent.settings.discount_factor * est_Qval) - curr_Qval))
-
-                    # on the next turn, this Q value will be added to the Q table. so if this is the end of the first round,
-                    # next round it will be W2 and then we assign the q value at W2 col
-                    curr_Qval = next_Qval
-                    # this is the next state, s'  the next action, a' is handled at the beginning of the while loop
-                    curr_state = self.environ.get_curr_state()
-                    
-                else: # game is over
+                if self.environ.turn_index >= self.settings.num_turns_per_player * 2:
+                    # index has reached max value, this will only happen for Black at Black's final max turn, 
+                    # White won't ever have this problem.
                     break
+
+                if self.game_on():
+                    ##### BLACK AGENT CHOOSES NEXT ACTION, BUT DOES NOT PLAY IT !!! #####                
+                    analysis_results = self.analyze_board_state(self.get_chessboard())               
+                    self.environ.load_chessboard_for_Q_est(analysis_results)
+                    B_est_Qval_analysis = self.analyze_board_state(self.get_chessboard(), False)
+                    
+                    if B_est_Qval_analysis['mate_score'] is None:
+                        B_est_Qval = W_est_Qval_analysis['centipawn_score']
+                    else:
+                        B_est_Qval = W_est_Qval_analysis['mate_score'] * self.settings.mate_score_factor
+                    
+                    self.environ.pop_chessboard()
+                else:
+                    break
+
+                # CRITICAL STEP, this is the main part of the SARSA algorithm. Do this for both agents
+                W_next_Qval = W_curr_Qval + self.W_rl_agent.settings.learn_rate * (W_reward + ((self.W_rl_agent.settings.discount_factor * W_est_Qval) - W_curr_Qval))
+                B_next_Qval = B_curr_Qval + self.B_rl_agent.settings.learn_rate * (B_reward + ((self.B_rl_agent.settings.discount_factor * B_est_Qval) - B_curr_Qval))
+
+                W_curr_Qval = W_next_Qval
+                B_curr_Qval = B_next_Qval
+
+                # this is the next state, s'  the next action, a' is handled at the beginning of the while loop
+                curr_state = self.environ.get_curr_state()
 
             # reset environ to prepare for the next game
             training_results.write(f'Game {curr_training_game} is over.\n')
@@ -391,27 +438,29 @@ class Bradley:
             training_results.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
             self.reset_environ()
         
-        # training is complete
-        self.rl_agent.is_trained = True
         training_results.close()   
         self.reset_environ()
 
 
-    def analyze_board_state(self, board, is_for_est_Qval_analysis = False):
+    def analyze_board_state(self, board, is_for_est_Qval_analysis = True):
         """ this function will return a move score based on the analysis results from stockfish 
-            :params minimal stockfish settings. accuracy of move position is not a priority
+            :param board, this is the chessboard
+            :param is_for_est_Qval_analysis. False means
             :return a dictionary with analysis results.
         """
         analysis_result = self.engine.analyse(board, self.search_limit, multipv = self.num_moves_to_return)
+        
+        # normalize by looking at it from White's perspective
         score = analysis_result[0]['score'].white()
+
         mate_score = score.mate()
         centipawn_score = score.score()
 
         if is_for_est_Qval_analysis:
-            return {'mate_score': mate_score, 'centipawn_score': centipawn_score} # we don't need the next pv score.
-        else:
-            anticipated_next_move = analysis_result[0]['pv'][0] # this would be the anticipated response from Black
+            anticipated_next_move = analysis_result[0]['pv'][0] # this would be the anticipated response from opposing agent
             return {'mate_score': mate_score, 'centipawn_score': centipawn_score, 'anticipated_next_move': anticipated_next_move}
+        else:
+            return {'mate_score': mate_score, 'centipawn_score': centipawn_score} # we don't need the anticipated next move
 
  
     def get_reward(self, chess_move_str):                                     
