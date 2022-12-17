@@ -2,6 +2,9 @@ import Bradley as imman
 import pandas as pd
 
 def init_bradley(chess_data):
+    """ the object needs to be instantiated with some chess data, 
+        even if the agents have already been trained.
+    """
     bubs = imman.Bradley(chess_data)
     return bubs
 
@@ -11,6 +14,7 @@ def play_game(bubs, rl_agent_color):
     """
     W_turn = True
     turn_num = bubs.get_curr_turn()
+
     if rl_agent_color == 'W':
         rl_agent = bubs.W_rl_agent
     else:
@@ -26,7 +30,7 @@ def play_game(bubs, rl_agent_color):
         
         if rl_agent.color == player_turn:
             print('=== RL AGENT\'S TURN ===')
-            chess_move = bubs.rl_agent_chess_move(rl_agent)
+            chess_move = bubs.rl_agent_chess_move(rl_agent.color)
             chess_move_str = chess_move['chess_move_str']
             print(f'RL agent played {chess_move_str}\n')
         else:
@@ -43,35 +47,40 @@ def play_game(bubs, rl_agent_color):
     
     print(f'Game is over, result is: {bubs.get_game_outcome()}')
     print(f'The game ended because of: {bubs.get_game_termination_reason()}')
+    bubs.reset_environ()
 
 
 def agent_vs_agent(bubs):
+    """ play two trained agents against each other """
     W_turn = True
     turn_num = bubs.get_curr_turn()
     
     while bubs.game_on():        
         # bubs's turn
-        print(f'\nCurrent turn:  {turn_num}')
+        print(f'\nCurrent turn: {turn_num}')
         chess_move_bubs = bubs.rl_agent_chess_move('W')
         bubs_chess_move_str = chess_move_bubs['chess_move_str']
         print(f'Bubs played {bubs_chess_move_str}\n')
 
-        # imman's turn
-        chess_move_imman = bubs.rl_agent_chess_move('B')
-        imman_chess_move_str = chess_move_imman['chess_move_str']
-        print(f'Imman played {imman_chess_move_str}\n')
-        bubs.recv_opp_move(imman_chess_move_str)
+        # imman's turn, check for end of game again, since the game could have ended after W's move.
+        if bubs.game_on():
+            turn_num = bubs.get_curr_turn()
+            print(f'Current turn:  {turn_num}')
+            chess_move_imman = bubs.rl_agent_chess_move('B')
+            imman_chess_move_str = chess_move_imman['chess_move_str']
+            print(f'Imman played {imman_chess_move_str}\n')
 
         print(bubs.environ.board)
         
         turn_num = bubs.get_curr_turn()
-        W_turn = not W_turn # simple flag to switch the turn to B or vice-versa
+        W_turn = not W_turn
     
-    print('Game is over, chessboard looks like this:\n\n')
+    print('Game is over, chessboard looks like this:\n')
     print(bubs.environ.board)
     print('\n\n')
     print(f'Game result is: {bubs.get_game_outcome()}')
     print(f'Game ended because of: {bubs.get_game_termination_reason()}')
+    bubs.reset_environ()
 
 
 def pikl_q_table(bubs, rl_agent_color, q_table_path):

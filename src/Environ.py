@@ -1,6 +1,7 @@
 import chess
 import Settings
 
+
 class Environ:
     """ This class manages the chessboard and determines what the state is.
         The class passes the state to the agent. 
@@ -17,7 +18,7 @@ class Environ:
         """
         self.chess_data = chess_data 
         self.board = chess.Board()
-        self.settings = Settings()
+        self.settings = Settings.Settings()
         # turn_list and turn_index work together to track the current turn (a string like this, 'W1')
         # num_turns_per_player, so multiply by 2, then to make sure we get all moves, add 1.
         # the 1 corresponds to 'W1'

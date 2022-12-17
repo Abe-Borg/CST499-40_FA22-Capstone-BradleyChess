@@ -12,30 +12,29 @@ class Agent:
         based on the current state. The state is passed the the agent by the environ class.
         The agent class does not make any changes to the chessboard. 
     """
-    def __init__(self, color, chess_data, is_opp_agent = False):        
+    def __init__(self, color, chess_data):        
         self.color = color
         self.chess_data = chess_data
         self.settings = Settings.Settings()
         self.is_trained = False
-        self.is_opp_agent = is_opp_agent
         self.Q_table = self.init_Q_table(self.chess_data)
 
 
-    def choose_action(self, environ_state, curr_game = 'Game 1', is_rl_agent_trained = False):
+    def choose_action(self, environ_state, curr_game = 'Game 1'):
         """ method does two things. First, this method helps to train the agent. Once the agent is trained, 
-            this method helps to pick the appropriate move based on highest val in the Q table for a given turn
-            each agent will play through the database games exactly as shown during training
+            this method helps to pick the appropriate move based on highest val in the Q table for a given turn.
+            Each agent will play through the database games exactly as shown during training
             :param environ_state is a dictionary 
+            :param curr_game. This is relevant when initally training the agents.
             :return a dict containing chess move
         """
         self.legal_moves = environ_state['legal_moves']
         self.curr_turn = environ_state['curr_turn']        
         self.curr_game = curr_game
-        self.is_rl_agent_trained = is_rl_agent_trained
         
         if self.is_trained: 
             # it's possible that there will be a completely new set of legal_moves during 
-            # game play with humna that is not represented in the Q table
+            # game play that is not represented in the Q table
             # when that happens, update the Q_table
             matching_moves_in_q_table = self.Q_table[self.curr_turn].filter(items = self.legal_moves).index 
             if (len(matching_moves_in_q_table) == 0): 
@@ -46,34 +45,29 @@ class Agent:
             else: 
                 return self.policy_game_mode() 
 
-        # the agent is not trained OR this agent instance is the opposing agent
+        # the agent is not trained
         else:
-            # when the agent is being trained again, we want the opposing rl agent to behave differently 
-            # during training
             return self.policy_training_mode()
     
 
     def policy_training_mode(self):
-        """ this policy determines how the agents choose a move at each turn during training
+        """ this policy determines how the agents choose a move at each 
+            turn during training. In this implementation, the agents
+            will play out the games in the database exactly as shown.
             :param none
-            :return dictionary with selected chess move information
+            :return dictionary with selected chess move as a string
         """
-        if self.is_rl_agent_trained:
-            ########## prioritize important moves ##########
-            # if important move is found, return to caller
-            valuable_move = self.choose_high_val_move()
-            return valuable_move
-        
-        # the agent is not trained
-        else:
-            chess_move_str = self.chess_data.at[self.curr_game, self.curr_turn]
-            return {'chess_move_str': chess_move_str}
+        chess_move_str = self.chess_data.at[self.curr_game, self.curr_turn]
+        return {'chess_move_str': chess_move_str}
         
     
     def policy_game_mode(self):
         """ policy to use during game between human player and agent 
-            the agent searches its q table to find the moves with the highest q values at each turn.
-            
+            the agent searches its q table to find the moves with the 
+            highest q values at each turn. However, sometimes
+            the agent will pick a random move.
+
+            This method is also used when the agents continue to be trained.
             :param none
             :return a dictionary with chess_move as a string 
         """
@@ -81,7 +75,7 @@ class Agent:
         q_table_move_list = self.get_Q_values()
         matching_moves_in_q_table = q_table_move_list.filter(items = self.legal_moves)
         
-        if self.curr_turn == 'W1':
+        if self.curr_turn == 'W1' or self.curr_turn == 'B1':
             chess_move_str = matching_moves_in_q_table.sort_values(ascending = False).sample().index[0]
         else:
             if dice_roll == 1:
@@ -99,9 +93,9 @@ class Agent:
     def choose_high_val_move(self):
         """ method is used during training mode. during training, the dataframe of games with legal moves
             at current turn will be scanned for any strings that match the following regex options.
-            the game at which the move occurs will be noted, and the chess move infor will be returned to caller. 
+            and the chess move will be returned to caller. 
             :param none
-            :return selected chess move and other information 
+            :return selected chess move
         """ 
         max_val = 0
         for chess_move_str in self.legal_moves:
@@ -154,9 +148,10 @@ class Agent:
     def init_Q_table(self, chess_data):
         """ creates the q table so the agent can be trained 
             the q table index represents unique moves across all games in the database for all turns.
-            columns are the turns, 'W1' to 'B75'
+            columns are the turns, 'W1' to 'BN' where N is determined by max number of turns per player, 
+            see Settings class.
             :param none
-            :return q_table a pandas dataframe
+            :return q_table, a pandas dataframe
         """
         # initialize array that will be used to build a list of pd Series.
         # each Series represents the unique moves for the turn for a player color, W1 for example.

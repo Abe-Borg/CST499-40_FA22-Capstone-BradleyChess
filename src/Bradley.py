@@ -30,7 +30,7 @@ class Bradley:
 
 
     def recv_opp_move(self, chess_move):                                                                                 
-        """ receives opp chess move and sends it to the environ so 
+        """ receives human's chess move and sends it to the environ so 
             that the chessboard can be loaded w/ opponent move.
             this method assumes that the incoming chess move is valid and playable.
             :param chess_move this is the str input, which comes from the human player
@@ -188,7 +188,7 @@ class Bradley:
         # for each game in the training data set.
         for game_num in self.chess_data.index:
             num_chess_moves = self.chess_data.at[game_num, 'Num Moves']
-            training_results.write(f'\n\n\n Start of {game_num} training\n\n') 
+            training_results.write(f'\n\n Start of {game_num} training\n\n')
 
             #initialize environment to provide a state, s
             curr_state = self.environ.get_curr_state()
@@ -320,6 +320,8 @@ class Bradley:
 
             # reset environ to prepare for the next game
             training_results.write(f'Game {game_num} is over.\n')
+            training_results.write(f'\nchessboard looks like this:\n\n')
+            training_results.write(f'\n {self.environ.board}\n\n')
             training_results.write(f'Game result is: {self.get_game_outcome()}\n')
             training_results.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
             self.reset_environ()
@@ -327,12 +329,13 @@ class Bradley:
         # training is complete
         self.W_rl_agent.is_trained = True
         self.B_rl_agent.is_trained = True
-
         training_results.close()   
         self.reset_environ()
 
+
     def continue_training_rl_agents(self, training_results_filepath, num_games):
         """ continues to train the agent
+            I KNOW I KNOW .... TERRIBLE TO DUPLICATE CODE LIKE THIS, I was just lazy this time.
             :param num_games, how long to train the agent
             :return none
         """ 
@@ -344,12 +347,9 @@ class Bradley:
 
         # for each game in the training data set.
         for curr_training_game in range(num_games):
-            training_results.write(f'\n\n\n Start of game {curr_training_game} training\n\n') 
-
-            #initialize environment to provide a state, s
+            training_results.write(f'\n\n Start of game {curr_training_game} training\n\n') 
+            
             curr_state = self.environ.get_curr_state()
-
-            # this loop plays through one game.
             while self.game_on():
                 ##### WHITE AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
                 W_curr_action = self.W_rl_agent.choose_action(curr_state)
@@ -414,10 +414,10 @@ class Bradley:
                     B_est_Qval_analysis = self.analyze_board_state(self.get_chessboard(), False)
                     
                     if B_est_Qval_analysis['mate_score'] is None:
-                        B_est_Qval = W_est_Qval_analysis['centipawn_score']
+                        B_est_Qval = B_est_Qval_analysis['centipawn_score']
                     else:
-                        B_est_Qval = W_est_Qval_analysis['mate_score'] * self.settings.mate_score_factor
-                    
+                        B_est_Qval = B_est_Qval_analysis['mate_score'] * self.settings.mate_score_factor
+
                     self.environ.pop_chessboard()
                 else:
                     break
@@ -434,6 +434,8 @@ class Bradley:
 
             # reset environ to prepare for the next game
             training_results.write(f'Game {curr_training_game} is over.\n')
+            training_results.write(f'\nchessboard looks like this:\n\n')
+            training_results.write(f'\n {self.environ.board}\n\n')
             training_results.write(f'Game result is: {self.get_game_outcome()}\n')
             training_results.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
             self.reset_environ()
