@@ -20,7 +20,14 @@ The chess database is already in the folder, chess_data, but you can make a bigg
 5. You can also have the agents play against each other by uncommenting the last portion of code, 'bootstrap agents and have them play each other.
 
 ### Main Components of Program
-#### test
+#### Bradley Class
+This is a composite class that manages components and data flow during training and game play. All communication with external applications is also managed by this class. The methods of this class are focused on coordinating actions during the training and gameplay phase. However, the methods don't change the chessboard or choose the chess moves.
+
+#### Environ Class
+This class manages the chessboard and is the only part of the program that will actually change the chessboard. It also sets and manages what is called the state. In this application the state is the current chessboard configuration, the current turn, and the legal moves at each turn. 
+
+#### Agent Class
+This class is reponsible for choosing the chess moves. The first training phase (remember, there are two training phases) the agents will play through a database of games exactly as shown and learn that way. I tried many different versions of this part of the project, and this implemenation was the most effective. This style of training teaches the agents to play good positional chess. Later during phase two, the user can change hyperparameters to make the agents more aggressive or even to prefer certain openings for example.
 
 ### Rationale for Project
 I chose this project for my capstone because I am pursuing a career in data science. Specifically machine learning, and ideally, reinforced learning. I structured the program as a sandbox that would be interesting and useful for students who are learning the basics of data science and to get an introduction to reinforced learning. I made sure to keep the code as simple as possible, but also as flexible as possible. The student can adjust the different hyperparameters and observe how the agents behave. Their behaviour changes dramatically based on training time and the value of variables like learning rate and the discount factor. The student can also change the way the agent chooses actions during the game play mode. Currently, the agent will choose the largest value in the Q table at each turn. Also, this project and also the data science class project (linked above) cover the fundamental topics of an introductory data science course that uses Python as the language. The student will recognize the use of Pandas, Matplotlib, Seaborn, Numpy, and some basic machine learning algorithms like kNN classification and decision trees. 
