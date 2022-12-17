@@ -20,7 +20,7 @@ The chess database is already in the folder, chess_data, but you can make a bigg
 5. You can also have the agents play against each other by uncommenting the last portion of code, 'bootstrap agents and have them play each other.
 
 ### Main Components of Program
-##### test
+#### test
 
 ### Rationale for Project
 I chose this project for my capstone because I am pursuing a career in data science. Specifically machine learning, and ideally, reinforced learning. I structured the program as a sandbox that would be interesting and useful for students who are learning the basics of data science and to get an introduction to reinforced learning. I made sure to keep the code as simple as possible, but also as flexible as possible. The student can adjust the different hyperparameters and observe how the agents behave. Their behaviour changes dramatically based on training time and the value of variables like learning rate and the discount factor. The student can also change the way the agent chooses actions during the game play mode. Currently, the agent will choose the largest value in the Q table at each turn. Also, this project and also the data science class project (linked above) cover the fundamental topics of an introductory data science course that uses Python as the language. The student will recognize the use of Pandas, Matplotlib, Seaborn, Numpy, and some basic machine learning algorithms like kNN classification and decision trees. 
