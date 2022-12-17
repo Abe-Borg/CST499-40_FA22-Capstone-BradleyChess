@@ -78,8 +78,8 @@ if __name__ == '__main__':
 
 
     # # ========================= bootstrap agents and have them play each other =========================  #
-    bradley = init_bradley(training_chess_data)
-    bootstrap_agent(bradley, 'W', bradley_agent_q_table_path)
-    bootstrap_agent(bradley, 'B', imman_agent_q_table_path)
-    agent_vs_agent(bradley)
-    quit()
+    # bradley = init_bradley(training_chess_data)
+    # bootstrap_agent(bradley, 'W', bradley_agent_q_table_path)
+    # bootstrap_agent(bradley, 'B', imman_agent_q_table_path)
+    # agent_vs_agent(bradley)
+    # quit()
