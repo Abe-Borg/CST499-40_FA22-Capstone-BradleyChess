@@ -12,6 +12,7 @@ The file main.py has all information necessary to run this program. You will nee
 
 The chess database is already in the folder, chess_data, but you can make a bigger or different chess database. You will need to make sure the formatting is the same as shown in the file, Chess_Data_Preparation.ipynb file linked above.
 
+
 ### To Run the Program
 1. Start at the main.py file and change the file paths shown. Also, go to the Settings.py file and change the path of the Stockfish chess engine. Setting.py shows the hyperparamers that you can change before initial training and during additional training. Also, the Stockfish engine is already included in this repo. Stockfish is used to assign points to different positions during the training periods.
 2. Main.py contains 4 commented out portions of code. The first time you run this, uncomment the first part (train new agent), and adjust training_sample_size to your preference (recommend you start small, training can take hours or days). Run Main.py and the first part of the training phase will be complete. 
