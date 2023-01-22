@@ -1,7 +1,9 @@
 class Settings:
     """A class to store all settings for BradleyChess."""
     def __init__(self):
-        # HYPERPARAMETERS
+        # HYPERPARAMETERS, no clue how to fine tune all of these, and the online documentation basically says
+        # just try different values and see what happens...
+        
         # learn_rate and discount factor can be different for each agent. range is 0 to 1 for both parameters
         self.learn_rate = 0.6 # too high num here means too focused on recent knowledge, 
         self.discount_factor = 0.35   # lower number means more opportunistic, but not good long term planning
@@ -16,5 +18,5 @@ class Settings:
         self.mate_score_factor = 1_000
         # end of hyperparameters
         
-        self.num_turns_per_player = 50     # turns per player   
+        self.num_turns_per_player = 50     # turns per player, most games don't go this long. The database itself has up to 75 turns per player. 
         self.stockfish_filepath = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\CST499-40_FA22-Capstone-BradleyChess\stockfish_15_win_x64_avx2\stockfish_15_x64_avx2.exe"

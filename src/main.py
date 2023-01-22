@@ -12,11 +12,11 @@ imman_agent_q_table_path = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\CST499-40_FA2
 initial_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\CST499-40_FA22-Capstone-BradleyChess\training_results\initial_training_results.txt'
 additional_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\CST499-40_FA22-Capstone-BradleyChess\training_results\additional_training_results.txt'
 
-training_sample_size = 10_000 # change this to whatever you want. For reference, 100k game training period takes 24 hrs on my machine.
-agent_vs_agent_num_games = 40_000 # change this to whatever you want. For reference, 40k games takes about 12 hrs on my machine.
+training_sample_size = 10_000
+agent_vs_agent_num_games = 40_000 # training takes a very long time!!!
 
-chess_data = pd.read_pickle(chess_data_path, compression = 'zip')
-training_chess_data = chess_data.sample(training_sample_size)
+chess_data = pd.read_pickle(chess_data_path, compression = 'zip') # <-- this is a dataframe
+training_chess_data = chess_data.sample(training_sample_size) # <-- this is a dataframe
 
 
 if __name__ == '__main__':

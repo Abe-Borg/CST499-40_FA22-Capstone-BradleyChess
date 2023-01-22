@@ -1,16 +1,19 @@
-import Bradley as imman
+import Bradley as imman #in case brad or imman ever read this code, I love you.
 import pandas as pd
 
-def init_bradley(chess_data):
+def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
     """ the object needs to be instantiated with some chess data, 
         even if the agents have already been trained.
+        I would rework this method, but I'm a lazy programmer
+        returns an object of the class Bradley
     """
     bubs = imman.Bradley(chess_data)
     return bubs
+### end of init_bradley
 
-
-def play_game(bubs, rl_agent_color):
+def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
     """ use this method to play against a human player 
+        using the terminal
     """
     W_turn = True
     turn_num = bubs.get_curr_turn()
@@ -48,10 +51,12 @@ def play_game(bubs, rl_agent_color):
     print(f'Game is over, result is: {bubs.get_game_outcome()}')
     print(f'The game ended because of: {bubs.get_game_termination_reason()}')
     bubs.reset_environ()
+### end of play_game
 
-
-def agent_vs_agent(bubs):
-    """ play two trained agents against each other """
+def agent_vs_agent(bubs: imman.Bradley) -> None:
+    """ play two trained agents against each other 
+        this function is buggy af, at some point I will need to fix it...
+    """
     W_turn = True
     turn_num = bubs.get_curr_turn()
     
@@ -81,9 +86,9 @@ def agent_vs_agent(bubs):
     print(f'Game result is: {bubs.get_game_outcome()}')
     print(f'Game ended because of: {bubs.get_game_termination_reason()}')
     bubs.reset_environ()
+### end of agent_vs_agent
 
-
-def pikl_q_table(bubs, rl_agent_color, q_table_path):
+def pikl_q_table(bubs: imman.Bradley, rl_agent_color: str, q_table_path: str) -> None:
     """ make sure to get input the correct q_table_path for each agent """
     if rl_agent_color == 'W':
         rl_agent = bubs.W_rl_agent
@@ -91,9 +96,9 @@ def pikl_q_table(bubs, rl_agent_color, q_table_path):
         rl_agent = bubs.B_rl_agent
 
     rl_agent.Q_table.to_pickle(q_table_path, compression = 'zip')
+### end of pikl_Q_table
 
-
-def bootstrap_agent(bubs, rl_agent_color, existing_q_table_path):
+def bootstrap_agent(bubs: imman.Bradley, rl_agent_color: str, existing_q_table_path: str) -> None:
     """ assigns an agents q table to an existing q table.
         make sure the q table you pass matches the color of the agent.
         Use this method when retraining an agent or when you want agents
