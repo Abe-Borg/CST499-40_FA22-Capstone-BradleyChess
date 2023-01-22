@@ -29,18 +29,29 @@ def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
         else:
             player_turn = 'B'
         
-        print(f'\nCurrent turn is :  {turn_num}')
-        
+        print(f'\nCurrent turn is :  {turn_num}\n')
+
         if rl_agent.color == player_turn:
-            print('=== RL AGENT\'S TURN ===')
+            print('=== RL AGENT\'S TURN ===\n')
             chess_move = bubs.rl_agent_chess_move(rl_agent.color)
             chess_move_str = chess_move['chess_move_str']
             print(f'RL agent played {chess_move_str}\n')
         else:
             print('=== OPPONENT\' TURN ===')
             chess_move = str(input('hooman, enter chess move: '))
+            
+            if chess_move == 'q':
+                quit()
+            elif chess_move == 'pop':
+                bubs.environ.undo_move()
+                continue
+            elif chess_move == 'pop 2x':
+                bubs.environ.undo_move()
+                bubs.environ.undo_move()
+                continue
             print('\n')
             
+            # human player chose to continue game and also to not undo last move.
             while not bubs.recv_opp_move(chess_move):  # this method returns False for incorrect input
                 print('invalid input, try again')
                 chess_move = str(input('enter chess move: '))
@@ -113,3 +124,4 @@ def bootstrap_agent(bubs: imman.Bradley, rl_agent_color: str, existing_q_table_p
 
     rl_agent.Q_table = pd.read_pickle(existing_q_table_path, compression = 'zip')
     rl_agent.is_trained = True
+### end of bootstrap_agent

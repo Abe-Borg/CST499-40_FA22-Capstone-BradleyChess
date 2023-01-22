@@ -80,6 +80,12 @@ class Environ:
         self.board.pop()
     ### end of pop_chessboard
 
+    def undo_move(self) -> None:
+        """ this method is used during game mode, human vs rl agent """
+        self.board.pop()
+        self.turn_index -= 1
+    ### end of undo_move
+
     def load_chessboard_for_Q_est(self, analysis_results) -> bool:
         """ method should only be called during training. this will load the 
             chessboard using a Move.uci string. This method works in tandem

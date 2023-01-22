@@ -5,6 +5,7 @@ import re
 from helper_methods import *
 import chess
 import chess.engine
+import pandas as pd
 
 ## note to reader: throughout this code you will see dictionaries for things that
 ## don't necessily need a dictionary. chess_move is a good example.
