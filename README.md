@@ -34,4 +34,7 @@ I chose this project for my capstone because I am pursuing a career in data scie
 
 Data science enthusiast will recogize ways to make this project better and to create more sophisticated agents. I started this project knowing nothing about reinforced learning. Therefore, the implementation is basic. I did not fully understand the math and theory behind the SARSA algorithm either. Regardless, I believe the form of the SARSA algorithm is implemented correctly.
 
-Finally, the single point of communication between this program and something external (like a web app) is facilitated by two methods, Bradley.recv_opp_move() and Bradley.rl_agent_chess_move(). 
+Finally, the single point of communication between this program and something external (like a web app) is facilitated by two methods, Bradley.recv_opp_move() and Bradley.rl_agent_chess_move().
+
+### Future Plans
+I will make a webGL application for this project. I think this is easier and looks better than a React app. Also, the training time could be faster, and I would like to train the agents on hundreds of thousands of games instead of tens of thousands. It could be that the only way to accomplish this is to use Julia or some other language. Also, I may find a way to use Numpy arrays instead of Pandas DataFrames. Right now it seems like I need DFs for what I am doing.
