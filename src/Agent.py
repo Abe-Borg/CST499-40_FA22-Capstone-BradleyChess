@@ -6,13 +6,14 @@ import re
 import copy
 import math
 import random
+import typing
 
 class Agent:
     """ The agent class is responsible for deciding what chess move to play 
         based on the current state. The state is passed the the agent by the environ class.
         The agent class does not make any changes to the chessboard. 
     """
-    def __init__(self, color, chess_data):        
+    def __init__(self, color: str, chess_data: pd.DataFrame):        
         self.color = color
         self.chess_data = chess_data
         self.settings = Settings.Settings()
@@ -20,7 +21,7 @@ class Agent:
         self.Q_table = self.init_Q_table(self.chess_data)
 
 
-    def choose_action(self, environ_state, curr_game = 'Game 1'):
+    def choose_action(self, environ_state: dict, curr_game: str = 'Game 1') -> dict[str]:
         """ method does two things. First, this method helps to train the agent. Once the agent is trained, 
             this method helps to pick the appropriate move based on highest val in the Q table for a given turn.
             Each agent will play through the database games exactly as shown during training
@@ -48,9 +49,9 @@ class Agent:
         # the agent is not trained
         else:
             return self.policy_training_mode()
+    ### end of choose_action ###
     
-
-    def policy_training_mode(self):
+    def policy_training_mode(self) -> dict[str]:
         """ this policy determines how the agents choose a move at each 
             turn during training. In this implementation, the agents
             will play out the games in the database exactly as shown.
@@ -59,9 +60,9 @@ class Agent:
         """
         chess_move_str = self.chess_data.at[self.curr_game, self.curr_turn]
         return {'chess_move_str': chess_move_str}
+    ### end of policy_training_mode ###
         
-    
-    def policy_game_mode(self):
+    def policy_game_mode(self) -> dict[str]:
         """ policy to use during game between human player and agent 
             the agent searches its q table to find the moves with the 
             highest q values at each turn. However, sometimes
@@ -88,9 +89,9 @@ class Agent:
                     self.change_Q_table_pts(chess_move_str, self.curr_turn, self.settings.new_move_pts)
         
         return {'chess_move_str': chess_move_str}
+    ### end of policy_game_mode ###
 
-
-    def choose_high_val_move(self):
+    def choose_high_val_move(self) -> dict[str]:
         """ method is used during training mode. during training, the dataframe of games with legal moves
             at current turn will be scanned for any strings that match the following regex options.
             and the chess move will be returned to caller. 
@@ -107,28 +108,28 @@ class Agent:
                 Q_move_val = 50
                 if Q_move_val > max_val:
                     max_val = Q_move_val
-                    promo_Q_chess_move_str = copy.copy(chess_move_str)
+                    promo_Q_chess_move_str = copy.deepcopy(chess_move_str)
                     promotion_to_queen = {'chess_move_str': promo_Q_chess_move_str}
 
             if re.search(r'=', chess_move_str): 
                 promotion_move_val = 25   
                 if promotion_move_val > max_val:
                     max_val = promotion_move_val
-                    promo_chess_move_str = copy.copy(chess_move_str)
+                    promo_chess_move_str = copy.deepcopy(chess_move_str)
                     promotion = {'chess_move_str': promo_chess_move_str}
                 
             if re.search(r'\+', chess_move_str):
                 check_move_val = 10
                 if check_move_val > max_val:
                     max_val = check_move_val
-                    check_chess_move_str = copy.copy(chess_move_str)
+                    check_chess_move_str = copy.deepcopy(chess_move_str)
                     check_move = {'chess_move_str': check_chess_move_str}
 
             if re.search(r'x', chess_move_str):
                 capture_move_val = 5 
                 if capture_move_val > max_val:
                     max_val = capture_move_val
-                    capture_move_str = copy.copy(chess_move_str)
+                    capture_move_str = copy.deepcopy(chess_move_str)
                     capture_move = {'chess_move_str': capture_move_str}
             
         if max_val == 50:
@@ -142,10 +143,9 @@ class Agent:
         else: 
             chess_move_str = random.sample(self.legal_moves, 1)
             return {'chess_move_str': chess_move_str[0]}
-    # end of choose_high_val_move
+    ### end of choose_high_val_move ###
 
-
-    def init_Q_table(self, chess_data):
+    def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
         """ creates the q table so the agent can be trained 
             the q table index represents unique moves across all games in the database for all turns.
             columns are the turns, 'W1' to 'BN' where N is determined by max number of turns per player, 
@@ -169,9 +169,9 @@ class Agent:
 
         q_table = q_table.astype(np.int32)
         return q_table # returns a pd dataframe
+    ### end of init_Q_table ###
 
-
-    def change_Q_table_pts(self, chess_move, curr_turn, pts):
+    def change_Q_table_pts(self, chess_move: str, curr_turn: str, pts: int) -> None:
         """ 
             :param chess_move is a string, 'e4' for example
             :param curr_turn is a string representing the turn num, for example, 'W10'
@@ -179,9 +179,9 @@ class Agent:
             :return none
         """
         self.Q_table.at[chess_move, curr_turn] += pts
+    ### end of change_Q_table_pts ###
 
-
-    def update_Q_table(self, new_chess_moves):
+    def update_Q_table(self, new_chess_moves: list[str]) -> None:
         """ method will accept a list of strings
             the strings represents chess moves
             :pre the list parameter represents moves that are not already in the q table.
@@ -196,18 +196,19 @@ class Agent:
         # protect against duplicate indices
         if any(self.Q_table.index.duplicated()):
             self.Q_table = self.Q_table[~self.Q_table.index.duplicated()]
+    ### update_Q_table ###
         
-        
-    def reset_Q_table(self):
+    def reset_Q_table(self) -> None:
         """ zeroes out the q table, call this method when you want to retrain the agent """
         for col in self.Q_table.columns:
             self.Q_table[col].values[:] = 0
+    ### end of reset_Q_table ###
 
-
-    def get_Q_values(self):
+    def get_Q_values(self) -> pd.Series:
         """ 
             Returns the series for the given turn. the series index represents the moves for that turn.
             :param curr_turn is a string, like 'W10'
             :return a pandas series, the index represents the chess moves, and the col is the curr turn in the game.
         """
         return self.Q_table[self.curr_turn]
+    ### end o f get_Q_values
