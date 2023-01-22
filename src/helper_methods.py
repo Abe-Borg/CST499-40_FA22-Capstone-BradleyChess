@@ -40,15 +40,16 @@ def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
             print('=== OPPONENT\' TURN ===')
             chess_move = str(input('hooman, enter chess move: '))
             
-            if chess_move == 'q':
-                quit()
-            elif chess_move == 'pop':
-                bubs.environ.undo_move()
-                continue
-            elif chess_move == 'pop 2x':
-                bubs.environ.undo_move()
-                bubs.environ.undo_move()
-                continue
+            # undo moves not working right now, too lazy to debug at the moment
+            # if chess_move == 'q':
+            #     quit()
+            # elif chess_move == 'pop':
+            #     bubs.environ.undo_move()
+            #     continue
+            # elif chess_move == 'pop 2x':
+            #     bubs.environ.undo_move()
+            #     bubs.environ.undo_move()
+            #     continue
             print('\n')
             
             # human player chose to continue game and also to not undo last move.

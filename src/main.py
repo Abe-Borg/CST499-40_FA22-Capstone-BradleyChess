@@ -69,12 +69,14 @@ if __name__ == '__main__':
     bootstrap_agent(bradley, 'W', bradley_agent_q_table_path)
     bootstrap_agent(bradley, 'B', imman_agent_q_table_path)
 
-    print('At any time, you can enter \'q\' to end the game.\n')
-    print('Also, once the game starts, to undo the computer\'s last move, type \'pop\'\n')
-    print('And if you want to undo your last move, type \'pop 2x\'\n')
+    # undo not working...
+    # print('At any time, you can enter \'q\' to end the game.\n')
+    # print('Also, once the game starts, to undo the computer\'s last move, type \'pop\'\n')
+    # print('And if you want to undo your last move, type \'pop 2x\'\n')
+    
     rl_agent_color = input('Enter color to play as, \'W\' or \'B\': ')
-    if rl_agent_color == 'q':
-        quit()
+    # if rl_agent_color == 'q':
+    #     quit()
     if rl_agent_color == 'W':
         play_game(bradley, rl_agent_color)
     else: 
