@@ -1,4 +1,4 @@
-import Settings
+from Settings import *
 import pandas as pd
 import numpy as np
 from helper_methods import *
@@ -16,7 +16,7 @@ class Agent:
     def __init__(self, color: str, chess_data: pd.DataFrame):        
         self.color = color
         self.chess_data = chess_data
-        self.settings = Settings.Settings()
+        self.settings = Settings()
         self.is_trained = False
         self.Q_table = self.init_Q_table(self.chess_data)
 
