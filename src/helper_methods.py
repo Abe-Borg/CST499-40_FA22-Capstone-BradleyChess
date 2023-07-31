@@ -1,5 +1,6 @@
 import Bradley as imman #in case brad or imman ever read this code, I love you.
 import pandas as pd
+import random
 
 def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
     """ the object needs to be instantiated with some chess data, 
@@ -126,3 +127,15 @@ def bootstrap_agent(bubs: imman.Bradley, rl_agent_color: str, existing_q_table_p
     rl_agent.Q_table = pd.read_pickle(existing_q_table_path, compression = 'zip')
     rl_agent.is_trained = True
 ### end of bootstrap_agent
+
+def get_number_with_probability(probability):
+    """
+        This function takes a probability val as an arg, which should be between 0 and 1 (inclusive)
+        If the randomly generated number is less that the prob value, 
+        the function returns 1
+    
+    """
+    if random.random() < probability:
+        return 1
+    else:
+        return 0

@@ -6,6 +6,7 @@ from helper_methods import *
 import chess
 import chess.engine
 import pandas as pd
+import copy
 
 ## note to reader: throughout this code you will see dictionaries for things that
 ## don't necessily need a dictionary. chess_move is a good example.
@@ -26,19 +27,20 @@ class Bradley:
         self.B_rl_agent = Agent.Agent('B', self.chess_data)
 
         # stockfish is used to analyze positions during training
-        # this is how we estimate the q value at each position, and also 
-        # for anticipated next position
+        # this is how we estimate the q value at each position, and also for anticipated next position
         self.engine = chess.engine.SimpleEngine.popen_uci(self.settings.stockfish_filepath)
+
         # we only want to look ahead one move, that's the anticipated q value at next state, and next action
         # this number has a massive inpact on how long it takes to analyze a position and it really doesn't help to go beyond 8.
-        self.num_moves_to_return = 1 
-        self.depth_limit = 8 
+        self.num_moves_to_return = 1
+        self.depth_limit = 8
         self.time_limit = None
         self.search_limit = chess.engine.Limit(depth = self.depth_limit, time = self.time_limit)
 
 
     def recv_opp_move(self, chess_move: str) -> bool:                                                                                 
-        """ receives human's chess move and sends it to the environ so 
+        """ 
+            receives human's chess move and sends it to the environ so 
             that the chessboard can be loaded w/ opponent move.
             this method assumes that the incoming chess move is valid and playable.
             :param chess_move this is the str input, which comes from the human player
@@ -54,36 +56,37 @@ class Bradley:
     ### end of recv_opp_move ###
 
     def rl_agent_chess_move(self, rl_agent_color: str) -> dict[str]:
-        """ this method will do two things, load up the environ.chessboard with the agent's action (chess_move)
+        """ 
+            this method will do two things, load up the environ.chessboard with the agent's action (chess_move)
             and return the string of the agent's chess move
             :param str that indicates the players as W or B
             :return a dictionary with the chess move str as one of the items
         """
         if rl_agent_color == 'W':
-            rl_agent = self.W_rl_agent
+            chess_move = self.W_rl_agent.choose_action(self.environ.get_curr_state()) # choose_action returns a dictionary
         else:
-            rl_agent = self.B_rl_agent
+            chess_move = self.B_rl_agent.choose_action(self.environ.get_curr_state()) # choose_action returns a dictionary
         
-        curr_state = self.environ.get_curr_state()
-        chess_move = rl_agent.choose_action(curr_state) # choose_action returns a dictionary
         self.environ.load_chessboard(chess_move['chess_move_str'])
         self.environ.update_curr_state()
         return chess_move
     ### end of rl_agent_chess_move
 
     def get_fen_str(self) -> str:
-        """ call this at each point in the chess game for the fen 
+        """ 
+            call this at each point in the chess game for the fen 
             string. The FEN string can be used to reconstruct a chessboard position
             The FEN string will change each time a move is made.
             :param none
             :return a string that represents a board state, something like this,
             'rnbqkbnr/pppp1ppp/8/8/4p1P1/5P2/PPPPP2P/RNBQKBNR w KQkq - 0 3'
         """
-        return self.environ.board.fen()
+        return copy.copy(self.environ.board.fen())
     ### end of get_gen_str ###
 
     def get_opp_agent_color(self, rl_agent_color: str) -> str:
-        """ method determines what color the opposing rl agent should be assigned to
+        """ 
+            method determines what color the opposing rl agent should be assigned to
             :param string that represents the rl_agent color 
             :return string that represents the opposing rl agent color
         """
@@ -94,7 +97,8 @@ class Bradley:
     ### end of get_opp_agent_color
             
     def get_curr_turn(self) -> str:
-        """ find curr turn which would be a string like 'W1' or 'B5'
+        """ 
+            find curr turn which would be a string like 'W1' or 'B5'
             :param none
             :return a string representing the current turn
         """
@@ -102,9 +106,10 @@ class Bradley:
     ### end of get_curr_turn
 
     def game_on(self) -> bool:
-        """ method determines when the game is over 
+        """ 
+            method determines when the game is over 
             game can end if python chess board determines the game is over, 
-            or if the game is at num_turns_per_player * 2 - 1 moves per player
+            or if the game is at num_turns_per_player * 2 - 1 moves per player (-1 b/c index starts at 0)
             :param none
             :return bool, False means the game is over
         """
@@ -115,7 +120,8 @@ class Bradley:
     ### end of game_on
     
     def get_legal_moves(self) -> list[str]:
-        """ returns a list of strings that represents the legal moves for the 
+        """ 
+            returns a list of strings that represents the legal moves for the 
             current turn and state of the chessboard
             :param none
             :return a list of strings
@@ -124,11 +130,12 @@ class Bradley:
     ### end of get_legal_moves
     
     def get_rl_agent_color(self) -> str: 
-        """ simple getter. returns the string for the color of the agent. 
+        """ 
+            simple getter. returns the string for the color of the agent. 
             :param none
             :return string, 'W' for example
         """
-        return self.rl_agent.color
+        return copy.copy(self.rl_agent.color)
     ### end of get_rl_agent_color
     
     def get_game_outcome(self) -> chess.Outcome or str:   
@@ -201,7 +208,7 @@ class Bradley:
             #initialize environment to provide a state, s
             curr_state = self.environ.get_curr_state()
 
-            # this loop plays through one game.
+            # this loop plays through one game in the database, exactly as shown.
             while curr_state['turn_index'] < num_chess_moves:
                 ##### WHITE AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
                 # choose action a from state s, using policy

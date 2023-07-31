@@ -18,5 +18,5 @@ class Settings:
         self.mate_score_factor = 1_000
         # end of hyperparameters
         
-        self.num_turns_per_player = 50     # turns per player, most games don't go this long. The database itself has up to 75 turns per player. 
+        self.num_turns_per_player = 75     # turns per player, most games don't go this long. The database itself has up to 75 turns per player. 
         self.stockfish_filepath = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\CST499-40_FA22-Capstone-BradleyChess\stockfish_15_win_x64_avx2\stockfish_15_x64_avx2.exe"

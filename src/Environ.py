@@ -1,10 +1,12 @@
 import chess
 import Settings
 import pandas as pd
+import copy
 
 
 class Environ:
-    """ This class manages the chessboard and determines what the state is.
+    """ 
+        This class manages the chessboard and determines what the state is.
         The class passes the state to the agent.
         This class is the only thing that should ake changes to the chessboard. 
     """
@@ -30,7 +32,8 @@ class Environ:
     ### end of constructor
 
     def get_curr_state(self) -> dict[str, str, list[str]]:
-        """ returns the dictionary that describes the curr state of the board, and the curr turn
+        """ 
+            returns the dictionary that describes the curr state of the board, and the curr turn
             :param none
             :return a dictionary that defines the current state that an agent will act on
         """
@@ -53,15 +56,15 @@ class Environ:
             :return, a string that corresponds to current turn or false
         """
         try: 
-            curr_turn = self.turn_list[self.turn_index]
-            return curr_turn
+            return self.turn_list[self.turn_index]
         except IndexError:
             print(f'list index out of range, turn index is {self.turn_index}')
             return False
     ### end of get_curr_turn
     
     def load_chessboard(self, chess_move_str: str) -> bool:
-        """ method to play move on chessboard. call this method when you want to commit a chess move.
+        """ 
+            method to play move on chessboard. call this method when you want to commit a chess move.
             the agent class chooses the move, but the environ class must load up the chessboard with that move
             :param chess_move as string like this, 'Nf3'
             :return bool for success or failure.
@@ -116,7 +119,8 @@ class Environ:
     ### end of reset_environ
     
     def get_legal_moves(self) -> list[str]:   
-        """ method will return a list of strings that represents the legal moves at that turn
+        """ 
+            method will return a list of strings that represents the legal moves at that turn
             :param none
             :return list of strings that represents the legal moves at a turn, given the board state
         """
