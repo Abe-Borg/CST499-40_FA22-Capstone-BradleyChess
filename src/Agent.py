@@ -34,14 +34,12 @@ class Agent:
         self.legal_moves = environ_state['legal_moves'] # this is a list of strings
         self.curr_turn = environ_state['curr_turn'] # this is a string, like 'W1'       
         self.curr_game = curr_game
-        moves_not_in_Q_table = []
 
         # check if any of the legal moves is not already in the Q table
-        for move in self.legal_moves:
-            if move not in self.Q_table[self.curr_turn].index:
-                moves_not_in_Q_table.push(move)
-        if len(moves_not_in_Q_table) > 0:
+        moves_not_in_Q_table = [move for move in self.legal_moves if move not in self.Q_table[self.curr_turn].index]
+        if moves_not_in_Q_table:
             self.update_Q_table(moves_not_in_Q_table)
+                
         
         if self.is_trained: 
             return self.policy_game_mode() # this function call returns a dict that contains a chess move.
@@ -77,7 +75,7 @@ class Agent:
         # get the list of chess moves in the q table, then filter that so that 
         # only the legal moves for this turn remain.
         q_values = self.get_Q_values()  # this is a pandas series
-        legal_moves_in_q_table = q_values.loc[q_values.index.intersection(self.legal_moves)] # this is a pandas series
+        legal_moves_in_q_table = q_values.loc[q_values.index.intersection(self.legal_moves)]
         
         if dice_roll == 1:
             # pick random move, that would be an index value of the pandas series (legal_moves_in_q_table)
@@ -90,7 +88,7 @@ class Agent:
         # compare the abs difference with a small tolerance.
         # this should be small enough to account for any rounding errors
         if abs(self.Q_table.at[chess_move_str, self.curr_turn] - 0) < 1e-6:
-                self.change_Q_table_pts(chess_move_str, self.curr_turn, self.settings.new_move_pts)
+            self.change_Q_table_pts(chess_move_str, self.curr_turn, self.settings.new_move_pts)
 
         return {'chess_move_str': chess_move_str}
     ### end of policy_game_mode ###
@@ -142,32 +140,22 @@ class Agent:
     ### end of choose_high_val_move ###
 
     def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
-        """ 
-            creates the q table so the agent can be trained 
-            the q table index represents unique moves across all games in the database for all turns.
-            columns are the turns, 'W1' to 'BN' where N is determined by max number of turns per player, 
-            see Settings class.
-            :param none
-            :return q_table, a pandas dataframe
+        """Creates the Q table so the agent can be trained.
+
+        The Q table index represents unique moves across all games in the database for all turns.
+        Columns are the turns, 'W1' to 'BN' where N is determined by max number of turns per player, see Settings class.
+
+        Args:
+            chess_data: A pandas dataframe containing chess data.
+
+        Returns:
+            A pandas dataframe representing the Q table.
         """
-        # initialize array that will be used to build a list of pd Series.
-        # each Series represents the unique moves for the turn for a player color, W1 for example.
-        uniq_mov_list = []
-        
-        # this loop will make an array of pandas series, add 1 to make it 1 through total columns (inclusive)
-        for i in range(1, self.settings.num_turns_per_player + 1):
-            uniq_mov_list.append(chess_data.loc[:, self.color + str(i)].value_counts())
-
-        uniq_mov_list = pd.concat(uniq_mov_list)        
-        uniq_mov_list = uniq_mov_list.index.drop_duplicates(keep = 'first')
+        unique_moves = pd.concat([chess_data.loc[:, f"{self.color}{i}"].value_counts() for i in range(1, self.settings.num_turns_per_player + 1)])
+        unique_moves = unique_moves.index.unique()
         turns_list = chess_data.loc[:, self.color + '1': self.color + str(self.settings.num_turns_per_player): 2].columns
-        q_table = pd.DataFrame(columns = turns_list, index = uniq_mov_list)
-        
-        # make sure all values start at 0
-        q_table = q_table.fillna(0)
-
-        q_table = q_table.astype(np.int32)
-        return q_table # returns a pd dataframe
+        q_table = pd.DataFrame(0, columns = turns_list, index = unique_moves, dtype = np.int32)
+        return q_table
     ### end of init_Q_table ###
 
     def change_Q_table_pts(self, chess_move: str, curr_turn: str, pts: int) -> None:
