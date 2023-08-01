@@ -6,6 +6,7 @@ import re
 import copy
 import random
 import typing
+import chess
 
 class Agent:
     """ 
@@ -95,61 +96,54 @@ class Agent:
     ### end of policy_game_mode ###
 
     def choose_high_val_move(self) -> dict[str]:
-        """ method is used during training mode. during training, the dataframe of games with legal moves
-            at current turn will be scanned for any strings that match the following regex options.
-            and the chess move will be returned to caller. 
+        """ 
+            The choose_high_val_move method is used during training mode to select the 
+            best chess move from a list of legal moves. The method assigns a value to each 
+            move based on whether it results in a check, capture, or promotion, and selects the 
+            move with the highest value. If there are no moves with a value greater than 0, 
+            the method selects a random move from the list of legal moves. 
+            The method returns a dictionary containing the selected chess move as a string.
             :param none
             :return selected chess move
         """ 
+        move_values = {
+            'check': 10,
+            'capture': 5,
+            'promotion': 25,
+            'promotion_to_queen': 50,
+        }
+
         max_val = 0
+        best_move = None
+        
         for chess_move_str in self.legal_moves:
-            # checkmate will always be the best move, so return immediately
-            if re.search(r'\#', chess_move_str):
-                return {'chess_move_str': chess_move_str}
+            move = chess.Move.from_uci(chess_move_str)
+            move_val = 0
 
-            if re.search(r'=Q', chess_move_str): 
-                Q_move_val = 50
-                if Q_move_val > max_val:
-                    max_val = Q_move_val
-                    promo_Q_chess_move_str = copy.deepcopy(chess_move_str)
-                    promotion_to_queen = {'chess_move_str': promo_Q_chess_move_str}
+            if move.promotion:
+                if move.promotion == chess.QUEEN:
+                    move_val = move_values['promotion_to_queen']
+                else:
+                    move_val = move_values['promotion']
+            elif move.capture:
+                move_val = move_values['capture']
+            elif self.board.is_check(move):
+                move_val = move_values['check']
 
-            if re.search(r'=', chess_move_str): 
-                promotion_move_val = 25   
-                if promotion_move_val > max_val:
-                    max_val = promotion_move_val
-                    promo_chess_move_str = copy.deepcopy(chess_move_str)
-                    promotion = {'chess_move_str': promo_chess_move_str}
-                
-            if re.search(r'\+', chess_move_str):
-                check_move_val = 10
-                if check_move_val > max_val:
-                    max_val = check_move_val
-                    check_chess_move_str = copy.deepcopy(chess_move_str)
-                    check_move = {'chess_move_str': check_chess_move_str}
+            if move_val > max_val:
+                max_val = move_val
+                best_move = {'chess_move_str': chess_move_str}
 
-            if re.search(r'x', chess_move_str):
-                capture_move_val = 5 
-                if capture_move_val > max_val:
-                    max_val = capture_move_val
-                    capture_move_str = copy.deepcopy(chess_move_str)
-                    capture_move = {'chess_move_str': capture_move_str}
-            
-        if max_val == 50:
-            return promotion_to_queen
-        elif max_val == 25:
-            return promotion
-        elif max_val == 10:
-            return check_move
-        elif max_val == 5:
-            return capture_move
-        else: 
+        if best_move is None:
             chess_move_str = random.sample(self.legal_moves, 1)
-            return {'chess_move_str': chess_move_str[0]}
+            best_move = {'chess_move_str': chess_move_str[0]}
+        
+        return best_move
     ### end of choose_high_val_move ###
 
     def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
-        """ creates the q table so the agent can be trained 
+        """ 
+            creates the q table so the agent can be trained 
             the q table index represents unique moves across all games in the database for all turns.
             columns are the turns, 'W1' to 'BN' where N is determined by max number of turns per player, 
             see Settings class.
@@ -159,6 +153,7 @@ class Agent:
         # initialize array that will be used to build a list of pd Series.
         # each Series represents the unique moves for the turn for a player color, W1 for example.
         uniq_mov_list = []
+        
         # this loop will make an array of pandas series, add 1 to make it 1 through total columns (inclusive)
         for i in range(1, self.settings.num_turns_per_player + 1):
             uniq_mov_list.append(chess_data.loc[:, self.color + str(i)].value_counts())
@@ -167,8 +162,9 @@ class Agent:
         uniq_mov_list = uniq_mov_list.index.drop_duplicates(keep = 'first')
         turns_list = chess_data.loc[:, self.color + '1': self.color + str(self.settings.num_turns_per_player): 2].columns
         q_table = pd.DataFrame(columns = turns_list, index = uniq_mov_list)
-        for col in q_table.columns:
-            q_table[col].values[:] = 0
+        
+        # make sure all values start at 0
+        q_table = q_table.fillna(0)
 
         q_table = q_table.astype(np.int32)
         return q_table # returns a pd dataframe
@@ -185,34 +181,33 @@ class Agent:
     ### end of change_Q_table_pts ###
 
     def update_Q_table(self, new_chess_moves: list[str]) -> None:
-        """ method will accept a list of strings
-            the strings represents chess moves
-            :pre the list parameter represents moves that are not already in the q table.
-            :param new_chess_moves, a list of strings
-            :return none
-        """
-        q_table_new_values = pd.DataFrame(index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int32)
-        for col in q_table_new_values.columns: 
-            q_table_new_values[col].values[:] = 0
+        """ 
+        Update the Q table with new chess moves.
 
-        self.Q_table = pd.concat([self.Q_table, q_table_new_values])
-        # protect against duplicate indices
-        if any(self.Q_table.index.duplicated()):
-            self.Q_table = self.Q_table[~self.Q_table.index.duplicated()]
+        :pre: The list parameter represents moves that are not already in the q table.
+        :param new_chess_moves: List of chess moves (strings).
+        :return: None
+        """
+        # Filter out moves that are already in the Q_table
+        new_chess_moves = [move for move in new_chess_moves if move not in self.Q_table.index]
+        
+        if new_chess_moves:
+            q_table_new_values = pd.DataFrame(index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int32)
+            q_table_new_values.values[:] = 0
+            self.Q_table = self.Q_table.append(q_table_new_values)
     ### update_Q_table ###
         
     def reset_Q_table(self) -> None:
-        """ zeroes out the q table, call this method when you want to retrain the agent """
-        for col in self.Q_table.columns:
-            self.Q_table[col].values[:] = 0
+        """ Zeroes out the Q-table. Call this method when you want to retrain the agent. """
+        self.Q_table.iloc[:, :] = 0
     ### end of reset_Q_table ###
 
     def get_Q_values(self) -> pd.Series:
         """ 
-            Returns the series for the given turn. the series index represents the 
-            unique moves that have been found in the chess data for that turn.
-            :param curr_turn is a string, like 'W10'
-            :return a pandas series, the index represents the chess moves, and the col is the curr turn in the game.
+        Returns the series for the given turn. The series index represents the 
+        unique moves that have been found in the chess data for that turn.
+
+        :return: A pandas series, the index represents the chess moves, and the column is the current turn in the game.
         """
         return self.Q_table[self.curr_turn]
-    ### end o f get_Q_values
+    ### end of get_Q_values

@@ -124,18 +124,6 @@ class Environ:
             :param none
             :return list of strings that represents the legal moves at a turn, given the board state
         """
-        ### this method is hacked together. I don't even remember how I got it to work
-        legal_moves = []
-        for i in self.board.legal_moves:
-            legal_moves.append(i)
-
-        i = 0
-        num_legal_moves = self.board.legal_moves.count()
-        legal_moves_str = []
-        while num_legal_moves > 0:
-            legal_moves_str.append(self.board.san(legal_moves[i]))
-            i += 1
-            num_legal_moves -= 1
-        
-        return legal_moves_str
+        return [self.board.san(move) for move in self.board.legal_moves]
     ### end of get_legal_moves
+    
