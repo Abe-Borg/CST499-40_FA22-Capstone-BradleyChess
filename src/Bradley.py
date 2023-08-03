@@ -7,6 +7,10 @@ import chess
 import chess.engine
 import pandas as pd
 import copy
+import logging
+import log_config
+
+logger = logging.getLogger(__name__)
 
 ## note to reader: throughout this code you will see dictionaries for things that
 ## don't necessily need a dictionary. chess_move is a good example.

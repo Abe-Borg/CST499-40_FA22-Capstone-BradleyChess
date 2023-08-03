@@ -7,6 +7,10 @@ import copy
 import random
 import typing
 import chess
+import logging
+import log_config
+
+logger = logging.getLogger(__name__)
 
 class Agent:
     """ 
@@ -17,9 +21,9 @@ class Agent:
     def __init__(self, color: str, chess_data: pd.DataFrame):        
         self.color = color
         self.chess_data = chess_data
-        self.settings = Settings.Settings()
-        self.is_trained = False
-        self.Q_table = self.init_Q_table(self.chess_data)
+        self.settings: Settings.Settings = Settings.Settings()
+        self.is_trained: bool = False
+        self.Q_table: pd.DataFrame = self.init_Q_table(self.chess_data)
 
 
     def choose_action(self, environ_state: dict, curr_game: str = 'Game 1') -> dict[str]:
@@ -31,16 +35,15 @@ class Agent:
             :param curr_game. This is relevant when initally training the agents.
             :return a dict containing chess move
         """
-        self.legal_moves = environ_state['legal_moves'] # this is a list of strings
-        self.curr_turn = environ_state['curr_turn'] # this is a string, like 'W1'       
+        self.legal_moves: List[str] = environ_state['legal_moves']
+        self.curr_turn: str = environ_state['curr_turn']     
         self.curr_game = curr_game
 
         # check if any of the legal moves is not already in the Q table
-        moves_not_in_Q_table = [move for move in self.legal_moves if move not in self.Q_table[self.curr_turn].index]
+        moves_not_in_Q_table: List[str] = [move for move in self.legal_moves if move not in self.Q_table[self.curr_turn].index]
         if moves_not_in_Q_table:
             self.update_Q_table(moves_not_in_Q_table)
                 
-        
         if self.is_trained: 
             return self.policy_game_mode() # this function call returns a dict that contains a chess move.
         else:
@@ -70,16 +73,16 @@ class Agent:
             :return a dictionary with chess_move as a string 
         """
         # dice roll will be 0 or 1
-        dice_roll = helper_methods.get_number_with_probability(self.settings.chance_for_random)
+        dice_roll: int = helper_methods.get_number_with_probability(self.settings.chance_for_random)
         
         # get the list of chess moves in the q table, then filter that so that 
         # only the legal moves for this turn remain.
-        q_values = self.get_Q_values()  # this is a pandas series
-        legal_moves_in_q_table = q_values.loc[q_values.index.intersection(self.legal_moves)]
+        q_values: pd.Series = self.get_Q_values()
+        legal_moves_in_q_table: pd.DataFrame = q_values.loc[q_values.index.intersection(self.legal_moves)]
         
         if dice_roll == 1:
             # pick random move, that would be an index value of the pandas series (legal_moves_in_q_table)
-            chess_move_str = legal_moves_in_q_table.sample().index[0]
+            chess_move_str: str = legal_moves_in_q_table.sample().index[0]
         else:
             # pick existing move in the q table that has the highest q value
             chess_move_str = legal_moves_in_q_table.idxmax()
@@ -104,19 +107,19 @@ class Agent:
             :param none
             :return selected chess move
         """ 
-        move_values = {
+        move_values: dict[int] = {
             'check': 10,
             'capture': 5,
             'promotion': 25,
             'promotion_to_queen': 50,
         }
 
-        max_val = 0
-        best_move = None
+        max_val: int = 0
+        best_move: dict[str] = None
         
         for chess_move_str in self.legal_moves:
-            move = chess.Move.from_uci(chess_move_str)
-            move_val = 0
+            move: chess.Move = chess.Move.from_uci(chess_move_str)
+            move_val: int = 0
 
             if move.promotion:
                 if move.promotion == chess.QUEEN:
@@ -133,7 +136,7 @@ class Agent:
                 best_move = {'chess_move_str': chess_move_str}
 
         if best_move is None:
-            chess_move_str = random.sample(self.legal_moves, 1)
+            chess_move_str: str = random.sample(self.legal_moves, 1)
             best_move = {'chess_move_str': chess_move_str[0]}
         
         return best_move
@@ -151,10 +154,10 @@ class Agent:
         Returns:
             A pandas dataframe representing the Q table.
         """
-        unique_moves = pd.concat([chess_data.loc[:, f"{self.color}{i}"].value_counts() for i in range(1, self.settings.num_turns_per_player + 1)])
+        unique_moves: pd.Index = pd.concat([chess_data.loc[:, f"{self.color}{i}"].value_counts() for i in range(1, self.settings.num_turns_per_player + 1)])
         unique_moves = unique_moves.index.unique()
-        turns_list = chess_data.loc[:, self.color + '1': self.color + str(self.settings.num_turns_per_player): 2].columns
-        q_table = pd.DataFrame(0, columns = turns_list, index = unique_moves, dtype = np.int32)
+        turns_list: pd.Index = chess_data.loc[:, self.color + '1': self.color + str(self.settings.num_turns_per_player): 2].columns
+        q_table: pd.DataFrame = pd.DataFrame(0, columns = turns_list, index = unique_moves, dtype = np.int32)
         return q_table
     ### end of init_Q_table ###
 
@@ -180,7 +183,7 @@ class Agent:
         new_chess_moves = [move for move in new_chess_moves if move not in self.Q_table.index]
         
         if new_chess_moves:
-            q_table_new_values = pd.DataFrame(index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int32)
+            q_table_new_values: pd.DataFrame = pd.DataFrame(index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int32)
             q_table_new_values.values[:] = 0
             self.Q_table = self.Q_table.append(q_table_new_values)
     ### update_Q_table ###

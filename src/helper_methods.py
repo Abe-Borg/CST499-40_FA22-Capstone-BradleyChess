@@ -1,6 +1,10 @@
 import Bradley as imman #in case brad or imman ever read this code, I love you.
 import pandas as pd
 import random
+import logging
+import log_config
+
+logger = logging.getLogger(__name__)
 
 def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
     """ the object needs to be instantiated with some chess data, 

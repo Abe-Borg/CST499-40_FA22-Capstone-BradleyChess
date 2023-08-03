@@ -2,7 +2,10 @@ import chess
 import Settings
 import pandas as pd
 import copy
+import logging
+import log_config
 
+logger = logging.getLogger(__name__)
 
 class Environ:
     """ 
@@ -21,14 +24,15 @@ class Environ:
             turn_list, this is a list that is utilized to keep track of the current turn (W1, B1 ... W50, B50) 
             turn_index, increment this as each player makes a move. 
         """
-        self.chess_data = chess_data 
-        self.board = chess.Board()
-        self.settings = Settings.Settings()
+        self.chess_data: pd.DataFrame = chess_data 
+        self.board: chess.Board = chess.Board()
+        self.settings: Settings.Settings = Settings.Settings()
+
         # turn_list and turn_index work together to track the current turn (a string like this, 'W1')
         # num_turns_per_player, so multiply by 2, then to make sure we get all moves, add 1.
-        # the 1 corresponds to 'W1'
-        self.turn_list = self.chess_data.columns[1 : self.settings.num_turns_per_player * 2 + 1].tolist()
-        self.turn_index = 0
+        # column 1 in the chess data pd dataframe corresponds to 'W1'
+        self.turn_list: List[str] = self.chess_data.columns[1 : self.settings.num_turns_per_player * 2 + 1].tolist()
+        self.turn_index: int = 0
     ### end of constructor
 
     def get_curr_state(self) -> dict[str, str, list[str]]:
@@ -46,7 +50,12 @@ class Environ:
             each time a move is made, the curr state needs to be updated
             only the index needs to be updated here. The board is updated by other methods.
         """
-        self.turn_index += 1
+        max_turn_index: int = self.settings.num_turns_per_player * 2 - 1
+        
+        if self.turn_index < max_turn_index:
+            self.turn_index += 1
+        else:
+            raise IndexError("Maximum turn index ({max_turn_index}) reached!")
     ### end of update_curr_state
         
     def get_curr_turn(self) -> str or bool:                        
@@ -57,8 +66,8 @@ class Environ:
         """
         try: 
             return self.turn_list[self.turn_index]
-        except IndexError:
-            print(f'list index out of range, turn index is {self.turn_index}')
+        except IndexError as e:
+            logging.error(f'list index out of range, turn index is {self.turn_index}: {e}')
             return False
     ### end of get_curr_turn
     
@@ -72,7 +81,8 @@ class Environ:
         try:
             self.board.push_san(chess_move_str)
             return True
-        except ValueError:
+        except ValueError as e:
+            logging.error(f'unable to load chessboard with {chess_move_str}: {e}')            
             return False
     ### end of load_chessboard    
 
@@ -80,13 +90,19 @@ class Environ:
         """ pops the most recent move applied to the chessboard 
             this method is used during agent training
         """
-        self.board.pop()
+        try:
+            self.board.pop()
+        except IndexError as e:
+            logging.error(f'unable to pop last move as the move stack is empty: {e}')
     ### end of pop_chessboard
 
     def undo_move(self) -> None:
         """ this method is used during game mode, human vs rl agent """
-        self.board.pop()
-        self.turn_index -= 1
+        try:
+            self.board.pop()
+            self.turn_index -= 1
+        except IndexError as e:
+            logging.error(f'unable to pop last move as the move stack is empty: {e}')
     ### end of undo_move
 
     def load_chessboard_for_Q_est(self, analysis_results) -> bool:
@@ -95,7 +111,7 @@ class Environ:
             with the Stockfish analysis during training
             :pre analysis of proposed board condition has already been done
             :post board is loaded with black's anticipated move
-            :param q_est_board_analysis_results, I forgot what this is exactly a list or a dict? This is what happens 
+            :param analysis_results, I forgot what this is exactly a list or a dict? This is what happens 
              when you code late at night I guess
             it has this form, [{'mate_score': <some score>, 'centipawn_score': <some score>, 'anticipated_next_move': <move>}]
             :return bool for success or failure
@@ -104,8 +120,8 @@ class Environ:
         try:
             self.board.push(chess_move)
             return True
-        except ValueError:
-            print('failed to add antiipated move')
+        except ValueError as e:
+            logging.warning(f'unable to push move: {e}')
             return False
     ### end of load_chessboard_for_Q_est
 

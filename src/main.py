@@ -1,6 +1,10 @@
 import pandas as pd
 from helper_methods import *
 import time
+import logging
+import log_config
+
+logger = logging.getLogger(__name__)
 
 ### CHANGE TO YOUR SPECIFIC PATHS OBVIOUSLY. ALSO, SEE Settings.py AND CHANGE THE STOCKFISH PATH THERE.
 
