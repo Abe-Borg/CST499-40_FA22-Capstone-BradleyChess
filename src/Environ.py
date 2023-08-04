@@ -140,6 +140,11 @@ class Environ:
             :param none
             :return list of strings that represents the legal moves at a turn, given the board state
         """
-        return [self.board.san(move) for move in self.board.legal_moves]
+        legal_moves = [self.board.san(move) for move in self.board.legal_moves]
+        if legal_moves:
+            return legal_moves
+        else:
+            logging.warning(f'legal_moves list was empty')
+
     ### end of get_legal_moves
     

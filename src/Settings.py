@@ -7,7 +7,11 @@ class Settings:
         # learn_rate and discount factor can be different for each agent. range is 0 to 1 for both parameters
         self.learn_rate = 0.6 # too high num here means too focused on recent knowledge, 
         self.discount_factor = 0.35   # lower number means more opportunistic, but not good long term planning
+        self.training_sample_size = 10_000
+        agent_vs_agent_num_games = 40_000
 
+
+        # the following numbers are based on centipawn scores, but not exactly. for example, the checkmate point value is made up.
         self.new_move_pts = 1_000
         self.chance_for_random = 0.10
         self.initial_q_val = 50  # this is about the centipawn score for W on its first move
@@ -19,4 +23,10 @@ class Settings:
         # end of hyperparameters
         
         self.num_turns_per_player = 75     # turns per player, most games don't go this long. The database itself has up to 75 turns per player. 
-        self.stockfish_filepath = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\CST499-40_FA22-Capstone-BradleyChess\stockfish_15_win_x64_avx2\stockfish_15_x64_avx2.exe"
+        
+        self.stockfish_filepath = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\stockfish_15_win_x64_avx2\stockfish_15_x64_avx2.exe"
+        self.chess_data_path = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\chess_data\kaggle_chess_data.pkl"
+        self.bradley_agent_q_table_path = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\Q_Tables\bradley_agent_q_table.pkl"
+        self.imman_agent_q_table_path = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\Q_Tables\imman_agent_q_table.pkl"
+        self.initial_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\training_results\initial_training_results.txt'
+        self.additional_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\training_results\additional_training_results.txt'
