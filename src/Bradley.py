@@ -67,7 +67,7 @@ class Bradley:
             :return a dictionary with the chess move str as one of the items
         """
         if rl_agent_color == 'W':
-            chess_move = self.W_rl_agent.choose_action(self.environ.get_curr_state()) # choose_action returns a dictionary
+            chess_move: dict[str] = self.W_rl_agent.choose_action(self.environ.get_curr_state()) # choose_action returns a dictionary
         else:
             chess_move = self.B_rl_agent.choose_action(self.environ.get_curr_state()) # choose_action returns a dictionary
         
@@ -199,6 +199,7 @@ class Bradley:
             :return none
         """ 
         training_results = open(training_results_filepath, 'a')
+        PRINT_RESULTS = True
 
         # init Qval to get things started.
         W_curr_Qval = self.settings.initial_q_val
