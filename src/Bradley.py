@@ -18,10 +18,22 @@ logger = logging.getLogger(__name__)
 ## than one way to indicate the chess move, along with other info related to the chess move.
 
 class Bradley:
-    """ 
-        Bradley class acts as the single point of communication between the RL agent and the player.
-        this class trains the agent and helps to manage the chessboard during play between the comp and the
-        user. This is a composite class with members of the Environ class and the Agent class
+    """Acts as the single point of communication between the RL agent and the player.
+
+    This class trains the agent and helps to manage the chessboard during play between the computer and the user.
+    This is a composite class with members of the Environ class and the Agent class.
+
+    Args:
+        chess_data (pd.DataFrame): A Pandas DataFrame containing the chess data.
+
+    Attributes:
+        chess_data (pd.DataFrame): A Pandas DataFrame containing the chess data.
+        settings (Settings.Settings): A Settings object containing the settings for the RL agents.
+        environ (Environ.Environ): An Environ object representing the chessboard environment.
+        W_rl_agent (Agent.Agent): A white RL Agent object.
+        B_rl_agent (Agent.Agent): A black RL Agent object.
+            engine (chess.engine.SimpleEngine): A Stockfish engine used to analyze positions during training.
+
     """
     def __init__(self, chess_data: pd.DataFrame):
         self.chess_data = chess_data
@@ -30,25 +42,30 @@ class Bradley:
         self.W_rl_agent = Agent.Agent('W', self.chess_data)             
         self.B_rl_agent = Agent.Agent('B', self.chess_data)
 
+        # set the sarsa learning params for the agents here, 
+        # or you can do nothing and keep the defaults.  
+        self.W_rl_agent.settings.learn_rate = 0.6
+        self.W_rl_agent.settings.discount_factor = 0.3
+
+        self.B_rl_agent.settings.learn_rate = 0.2
+        self.B_rl_agent.settings.discount_factor = 0.8
+
         # stockfish is used to analyze positions during training
         # this is how we estimate the q value at each position, and also for anticipated next position
         self.engine = chess.engine.SimpleEngine.popen_uci(self.settings.stockfish_filepath)
 
-        # we only want to look ahead one move, that's the anticipated q value at next state, and next action
-        # this number has a massive inpact on how long it takes to analyze a position and it really doesn't help to go beyond 8.
-        self.num_moves_to_return = 1
-        self.depth_limit = 8
-        self.time_limit = None
-        self.search_limit = chess.engine.Limit(depth = self.depth_limit, time = self.time_limit)
-
 
     def recv_opp_move(self, chess_move: str) -> bool:                                                                                 
-        """ 
-            receives human's chess move and sends it to the environ so 
-            that the chessboard can be loaded w/ opponent move.
-            this method assumes that the incoming chess move is valid and playable.
-            :param chess_move this is the str input, which comes from the human player
-            :return bool, True for successful move input
+        """Receives the opponent's chess move and loads it onto the chessboard.
+
+        Call this method when the opponent makes a move. This method assumes that the incoming chess move is valid and playable.
+
+        Args:
+            chess_move (str): A string representing the opponent's chess move, such as 'Nf3'.
+
+        Returns:
+            bool: A boolean value indicating whether the move was successfully loaded.
+
         """
         # load_chessboard returns False if failure to add move to board,
         if self.environ.load_chessboard(chess_move):
@@ -56,15 +73,21 @@ class Bradley:
             self.environ.update_curr_state()
             return True
         else:
+            logging.warning("failed to receive opponent's move")
             return False
     ### end of recv_opp_move ###
 
-    def rl_agent_chess_move(self, rl_agent_color: str) -> dict[str]:
-        """ 
-            this method will do two things, load up the environ.chessboard with the agent's action (chess_move)
-            and return the string of the agent's chess move
-            :param str that indicates the players as W or B
-            :return a dictionary with the chess move str as one of the items
+    def rl_agent_selects_chess_move(self, rl_agent_color: str) -> dict[str]:
+        """Selects a chess move for the RL agent and loads it onto the chessboard.
+
+        Call this method when the RL agent selects a move. This method assumes that the agents have already been trained.
+
+        Args:
+            rl_agent_color (str): A string indicating the color of the RL agent, either 'W' or 'B'.
+
+        Returns:
+            dict[str]: A dictionary containing the selected chess move string.
+
         """
         if rl_agent_color == 'W':
             chess_move: dict[str] = self.W_rl_agent.choose_action(self.environ.get_curr_state()) # choose_action returns a dictionary
@@ -74,25 +97,41 @@ class Bradley:
         self.environ.load_chessboard(chess_move['chess_move_str'])
         self.environ.update_curr_state()
         return chess_move
-    ### end of rl_agent_chess_move
+    ### end of rl_agent_selects_chess_move
 
     def get_fen_str(self) -> str:
-        """ 
-            call this at each point in the chess game for the fen 
-            string. The FEN string can be used to reconstruct a chessboard position
-            The FEN string will change each time a move is made.
-            :param none
-            :return a string that represents a board state, something like this,
-            'rnbqkbnr/pppp1ppp/8/8/4p1P1/5P2/PPPPP2P/RNBQKBNR w KQkq - 0 3'
+        """Returns the FEN string representing the current board state.
+
+        Call this method at each point in the chess game to get the FEN string representing the current board state.
+        The FEN string can be used to reconstruct a chessboard position.
+
+        Args:
+            None
+
+        Returns:
+            str: A string representing the current board state in FEN format, such as 'rnbqkbnr/pppp1ppp/8/8/4p1P1/5P2/PPPPP2P/RNBQKBNR w KQkq - 0 3'.
+
         """
-        return copy.copy(self.environ.board.fen())
+        try:
+            fen: str = self.environ.board.fen()
+            return fen
+        except Exception as e:
+            print(f'An error occurred: {e}')
+            logging.error("invalid board state, fen string was not valid.")
+            return 'invalid board state, no fen str'
     ### end of get_gen_str ###
 
     def get_opp_agent_color(self, rl_agent_color: str) -> str:
-        """ 
-            method determines what color the opposing rl agent should be assigned to
-            :param string that represents the rl_agent color 
-            :return string that represents the opposing rl agent color
+        """Determines the color of the opposing RL agent.
+
+        Call this method to determine the color of the opposing RL agent, given the color of the current RL agent.
+
+        Args:
+            rl_agent_color (str): A string indicating the color of the current RL agent, either 'W' or 'B'.
+
+        Returns:
+            str: A string indicating the color of the opposing RL agent, either 'W' or 'B'.
+
         """
         if rl_agent_color == 'W':
             return 'B'
@@ -101,21 +140,31 @@ class Bradley:
     ### end of get_opp_agent_color
             
     def get_curr_turn(self) -> str:
-        """ 
-            find curr turn which would be a string like 'W1' or 'B5'
-            :param none
-            :return a string representing the current turn
+        """Returns the current turn as a string.
+
+        Call this method to get the current turn as a string, such as 'W1' or 'B5'.
+
+        Args:
+            None
+
+        Returns:
+            str: A string representing the current turn.
+
         """
         return self.environ.get_curr_turn()
     ### end of get_curr_turn
 
     def game_on(self) -> bool:
-        """ 
-            method determines when the game is over 
-            game can end if python chess board determines the game is over, 
-            or if the game is at num_turns_per_player * 2 - 1 moves per player (-1 b/c index starts at 0)
-            :param none
-            :return bool, False means the game is over
+        """Determines whether the game is still ongoing.
+
+        Call this method to determine whether the game is still ongoing. The game can end if the Python chess board determines the game is over, or if the game is at `num_turns_per_player * 2 - 1` moves per player (minus 1 because the index starts at 0).
+
+        Args:
+            None
+
+        Returns:
+            bool: A boolean value indicating whether the game is still ongoing (`True`) or not (`False`).
+
         """
         if self.environ.board.is_game_over() or self.environ.turn_index >= self.settings.num_turns_per_player * 2 - 1:
             return False
@@ -124,102 +173,139 @@ class Bradley:
     ### end of game_on
     
     def get_legal_moves(self) -> list[str]:
-        """ 
-            returns a list of strings that represents the legal moves for the 
-            current turn and state of the chessboard
-            :param none
-            :return a list of strings
+        """Returns a list of legal moves for the current turn and state of the chessboard.
+
+        Call this method to get a list of legal moves for the current turn and state of the chessboard.
+
+        Args:
+            None
+
+        Returns:
+            list[str]: A list of strings representing the legal moves for the current turn and state of the chessboard.
+
         """
         return self.environ.get_legal_moves()
     ### end of get_legal_moves
     
     def get_rl_agent_color(self) -> str: 
-        """ 
-            simple getter. returns the string for the color of the agent. 
-            :param none
-            :return string, 'W' for example
+        """Returns the color of the RL agent.
+
+        Call this method to get the color of the RL agent.
+
+        Args:
+            None
+
+        Returns:
+            str: A string indicating the color of the RL agent, either 'W' or 'B'.
+
         """
-        return copy.copy(self.rl_agent.color)
+        return self.rl_agent.color
     ### end of get_rl_agent_color
     
     def get_game_outcome(self) -> chess.Outcome or str:   
-        """ method will return the winner, loser, or draw for a chess game
-            :param none
-            :return chess.Outcome class, this class has a result() method that returns 1-0, 0-1 or 1/2-1/2 
-            or false if failure
+        """Returns the outcome of the chess game.
+
+        Call this method to get the outcome of the chess game, either '1-0', '0-1', '1/2-1/2', or 'False' if the outcome is not available.
+
+        Args:
+            None
+
+        Returns:
+            chess.Outcome or str: An instance of the `chess.Outcome` class with a `result()` method that returns the outcome of the game, or a string indicating that the outcome is not available.
+
+        Raises:
+        AttributeError: If the outcome is not available due to an invalid board state.
+        
         """
         try:
             return self.environ.board.outcome().result()
         except AttributeError:
+            logging.error("game outcome not available")
             return 'outcome not available, most likely game ended because turn_index was too high or player resigned'
     ### end of get_game_outcome
     
     def get_game_termination_reason(self) -> str:
-        """ the method determines why the game ended, for example
-            if the game ended due to a checkmate, a string termination.CHECKMATE will be returned
-            this method will return an exception if the game ended by too many moves or a player resigning
-            :param none
-            :return a single string that describes the reason for the game ending
+        """Determines why the game ended.
+
+        Call this method to determine why the game ended. If the game ended due to a checkmate, a string 'termination.CHECKMATE' will be returned. This method will raise an `AttributeError` exception if the outcome is not available due to an invalid board state.
+
+        Args:
+            None
+
+        Returns:
+            str: A single string that describes the reason for the game ending.
+
+        Raises:
+            AttributeError: If the outcome is not available due to an invalid board state.
+
         """
         try:
             return str(self.environ.board.outcome().termination)
         except AttributeError:
+            logging.error('termination reason not available')
             return 'termination reason not available, most likely game ended because turn_index was too high or player resigned'
     ### end of get_game_termination_reason
     
     def get_chessboard(self) -> chess.Board:
-        """ returns the chessboard object
-            the chessboard object can be printed and the output will be an ASCII representation of the chessboard
-            and current state of the game.
-            :param none
-            :return chessboard object
+        """Returns the current state of the chessboard.
+
+        Call this method to get the current state of the chessboard as a `chess.Board` object. The `chess.Board` object can be printed to get an ASCII representation of the chessboard and current state of the game.
+
+        Args:
+            None
+
+        Returns:
+            chess.Board: A `chess.Board` object representing the current state of the chessboard.
+
         """
         return self.environ.board
     ### end of get_chess_board
 
     def train_rl_agents(self, training_results_filepath: str) -> None:
-        """ trains the agents and then sets their is_trained flag to True.
-            the algorithm used for training is SARSA. Two rl agents train each other
-            A chess game can end at multiple places during training, so we need to 
-            check for end-game conditions throughout this method.
+        """Trains the RL agents using the SARSA algorithm and sets their `is_trained` flag to True.
+        
+        The algorithm used for training is SARSA. Two rl agents train each other
+        A chess game can end at multiple places during training, so we need to 
+        check for end-game conditions throughout this method.
 
-            The agents are trained by playing games from a database exactly as
-            shown, and learning from that. Then the agents are trained again (in another method), 
-            but this time they makes their own decisions. A White or Black agent can be trained.
+        The agents are trained by playing games from a database exactly as
+        shown, and learning from that. Then the agents are trained again (in another method), 
+        but this time they makes their own decisions. A White or Black agent can be trained.
 
-            This training regimen first trains the agents to play a good positional game.
-            Then when the agents are retrained, the agents behaviour can be fine-tuned
-            by adjusting hyperparameters.
+        This training regimen first trains the agents to play a good positional game.
+        Then when the agents are retrained, the agents behaviour can be fine-tuned
+        by adjusting hyperparameters.
 
-            In the current implementation, training takes a very long time. To train both
-            agents on 100k games, it takes 1 week. That can probably be faster, but I 
-            just don't know how to speed it up. It could be a limitation of Python.
-
-            :param: results doc filepath
-            :return none
+        Args:
+            training_results_filepath (str): The file path to save the training results to.
+        
+        Returns: 
+                None
         """ 
         training_results = open(training_results_filepath, 'a')
         PRINT_RESULTS = True
 
         # init Qval to get things started.
-        W_curr_Qval = self.settings.initial_q_val
-        B_curr_Qval = self.settings.initial_q_val
+        W_curr_Qval: int = self.settings.initial_q_val
+        B_curr_Qval: int = self.settings.initial_q_val
 
         # for each game in the training data set.
         for game_num in self.chess_data.index:
-            num_chess_moves = self.chess_data.at[game_num, 'Num Moves']
-            training_results.write(f'\n\n Start of {game_num} training\n\n')
+            num_chess_moves: int = self.chess_data.at[game_num, 'Num Moves']
+            
+            if PRINT_RESULTS:
+                training_results.write(f'\n\n Start of {game_num} training\n\n')
 
             #initialize environment to provide a state, s
             curr_state = self.environ.get_curr_state()
 
-            # this loop plays through one game in the database, exactly as shown.
+            # loop plays through one game in the database, exactly as shown.
             while curr_state['turn_index'] < num_chess_moves:
                 ##### WHITE AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
                 # choose action a from state s, using policy
-                W_curr_action = self.W_rl_agent.choose_action(curr_state, game_num)
-                W_chess_move = W_curr_action['chess_move_str']
-                curr_turn = curr_state['curr_turn']
+                W_curr_action: dict[str] = self.W_rl_agent.choose_action(curr_state, game_num)
+                W_chess_move: str = W_curr_action['chess_move_str']
+                curr_turn: str = curr_state['curr_turn']
 
                 ### ASSIGN POINTS TO Q_TABLE FOR WHITE
                 # on the first turn for white, this would assign to W1 col at chess_move row.
@@ -228,7 +314,7 @@ class Bradley:
                     self.W_rl_agent.change_Q_table_pts(W_chess_move, curr_turn, W_curr_Qval)
                 except KeyError: 
                     # chess move is not represented in the Q table, update Q table and try again.
-                    self.W_rl_agent.update_Q_table(W_chess_move)
+                    self.W_rl_agent.update_Q_table([W_chess_move])
                     self.W_rl_agent.change_Q_table_pts(W_chess_move, curr_turn, W_curr_Qval)
 
                 ##### WHITE AGENT PLAYS SELECTED MOVE #####
@@ -339,11 +425,12 @@ class Bradley:
                 curr_state = self.environ.get_curr_state()
 
             # reset environ to prepare for the next game
-            training_results.write(f'Game {game_num} is over.\n')
-            training_results.write(f'\nchessboard looks like this:\n\n')
-            training_results.write(f'\n {self.environ.board}\n\n')
-            training_results.write(f'Game result is: {self.get_game_outcome()}\n')
-            training_results.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
+            if PRINT_RESULTS:
+                training_results.write(f'Game {game_num} is over.\n')
+                training_results.write(f'\nchessboard looks like this:\n\n')
+                training_results.write(f'\n {self.environ.board}\n\n')
+                training_results.write(f'Game result is: {self.get_game_outcome()}\n')
+                training_results.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
             self.reset_environ()
         
         # training is complete
@@ -466,16 +553,24 @@ class Bradley:
     ### end of continue_training_rl_agents
 
     def analyze_board_state(self, board: chess.Board, is_for_est_Qval_analysis: bool = True) -> dict:
-        """ this function will return a move score based on the analysis results from stockfish 
-            :param board, this is the chessboard
-            :param is_for_est_Qval_analysis. False means... I don't even remember what is happening in this method anymore.
-            :return a dictionary with analysis results.
+        """Analyzes the current state of the chessboard using the Stockfish engine.
+
+        This method analyzes the current state of the chessboard using the Stockfish engine and returns a dictionary with the analysis results. The analysis results include the mate score and centipawn score, which are normalized by looking at the board from White's perspective. If `is_for_est_Qval_analysis` is True, the anticipated next move from the opposing agent is also included in the analysis results.
+
+        Args:
+            board (chess.Board): The current state of the chessboard to analyze.
+            is_for_est_Qval_analysis (bool): A boolean indicating whether the analysis is for estimating the Q-value during training. Defaults to True.
+
+        Returns:
+            dict: A dictionary with the analysis results, including the mate score and centipawn score. If `is_for_est_Qval_analysis` is True, the anticipated next move from the opposing agent is also included in the analysis results.
+
         """
+        # analysis_result is an InfoDict (see python-chess documentation)
         analysis_result = self.engine.analyse(board, self.search_limit, multipv = self.num_moves_to_return)
         
         # normalize by looking at it from White's perspective
+        # score datatype is Cp (centipawn) or Mate
         score = analysis_result[0]['score'].white()
-
         mate_score = score.mate()
         centipawn_score = score.score()
 
@@ -487,10 +582,16 @@ class Bradley:
     ### end of analyze_board_state
  
     def get_reward(self, chess_move_str: str) -> int:                                     
-        """
-            returns the number of points for a special chess action
-            :param chess_move, string representing selected chess move
-            :return reward based on type of move as an integer
+        """Calculates the reward for a given chess move.
+
+        This method calculates the reward for a given chess move based on the type of move. The reward is returned as an integer.
+
+        Args:
+            chess_move_str (str): A string representing the selected chess move.
+
+        Returns:
+            int: The reward based on the type of move as an integer.
+
         """
         total_reward = 0
         if re.search(r'N.', chess_move_str): # encourage development of pieces
@@ -511,10 +612,16 @@ class Bradley:
     ## end of get_reward
 
     def reset_environ(self) -> None:
-        """ method is useful when training and also when finding
-            the value of each move. the board needs to be cleared each time a
-            game is played.
-            return: None
+        """Resets the environment for a new game.
+
+        This method is useful when training and also when finding the value of each move. The board needs to be cleared each time a game is played.
+
+        Args:
+            None
+
+        Returns:
+            None
+
         """
         self.environ.reset_environ()
     ### end of reset_environ

@@ -7,7 +7,8 @@ import log_config
 logger = logging.getLogger(__name__)
 
 def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
-    """ the object needs to be instantiated with some chess data, 
+    """ 
+        the object needs to be instantiated with some chess data, 
         even if the agents have already been trained.
         I would rework this method, but I'm a lazy programmer
         returns an object of the class Bradley
@@ -17,7 +18,8 @@ def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
 ### end of init_bradley
 
 def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
-    """ use this method to play against a human player 
+    """ 
+        use this method to play against a human player 
         using the terminal
     """
     W_turn = True
@@ -38,7 +40,7 @@ def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
 
         if rl_agent.color == player_turn:
             print('=== RL AGENT\'S TURN ===\n')
-            chess_move = bubs.rl_agent_chess_move(rl_agent.color)
+            chess_move = bubs.rl_agent_selects_chess_move(rl_agent.color)
             chess_move_str = chess_move['chess_move_str']
             print(f'RL agent played {chess_move_str}\n')
         else:
@@ -80,7 +82,7 @@ def agent_vs_agent(bubs: imman.Bradley) -> None:
     while bubs.game_on():        
         # bubs's turn
         print(f'\nCurrent turn: {turn_num}')
-        chess_move_bubs = bubs.rl_agent_chess_move('W')
+        chess_move_bubs = bubs.rl_agent_selects_chess_move('W')
         bubs_chess_move_str = chess_move_bubs['chess_move_str']
         print(f'Bubs played {bubs_chess_move_str}\n')
 
@@ -88,7 +90,7 @@ def agent_vs_agent(bubs: imman.Bradley) -> None:
         if bubs.game_on():
             turn_num = bubs.get_curr_turn()
             print(f'Current turn:  {turn_num}')
-            chess_move_imman = bubs.rl_agent_chess_move('B')
+            chess_move_imman = bubs.rl_agent_selects_chess_move('B')
             imman_chess_move_str = chess_move_imman['chess_move_str']
             print(f'Imman played {imman_chess_move_str}\n')
 

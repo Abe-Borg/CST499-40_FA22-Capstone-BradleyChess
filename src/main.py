@@ -4,6 +4,7 @@ import time
 import logging
 import log_config
 import settings
+settings = settings.Settings()
 
 logger = logging.getLogger(__name__)
 

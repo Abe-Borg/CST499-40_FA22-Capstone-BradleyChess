@@ -186,6 +186,9 @@ class Agent:
             q_table_new_values: pd.DataFrame = pd.DataFrame(index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int32)
             q_table_new_values.values[:] = 0
             self.Q_table = self.Q_table.append(q_table_new_values)
+        else:
+            logging.warning(f'new_chess_moves list was empty')
+            return ["new_chess_moves list is empty"]
     ### update_Q_table ###
         
     def reset_Q_table(self) -> None:

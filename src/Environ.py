@@ -8,21 +8,25 @@ import log_config
 logger = logging.getLogger(__name__)
 
 class Environ:
-    """ 
-        This class manages the chessboard and determines what the state is.
-        The class passes the state to the agent.
-        This class is the only thing that should ake changes to the chessboard. 
+    """Manages the chessboard and determines its state.
+
+        This class passes the state to the agent. It is the only thing that should make changes to the chessboard.
     """
     def __init__(self, chess_data: pd.DataFrame):
-        """
-            :param chess_data, this is a pandas dataframe. It is the chess games database.
-                   The format of the chess_data is extremely important.
-                   see this link for an explanation: 
-                   https://github.com/abecsumb/DataScienceProject/blob/main/Chess_Data_Preparation.ipynb
-            
-            board, This is an object. It comes from the python chess module
-            turn_list, this is a list that is utilized to keep track of the current turn (W1, B1 ... W50, B50) 
-            turn_index, increment this as each player makes a move. 
+        """Initializes the Environ object.
+
+        Args:
+            chess_data (pd.DataFrame): A pandas DataFrame representing the chess games database.
+            The format of the chess_data is extremely important. See this link for an explanation:
+            https://github.com/abecsumb/DataScienceProject/blob/main/Chess_Data_Preparation.ipynb
+
+        Attributes:
+            chess_data (pd.DataFrame): A pandas DataFrame representing the chess games database.
+            board (chess.Board): An object representing the chessboard.
+            settings (Settings.Settings): An object representing the settings for the chess game.
+            turn_list (List[str]): A list that is utilized to keep track of the current turn (W1, B1 ... W50, B50).
+            turn_index (int): An integer that is incremented as each player makes a move.
+
         """
         self.chess_data: pd.DataFrame = chess_data 
         self.board: chess.Board = chess.Board()
@@ -36,47 +40,63 @@ class Environ:
     ### end of constructor
 
     def get_curr_state(self) -> dict[str, str, list[str]]:
-        """ 
-            returns the dictionary that describes the curr state of the board, and the curr turn
-            :param none
-            :return a dictionary that defines the current state that an agent will act on
+        """Returns a dictionary that describes the current state of the chessboard and the current turn.
+
+        Returns:
+            dict[str, str, list[str]]: A dictionary that defines the current state that an agent will act on.
+
         """
         return {'turn_index': self.turn_index, 'curr_turn': self.get_curr_turn(), 'legal_moves': self.get_legal_moves()}
     ### end of get_curr_state
     
     def update_curr_state(self) -> None:
-        """ current state is the current turn and the legal moves at that turn 
-            the state is updated each time a chess_move str is loaded to the chessboard.
-            each time a move is made, the curr state needs to be updated
-            only the index needs to be updated here. The board is updated by other methods.
+        """Updates the current state of the chessboard.
+
+        The current state is the current turn and the legal moves at that turn. The state is updated each time a
+        chess_move str is loaded to the chessboard. Each time a move is made, the current state needs to be updated.
+        Only the index needs to be updated here. The board is updated by other methods.
+
+        Raises:
+            IndexError: If the maximum turn index is reached.
+
         """
         max_turn_index: int = self.settings.num_turns_per_player * 2 - 1
         
         if self.turn_index < max_turn_index:
             self.turn_index += 1
         else:
-            raise IndexError("Maximum turn index ({max_turn_index}) reached!")
+            raise IndexError(f"Maximum turn index ({max_turn_index}) reached!")
     ### end of update_curr_state
         
-    def get_curr_turn(self) -> str or bool:                        
-        """ returns the string of the current turn, 'W2' for example
-            which would correspond to index = 2
-            :param none
-            :return, a string that corresponds to current turn or false
+    def get_curr_turn(self) -> str:                        
+        """Returns the string of the current turn.
+
+        Returns:
+            str: A string that corresponds to the current turn, such as 'W2' for index 2.
+
+        Raises:
+            IndexError: If the turn index is out of range.
+
         """
         try: 
             return self.turn_list[self.turn_index]
         except IndexError as e:
             logging.error(f'list index out of range, turn index is {self.turn_index}: {e}')
-            return False
+            return 'ERROR: list index out of range'
     ### end of get_curr_turn
     
     def load_chessboard(self, chess_move_str: str) -> bool:
-        """ 
-            method to play move on chessboard. call this method when you want to commit a chess move.
-            the agent class chooses the move, but the environ class must load up the chessboard with that move
-            :param chess_move as string like this, 'Nf3'
-            :return bool for success or failure.
+        """Loads a chess move on the chessboard.
+
+        Call this method when you want to commit a chess move. The agent class chooses the move, but the Environ class
+        must load up the chessboard with that move.
+
+        Args:
+            chess_move_str (str): A string representing the chess move, such as 'Nf3'.
+
+        Returns:
+            bool: A boolean value indicating whether the move was successfully loaded.
+
         """
         try:
             self.board.push_san(chess_move_str)
@@ -87,8 +107,13 @@ class Environ:
     ### end of load_chessboard    
 
     def pop_chessboard(self) -> None:
-        """ pops the most recent move applied to the chessboard 
-            this method is used during agent training
+        """Pops the most recent move applied to the chessboard.
+
+        This method is used during agent training.
+
+        Raises:
+            IndexError: If the move stack is empty.
+
         """
         try:
             self.board.pop()
@@ -97,7 +122,12 @@ class Environ:
     ### end of pop_chessboard
 
     def undo_move(self) -> None:
-        """ this method is used during game mode, human vs rl agent """
+        """Undoes the most recent move applied to the chessboard.
+
+        Raises:
+            IndexError: If the move stack is empty.
+
+        """
         try:
             self.board.pop()
             self.turn_index -= 1
@@ -106,15 +136,18 @@ class Environ:
     ### end of undo_move
 
     def load_chessboard_for_Q_est(self, analysis_results) -> bool:
-        """ method should only be called during training. this will load the 
-            chessboard using a Move.uci string. This method works in tandem
-            with the Stockfish analysis during training
-            :pre analysis of proposed board condition has already been done
-            :post board is loaded with black's anticipated move
-            :param analysis_results, I forgot what this is exactly a list or a dict? This is what happens 
-             when you code late at night I guess
-            it has this form, [{'mate_score': <some score>, 'centipawn_score': <some score>, 'anticipated_next_move': <move>}]
-            :return bool for success or failure
+        """Loads the chessboard using a Move.uci string during training.
+
+        This method works in tandem with the Stockfish analysis during training.
+
+        Args:
+            analysis_results (list[dict]): A list of dictionaries containing the analysis results.
+                Each dictionary has the form {'mate_score': <some score>, 'centipawn_score': <some score>,
+                'anticipated_next_move': <move>}.
+
+        Returns:
+            bool: A boolean value indicating whether the move was successfully loaded.
+
         """
         chess_move = analysis_results['anticipated_next_move']  # this has the form like this, Move.from_uci('e4f6')
         try:
@@ -126,25 +159,30 @@ class Environ:
     ### end of load_chessboard_for_Q_est
 
     def reset_environ(self) -> None:
-        """ resets environ, call each time a game ends.
-            :param none
-            :return none
+        """Resets the Environ object.
+
+        Call this method each time a game ends.
+
         """
         self.board.reset()
         self.turn_index = 0
     ### end of reset_environ
     
     def get_legal_moves(self) -> list[str]:   
-        """ 
-            method will return a list of strings that represents the legal moves at that turn
-            :param none
-            :return list of strings that represents the legal moves at a turn, given the board state
+        """Returns a list of legal moves at the current turn.
+
+        Args:
+            None
+
+        Returns:
+            list[str]: A list of strings representing the legal moves at the current turn, given the board state.
+
         """
         legal_moves = [self.board.san(move) for move in self.board.legal_moves]
         if legal_moves:
             return legal_moves
         else:
             logging.warning(f'legal_moves list was empty')
-
+            return ["legal moves list is empty"]
     ### end of get_legal_moves
     
