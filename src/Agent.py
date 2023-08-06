@@ -13,10 +13,21 @@ import log_config
 logger = logging.getLogger(__name__)
 
 class Agent:
-    """ 
-        The agent class is responsible for deciding what chess move to play 
-        based on the current state. The state is passed the the agent by the environ class.
-        The agent class does not make any changes to the chessboard. 
+    """The `Agent` class is responsible for deciding what chess move to play based on the current state.
+
+    The state is passed to the agent by the `Environ` class. The `Agent` class does not make any changes to the chessboard.
+
+    Args:
+        color (str): A string indicating the color of the agent, either 'W' or 'B'.
+        chess_data (pd.DataFrame): A Pandas DataFrame containing the chess data used for training the agent.
+
+    Attributes:
+        color (str): A string indicating the color of the agent, either 'W' or 'B'.
+        chess_data (pd.DataFrame): A Pandas DataFrame containing the chess data used for training the agent.
+        settings (Settings.Settings): An instance of the `Settings` class containing the settings for the agent.
+        is_trained (bool): A boolean indicating whether the agent has been trained.
+        Q_table (pd.DataFrame): A Pandas DataFrame containing the Q-values for the agent.
+
     """
     def __init__(self, color: str, chess_data: pd.DataFrame):        
         self.color = color
@@ -27,13 +38,17 @@ class Agent:
 
 
     def choose_action(self, environ_state: dict, curr_game: str = 'Game 1') -> dict[str]:
-        """ 
-            method does two things. First, this method helps to train the agent. Once the agent is trained, 
-            this method helps to pick the appropriate move based on highest val in the Q table for a given turn.
-            Each agent will play through the database games exactly as shown during training
-            :param environ_state is a dictionary 
-            :param curr_game. This is relevant when initally training the agents.
-            :return a dict containing chess move
+        """Chooses the next chess move for the agent based on the current state.
+
+        This method does two things. First, it helps to train the agent. Once the agent is trained, it helps to pick the appropriate move based on the highest value in the Q table for a given turn. Each agent will play through the database games exactly as shown during training.
+
+        Args:
+            environ_state (dict): A dictionary containing the current state of the environment.
+            curr_game (str): A string indicating the current game being played. Relevant when initially training the agents. Defaults to 'Game 1'.
+
+        Returns:
+            dict[str]: A dictionary containing the chosen chess move.
+
         """
         self.legal_moves: List[str] = environ_state['legal_moves']
         self.curr_turn: str = environ_state['curr_turn']     
@@ -51,26 +66,33 @@ class Agent:
     ### end of choose_action ###
     
     def policy_training_mode(self) -> dict[str]:
-        """ 
-            this policy determines how the agents choose a move at each 
-            turn during training. In this implementation, the agents
-            will play out the games in the database exactly as shown.
-            :param none
-            :return dictionary with selected chess move as a string
+        """Determines how the agents choose a move at each turn during training.
+
+        In this implementation, the agents will play out the games in the database exactly as shown.
+
+        Args:
+            None
+
+        Returns:
+            dict[str]: A dictionary containing the selected chess move as a string.
+
         """
         return {'chess_move_str': self.chess_data.at[self.curr_game, self.curr_turn]}
     ### end of policy_training_mode ###
         
     def policy_game_mode(self) -> dict[str]:
-        """ 
-            policy to use during game between human player and agent 
-            the agent searches its q table to find the moves with the 
-            highest q values at each turn. However, sometimes
-            the agent will pick a random move.
+        """Determines how the agent chooses a move during a game between a human player and the agent.
 
-            This method is also used when the agents continue to be trained.
-            :param none
-            :return a dictionary with chess_move as a string 
+        The agent searches its Q table to find the moves with the highest Q values at each turn. 
+        However, sometimes the agent will pick a random move. 
+        This method is also used when the agents continue to be trained.
+
+        Args:
+            None
+
+        Returns:
+            dict[str]: A dictionary containing the selected chess move as a string.
+
         """
         # dice roll will be 0 or 1
         dice_roll: int = helper_methods.get_number_with_probability(self.settings.chance_for_random)
@@ -97,16 +119,21 @@ class Agent:
     ### end of policy_game_mode ###
 
     def choose_high_val_move(self) -> dict[str]:
-        """ 
-            The choose_high_val_move method is used during training mode to select the 
-            best chess move from a list of legal moves. The method assigns a value to each 
-            move based on whether it results in a check, capture, or promotion, and selects the 
-            move with the highest value. If there are no moves with a value greater than 0, 
-            the method selects a random move from the list of legal moves. 
-            The method returns a dictionary containing the selected chess move as a string.
-            :param none
-            :return selected chess move
-        """ 
+        """ Selects the best chess move from a list of legal moves during training mode.
+        
+        The method is used during training mode to select the 
+        best chess move from a list of legal moves. The method assigns a value to each 
+        move based on whether it results in a check, capture, or promotion, and selects the 
+        move with the highest value. If there are no moves with a value greater than 0, 
+        the method selects a random move from the list of legal moves. 
+        
+        Args:
+                None
+
+        Returns:
+            dict[str]: A dictionary containing the selected chess move as a string.
+
+        """
         move_values: dict[int] = {
             'check': 10,
             'capture': 5,
@@ -162,22 +189,33 @@ class Agent:
     ### end of init_Q_table ###
 
     def change_Q_table_pts(self, chess_move: str, curr_turn: str, pts: int) -> None:
-        """ 
-            :param chess_move is a string, 'e4' for example
-            :param curr_turn is a string representing the turn num, for example, 'W10'
-            :param pts is an int for the number of points to add to a q table cell
-            :return none
+        """Adds points to a cell in the Q table.
+
+        This method adds the specified number of points to the cell in the Q table corresponding to the given chess move and turn number.
+
+        Args:
+            chess_move (str): A string representing the chess move, e.g. 'e4'.
+            curr_turn (str): A string representing the turn number, e.g. 'W10'.
+            pts (int): An integer representing the number of points to add to the Q table cell.
+
+        Returns:
+            None
+
         """
         self.Q_table.at[chess_move, curr_turn] += pts
     ### end of change_Q_table_pts ###
 
     def update_Q_table(self, new_chess_moves: list[str]) -> None:
-        """ 
-        Update the Q table with new chess moves.
+        """Updates the Q table with new chess moves.
 
-        :pre: The list parameter represents moves that are not already in the q table.
-        :param new_chess_moves: List of chess moves (strings).
-        :return: None
+        This method filters out moves that are already in the Q table, creates a new DataFrame with the new chess moves, and appends it to the Q table. If the list of new chess moves is empty, a warning is logged and the method returns None.
+
+        Args:
+            new_chess_moves (list[str]): A list of chess moves (strings) that are not already in the Q table.
+
+        Returns:
+            None
+
         """
         # Filter out moves that are already in the Q_table
         new_chess_moves = [move for move in new_chess_moves if move not in self.Q_table.index]
@@ -187,21 +225,36 @@ class Agent:
             q_table_new_values.values[:] = 0
             self.Q_table = self.Q_table.append(q_table_new_values)
         else:
-            logging.warning(f'new_chess_moves list was empty')
+            logger.warning(f'new_chess_moves list was empty')
             return ["new_chess_moves list is empty"]
     ### update_Q_table ###
         
     def reset_Q_table(self) -> None:
-        """ Zeroes out the Q-table. Call this method when you want to retrain the agent. """
+        """Resets the Q table to all zeros.
+
+        This method sets all cells in the Q table to zero. Call this method when you want to retrain the agent.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        """
         self.Q_table.iloc[:, :] = 0
     ### end of reset_Q_table ###
 
     def get_Q_values(self) -> pd.Series:
-        """ 
-        Returns the series for the given turn. The series index represents the 
-        unique moves that have been found in the chess data for that turn.
+        """Returns a Pandas series of Q values for the current turn.
 
-        :return: A pandas series, the index represents the chess moves, and the column is the current turn in the game.
+        The series index represents the unique moves that have been found in the chess data for the current turn.
+
+        Args:
+            None
+
+        Returns:
+            pd.Series: A Pandas series where the index represents the chess moves, and the column is the current turn in the game.
+
         """
         return self.Q_table[self.curr_turn]
     ### end of get_Q_values

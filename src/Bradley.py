@@ -73,7 +73,7 @@ class Bradley:
             self.environ.update_curr_state()
             return True
         else:
-            logging.warning("failed to receive opponent's move")
+            logger.warning("failed to receive opponent's move")
             return False
     ### end of recv_opp_move ###
 
@@ -117,7 +117,7 @@ class Bradley:
             return fen
         except Exception as e:
             print(f'An error occurred: {e}')
-            logging.error("invalid board state, fen string was not valid.")
+            logger.error("invalid board state, fen string was not valid.")
             return 'invalid board state, no fen str'
     ### end of get_gen_str ###
 
@@ -220,7 +220,7 @@ class Bradley:
         try:
             return self.environ.board.outcome().result()
         except AttributeError:
-            logging.error("game outcome not available")
+            logger.error("game outcome not available")
             return 'outcome not available, most likely game ended because turn_index was too high or player resigned'
     ### end of get_game_outcome
     
@@ -242,7 +242,7 @@ class Bradley:
         try:
             return str(self.environ.board.outcome().termination)
         except AttributeError:
-            logging.error('termination reason not available')
+            logger.error('termination reason not available')
             return 'termination reason not available, most likely game ended because turn_index was too high or player resigned'
     ### end of get_game_termination_reason
     
@@ -283,7 +283,7 @@ class Bradley:
                 None
         """ 
         training_results = open(training_results_filepath, 'a')
-        PRINT_RESULTS = True
+        PRINT_RESULTS: bool = True
 
         # init Qval to get things started.
         W_curr_Qval: int = self.settings.initial_q_val
@@ -291,13 +291,15 @@ class Bradley:
 
         # for each game in the training data set.
         for game_num in self.chess_data.index:
+            # num_chess_moves represents the total moves in the current game in the database.
+            # this will be different from game to game.
             num_chess_moves: int = self.chess_data.at[game_num, 'Num Moves']
             
             if PRINT_RESULTS:
                 training_results.write(f'\n\n Start of {game_num} training\n\n')
 
-            #initialize environment to provide a state, s
-            curr_state = self.environ.get_curr_state()
+            # initialize environment to provide a state, s
+            curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
 
             # loop plays through one game in the database, exactly as shown.
             while curr_state['turn_index'] < num_chess_moves:
@@ -323,10 +325,11 @@ class Bradley:
                 self.environ.update_curr_state()
 
                 # the state changes each time a move is made, so get curr state again.                
-                curr_state = self.environ.get_curr_state()
+                curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
 
                 # false means we don't care about the anticipated next move
                 analysis_results = self.analyze_board_state(self.get_chessboard(), False)
+                
                 if analysis_results['mate_score'] is None:
                     W_reward = analysis_results['centipawn_score']
                 else: # there is an impending checkmate
@@ -363,9 +366,9 @@ class Bradley:
                     self.environ.pop_chessboard()
 
                 ##### BLACK AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
-                B_curr_action = self.B_rl_agent.choose_action(curr_state, game_num)
-                B_chess_move = B_curr_action['chess_move_str']
-                curr_turn = curr_state['curr_turn']
+                B_curr_action: dict[str] = self.B_rl_agent.choose_action(curr_state, game_num)
+                B_chess_move: str = B_curr_action['chess_move_str']
+                curr_turn: str = curr_state['curr_turn']
 
                 ### ASSIGN POINTS TO Q_TABLE FOR BLACK
                 try:
@@ -381,10 +384,11 @@ class Bradley:
                 self.environ.update_curr_state()
 
                 # the state changes each time a move is made, so get curr state again.                
-                curr_state = self.environ.get_curr_state()
+                curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
 
                 # false means we don't care about the anticipated next move
                 analysis_results = self.analyze_board_state(self.get_chessboard(), False)
+                
                 if analysis_results['mate_score'] is None:
                     B_reward = analysis_results['centipawn_score']
                 else: # there is an impending checkmate
@@ -422,7 +426,7 @@ class Bradley:
                 B_curr_Qval = B_next_Qval
 
                 # this is the next state, s'  the next action, a' is handled at the beginning of the while loop
-                curr_state = self.environ.get_curr_state()
+                curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
 
             # reset environ to prepare for the next game
             if PRINT_RESULTS:

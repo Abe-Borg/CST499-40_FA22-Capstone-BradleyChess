@@ -17,7 +17,7 @@ class Settings:
         self.discount_factor = 0.35   # lower number means more opportunistic, but not good long term planning
         self.training_sample_size = 10_000
         self.agent_vs_agent_num_games = 40_000
-        self.num_turns_per_player = 150     # turns per player, most games don't go nearly this long, but the agents do play this long. 
+        self.num_turns_per_player = 50
 
 
         # the following numbers are based on centipawn scores, but not exactly. for example, the checkmate point value is made up.

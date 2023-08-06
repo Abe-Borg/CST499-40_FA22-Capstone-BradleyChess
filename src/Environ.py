@@ -81,7 +81,7 @@ class Environ:
         try: 
             return self.turn_list[self.turn_index]
         except IndexError as e:
-            logging.error(f'list index out of range, turn index is {self.turn_index}: {e}')
+            logger.error(f'list index out of range, turn index is {self.turn_index}: {e}')
             return 'ERROR: list index out of range'
     ### end of get_curr_turn
     
@@ -102,14 +102,14 @@ class Environ:
             self.board.push_san(chess_move_str)
             return True
         except ValueError as e:
-            logging.error(f'unable to load chessboard with {chess_move_str}: {e}')            
+            logger.error(f'unable to load chessboard with {chess_move_str}: {e}')            
             return False
     ### end of load_chessboard    
 
     def pop_chessboard(self) -> None:
         """Pops the most recent move applied to the chessboard.
 
-        This method is used during agent training.
+        This method is used during agent training ONLY
 
         Raises:
             IndexError: If the move stack is empty.
@@ -118,7 +118,7 @@ class Environ:
         try:
             self.board.pop()
         except IndexError as e:
-            logging.error(f'unable to pop last move as the move stack is empty: {e}')
+            logger.error(f'unable to pop last move as the move stack is empty: {e}')
     ### end of pop_chessboard
 
     def undo_move(self) -> None:
@@ -132,7 +132,7 @@ class Environ:
             self.board.pop()
             self.turn_index -= 1
         except IndexError as e:
-            logging.error(f'unable to pop last move as the move stack is empty: {e}')
+            logger.error(f'unable to pop last move as the move stack is empty: {e}')
     ### end of undo_move
 
     def load_chessboard_for_Q_est(self, analysis_results) -> bool:
@@ -154,7 +154,7 @@ class Environ:
             self.board.push(chess_move)
             return True
         except ValueError as e:
-            logging.warning(f'unable to push move: {e}')
+            logger.warning(f'unable to push move: {e}')
             return False
     ### end of load_chessboard_for_Q_est
 
@@ -182,7 +182,7 @@ class Environ:
         if legal_moves:
             return legal_moves
         else:
-            logging.warning(f'legal_moves list was empty')
+            logger.warning(f'legal_moves list was empty')
             return ["legal moves list is empty"]
     ### end of get_legal_moves
     
