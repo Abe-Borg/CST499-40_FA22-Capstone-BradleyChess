@@ -19,7 +19,6 @@ class Settings:
         self.agent_vs_agent_num_games = 40_000
         self.num_turns_per_player = 50
 
-
         # the following numbers are based on centipawn scores, but not exactly. for example, the checkmate point value is made up.
         self.new_move_pts = 1_000
         self.chance_for_random = 0.10

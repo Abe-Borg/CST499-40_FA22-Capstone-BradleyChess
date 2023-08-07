@@ -36,7 +36,7 @@ class Agent:
         self.is_trained: bool = False
         self.Q_table: pd.DataFrame = self.init_Q_table(self.chess_data)
 
-
+    @log_config.log_execution_time_every_N
     def choose_action(self, environ_state: dict, curr_game: str = 'Game 1') -> dict[str]:
         """Chooses the next chess move for the agent based on the current state.
 
@@ -65,6 +65,7 @@ class Agent:
             return self.policy_training_mode() # this function call returns a dict that contains a chess move.
     ### end of choose_action ###
     
+    @log_config.log_execution_time_every_N
     def policy_training_mode(self) -> dict[str]:
         """Determines how the agents choose a move at each turn during training.
 
@@ -79,7 +80,8 @@ class Agent:
         """
         return {'chess_move_str': self.chess_data.at[self.curr_game, self.curr_turn]}
     ### end of policy_training_mode ###
-        
+
+    @log_config.log_execution_time_every_N        
     def policy_game_mode(self) -> dict[str]:
         """Determines how the agent chooses a move during a game between a human player and the agent.
 
@@ -118,6 +120,7 @@ class Agent:
         return {'chess_move_str': chess_move_str}
     ### end of policy_game_mode ###
 
+    @log_config.log_execution_time_every_N
     def choose_high_val_move(self) -> dict[str]:
         """ Selects the best chess move from a list of legal moves during training mode.
         
@@ -169,6 +172,7 @@ class Agent:
         return best_move
     ### end of choose_high_val_move ###
 
+    @log_config.log_execution_time_every_N
     def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
         """Creates the Q table so the agent can be trained.
 
@@ -188,6 +192,7 @@ class Agent:
         return q_table
     ### end of init_Q_table ###
 
+    @log_config.log_execution_time_every_N
     def change_Q_table_pts(self, chess_move: str, curr_turn: str, pts: int) -> None:
         """Adds points to a cell in the Q table.
 
@@ -205,6 +210,7 @@ class Agent:
         self.Q_table.at[chess_move, curr_turn] += pts
     ### end of change_Q_table_pts ###
 
+    @log_config.log_execution_time_every_N
     def update_Q_table(self, new_chess_moves: list[str]) -> None:
         """Updates the Q table with new chess moves.
 
@@ -228,7 +234,8 @@ class Agent:
             logger.warning(f'new_chess_moves list was empty')
             return ["new_chess_moves list is empty"]
     ### update_Q_table ###
-        
+
+    @log_config.log_execution_time_every_N        
     def reset_Q_table(self) -> None:
         """Resets the Q table to all zeros.
 
@@ -244,6 +251,7 @@ class Agent:
         self.Q_table.iloc[:, :] = 0
     ### end of reset_Q_table ###
 
+    @log_config.log_execution_time_every_N
     def get_Q_values(self) -> pd.Series:
         """Returns a Pandas series of Q values for the current turn.
 

@@ -77,6 +77,7 @@ class Bradley:
             return False
     ### end of recv_opp_move ###
 
+    @log_config.log_execution_time_every_N
     def rl_agent_selects_chess_move(self, rl_agent_color: str) -> dict[str]:
         """Selects a chess move for the RL agent and loads it onto the chessboard.
 
@@ -98,7 +99,7 @@ class Bradley:
         self.environ.update_curr_state()
         return chess_move
     ### end of rl_agent_selects_chess_move
-
+    
     def get_fen_str(self) -> str:
         """Returns the FEN string representing the current board state.
 
@@ -139,6 +140,7 @@ class Bradley:
             return 'W'
     ### end of get_opp_agent_color
             
+    @log_config.log_execution_time_every_N        
     def get_curr_turn(self) -> str:
         """Returns the current turn as a string.
 
@@ -154,6 +156,7 @@ class Bradley:
         return self.environ.get_curr_turn()
     ### end of get_curr_turn
 
+    @log_config.log_execution_time_every_N
     def game_on(self) -> bool:
         """Determines whether the game is still ongoing.
 
@@ -171,7 +174,8 @@ class Bradley:
         else:
             return True
     ### end of game_on
-    
+
+    @log_config.log_execution_time_every_N
     def get_legal_moves(self) -> list[str]:
         """Returns a list of legal moves for the current turn and state of the chessboard.
 
@@ -202,6 +206,7 @@ class Bradley:
         return self.rl_agent.color
     ### end of get_rl_agent_color
     
+    @log_config.log_execution_time_every_N
     def get_game_outcome(self) -> chess.Outcome or str:   
         """Returns the outcome of the chess game.
 
@@ -224,6 +229,7 @@ class Bradley:
             return 'outcome not available, most likely game ended because turn_index was too high or player resigned'
     ### end of get_game_outcome
     
+    @log_config.log_execution_time_every_N
     def get_game_termination_reason(self) -> str:
         """Determines why the game ended.
 
@@ -246,6 +252,7 @@ class Bradley:
             return 'termination reason not available, most likely game ended because turn_index was too high or player resigned'
     ### end of get_game_termination_reason
     
+    @log_config.log_execution_time
     def get_chessboard(self) -> chess.Board:
         """Returns the current state of the chessboard.
 
@@ -261,6 +268,7 @@ class Bradley:
         return self.environ.board
     ### end of get_chess_board
 
+    @log_config.log_execution_time
     def train_rl_agents(self, training_results_filepath: str) -> None:
         """Trains the RL agents using the SARSA algorithm and sets their `is_trained` flag to True.
         
@@ -291,9 +299,9 @@ class Bradley:
 
         # for each game in the training data set.
         for game_num in self.chess_data.index:
-            # num_chess_moves represents the total moves in the current game in the database.
+            # num_chess_moves_curr_training_game represents the total moves in the current game in the database.
             # this will be different from game to game.
-            num_chess_moves: int = self.chess_data.at[game_num, 'Num Moves']
+            num_chess_moves_curr_training_game: int = self.chess_data.at[game_num, 'Num Moves']
             
             if PRINT_RESULTS:
                 training_results.write(f'\n\n Start of {game_num} training\n\n')
@@ -302,7 +310,7 @@ class Bradley:
             curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
 
             # loop plays through one game in the database, exactly as shown.
-            while curr_state['turn_index'] < num_chess_moves:
+            while curr_state['turn_index'] < num_chess_moves_curr_training_game:
                 ##### WHITE AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
                 # choose action a from state s, using policy
                 W_curr_action: dict[str] = self.W_rl_agent.choose_action(curr_state, game_num)
@@ -336,7 +344,7 @@ class Bradley:
                     W_reward = analysis_results['mate_score'] * self.settings.mate_score_factor
                 
                 # check if game ended after W's move
-                if curr_state['turn_index'] >= num_chess_moves:
+                if curr_state['turn_index'] >= num_chess_moves_curr_training_game:
                     break
                 else: # game continues
                     ##### WHITE AGENT CHOOSES NEXT ACTION, BUT DOES NOT PLAY IT !!! #####
@@ -400,7 +408,7 @@ class Bradley:
                     break
 
                 # check if game ended after B's move
-                if curr_state['turn_index'] >= num_chess_moves:
+                if curr_state['turn_index'] >= num_chess_moves_curr_training_game:
                     break
                 else: # game continues
                     ##### AGENT CHOOSES NEXT ACTION, BUT DOES NOT PLAY IT !!! #####
@@ -444,6 +452,7 @@ class Bradley:
         self.reset_environ()
     ### end of train_rl_agents
 
+    @log_config.log_execution_time
     def continue_training_rl_agents(self, training_results_filepath: str, num_games: int) -> None:
         """ continues to train the agent, this time the agents make their own decisions instead 
             of playing through the database.
@@ -556,6 +565,7 @@ class Bradley:
         self.reset_environ()
     ### end of continue_training_rl_agents
 
+    @log_config.log_execution_time_every_N
     def analyze_board_state(self, board: chess.Board, is_for_est_Qval_analysis: bool = True) -> dict:
         """Analyzes the current state of the chessboard using the Stockfish engine.
 
@@ -585,6 +595,7 @@ class Bradley:
             return {'mate_score': mate_score, 'centipawn_score': centipawn_score} # we don't need the anticipated next move
     ### end of analyze_board_state
  
+    @log_config.log_execution_time_every_N
     def get_reward(self, chess_move_str: str) -> int:                                     
         """Calculates the reward for a given chess move.
 
@@ -615,6 +626,7 @@ class Bradley:
         return total_reward
     ## end of get_reward
 
+    @log_config.log_execution_time_every_N
     def reset_environ(self) -> None:
         """Resets the environment for a new game.
 

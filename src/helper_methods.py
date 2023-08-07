@@ -130,9 +130,7 @@ def agent_vs_agent(bubs: imman.Bradley) -> None:
 
     Raises:
         None
-    """
-    W_turn: bool = True
-    
+    """    
     while bubs.game_on():        
         # bubs's turn
         print(f'\nCurrent turn: {bubs.get_curr_turn()}')
@@ -148,8 +146,6 @@ def agent_vs_agent(bubs: imman.Bradley) -> None:
             print(f'Imman played {imman_chess_move_str}\n')
 
         print(bubs.environ.board)
-        
-        W_turn = not W_turn
     
     print('Game is over, chessboard looks like this:\n')
     print(bubs.environ.board)
