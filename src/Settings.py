@@ -17,7 +17,7 @@ class Settings:
         self.discount_factor = 0.35   # lower number means more opportunistic, but not good long term planning
         self.training_sample_size = 10_000
         self.agent_vs_agent_num_games = 40_000
-        self.num_turns_per_player = 50
+        self.max_num_turns_per_player = 50
 
         # the following numbers are based on centipawn scores, but not exactly. for example, the checkmate point value is made up.
         self.new_move_pts = 1_000
@@ -27,7 +27,7 @@ class Settings:
         self.capture_pts = 100
         self.promotion_Queen_pts = 1_000
         self.checkmate_pts = 1_000_000
-        self.mate_score_factor = 1_000
+        self.mate_score_reward = 1_000
         
         # The following values are for the ches engine analysis of moves.
         # we only want to look ahead one move, that's the anticipated q value at next state, and next action

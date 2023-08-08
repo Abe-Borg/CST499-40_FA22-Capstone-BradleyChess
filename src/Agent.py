@@ -185,9 +185,9 @@ class Agent:
         Returns:
             A pandas dataframe representing the Q table.
         """
-        unique_moves: pd.Index = pd.concat([chess_data.loc[:, f"{self.color}{i}"].value_counts() for i in range(1, self.settings.num_turns_per_player + 1)])
+        unique_moves: pd.Index = pd.concat([chess_data.loc[:, f"{self.color}{i}"].value_counts() for i in range(1, self.settings.max_num_turns_per_player + 1)])
         unique_moves = unique_moves.index.unique()
-        turns_list: pd.Index = chess_data.loc[:, self.color + '1': self.color + str(self.settings.num_turns_per_player): 2].columns
+        turns_list: pd.Index = chess_data.loc[:, self.color + '1': self.color + str(self.settings.max_num_turns_per_player): 2].columns
         q_table: pd.DataFrame = pd.DataFrame(0, columns = turns_list, index = unique_moves, dtype = np.int32)
         return q_table
     ### end of init_Q_table ###

@@ -33,9 +33,9 @@ class Environ:
         self.settings: Settings.Settings = Settings.Settings()
 
         # turn_list and turn_index work together to track the current turn (a string like this, 'W1')
-        # num_turns_per_player, so multiply by 2, then to make sure we get all moves, add 1.
+        # max_num_turns_per_player, so multiply by 2, then to make sure we get all moves, add 1.
         # column 1 in the chess data pd dataframe corresponds to 'W1'
-        self.turn_list: List[str] = self.chess_data.columns[1 : self.settings.num_turns_per_player * 2 + 1].tolist()
+        self.turn_list: List[str] = self.chess_data.columns[1 : self.settings.max_num_turns_per_player * 2 + 1].tolist()
         self.turn_index: int = 0
     ### end of constructor
 
@@ -60,7 +60,7 @@ class Environ:
             IndexError: If the maximum turn index is reached.
 
         """
-        max_turn_index: int = self.settings.num_turns_per_player * 2 - 1
+        max_turn_index: int = self.settings.max_num_turns_per_player * 2 - 1
         
         if self.turn_index < max_turn_index:
             self.turn_index += 1
@@ -135,7 +135,7 @@ class Environ:
             logger.error(f'unable to pop last move as the move stack is empty: {e}')
     ### end of undo_move
 
-    def load_chessboard_for_Q_est(self, analysis_results) -> bool:
+    def load_chessboard_for_Q_est(self, analysis_results) -> None:
         """Loads the chessboard using a Move.uci string during training.
 
         This method works in tandem with the Stockfish analysis during training.
@@ -146,16 +146,15 @@ class Environ:
                 'anticipated_next_move': <move>}.
 
         Returns:
-            bool: A boolean value indicating whether the move was successfully loaded.
+            None
 
         """
-        chess_move = analysis_results['anticipated_next_move']  # this has the form like this, Move.from_uci('e4f6')
+        # this is the anticipated chess move due to opponent's previous chess move. so if White plays Ne4, what is Black like to play?
+        anticipated_chess_move = analysis_results['anticipated_next_move']  # this has the form like this, Move.from_uci('e4f6')
         try:
-            self.board.push(chess_move)
-            return True
+            self.board.push(anticipated_chess_move)
         except ValueError as e:
             logger.warning(f'unable to push move: {e}')
-            return False
     ### end of load_chessboard_for_Q_est
 
     def reset_environ(self) -> None:
