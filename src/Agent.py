@@ -29,6 +29,14 @@ class Agent:
         Q_table (pd.DataFrame): A Pandas DataFrame containing the Q-values for the agent.
 
     """
+
+    MOVE_VALUES: dict[str, int] = {
+        'check': 10,
+        'capture': 5,
+        'promotion': 25,
+        'promotion_to_queen': 50
+    }
+
     def __init__(self, color: str, chess_data: pd.DataFrame):        
         self.color = color
         self.chess_data = chess_data
@@ -37,22 +45,40 @@ class Agent:
         self.Q_table: pd.DataFrame = self.init_Q_table(self.chess_data)
 
     @log_config.log_execution_time_every_N
-    def choose_action(self, environ_state: dict, curr_game: str = 'Game 1') -> dict[str]:
+    def choose_action(self, environ_state: dict[str, str, list[str]], curr_game: str = 'Game 1') -> dict[str]:
         """Chooses the next chess move for the agent based on the current state.
 
-        This method does two things. First, it helps to train the agent. Once the agent is trained, it helps to pick the appropriate move based on the highest value in the Q table for a given turn. Each agent will play through the database games exactly as shown during training.
+        This method does two things. First, it helps to train the agent. Once the agent is trained, 
+        it helps to pick the appropriate move based on the highest value in the Q table for a given turn. 
+        Each agent will play through the database games exactly as shown during training.
+
+        Preconditions:
+            The `environ_state` dictionary must contain the following keys:
+                'turn_index': A string representing the current turn number.
+                'curr_turn': A string representing the current turn, e.g. 'W1'.
+                'legal_moves': A list of strings representing the legal moves for the current turn.
+            curr_game must be a string that is a key in the chess_data dataframe.
+        
+        Invariants:
+            environ_state and curr_game are not modified in this method.
+        
+        Side Effects:
+            The Q table may be updated.
 
         Args:
             environ_state (dict): A dictionary containing the current state of the environment.
-            curr_game (str): A string indicating the current game being played. Relevant when initially training the agents. Defaults to 'Game 1'.
+                Make sure environ_state is not modified in this method.
+            curr_game (str): A string indicating the current game being played. 
+                Relevant when initially training the agents. Defaults to 'Game 1'.
 
         Returns:
             dict[str]: A dictionary containing the chosen chess move.
 
         """
-        self.legal_moves: List[str] = environ_state['legal_moves']
-        self.curr_turn: str = environ_state['curr_turn']     
-        self.curr_game = curr_game
+        environ_state_copy = copy.deepcopy(environ_state)
+        self.legal_moves: List[str] = environ_state_copy['legal_moves']
+        self.curr_turn: str = environ_state_copy['curr_turn']     
+        self.curr_game: str = curr_game
 
         # check if any of the legal moves is not already in the Q table
         moves_not_in_Q_table: List[str] = [move for move in self.legal_moves if move not in self.Q_table[self.curr_turn].index]
@@ -70,7 +96,7 @@ class Agent:
         """Determines how the agents choose a move at each turn during training.
 
         In this implementation, the agents will play out the games in the database exactly as shown.
-
+        
         Args:
             None
 
@@ -87,7 +113,7 @@ class Agent:
 
         The agent searches its Q table to find the moves with the highest Q values at each turn. 
         However, sometimes the agent will pick a random move. 
-        This method is also used when the agents continue to be trained.
+        This method is also used when the two agents continue to be trained (when the play agains each other).
 
         Args:
             None
@@ -111,7 +137,7 @@ class Agent:
             # pick existing move in the q table that has the highest q value
             chess_move_str = legal_moves_in_q_table.idxmax()
         
-        # if the q table val at that index has no points, add some points.
+        # if the q table val at that index has almost no points, add some points.
         # compare the abs difference with a small tolerance.
         # this should be small enough to account for any rounding errors
         if abs(self.Q_table.at[chess_move_str, self.curr_turn] - 0) < 1e-6:
@@ -137,32 +163,28 @@ class Agent:
             dict[str]: A dictionary containing the selected chess move as a string.
 
         """
-        move_values: dict[int] = {
-            'check': 10,
-            'capture': 5,
-            'promotion': 25,
-            'promotion_to_queen': 50,
-        }
-
-        max_val: int = 0
+        highest_move_value: int = 0
         best_move: dict[str] = None
         
+        # loop through legal moves list to find the best move
         for chess_move_str in self.legal_moves:
             move: chess.Move = chess.Move.from_uci(chess_move_str)
-            move_val: int = 0
+            move_value: int = 0
 
-            if move.promotion:
-                if move.promotion == chess.QUEEN:
-                    move_val = move_values['promotion_to_queen']
-                else:
-                    move_val = move_values['promotion']
-            elif move.capture:
-                move_val = move_values['capture']
-            elif self.board.is_check(move):
-                move_val = move_values['check']
+            conditions: list[bool] = [
+                (move.promotion == chess.QUEEN,"promotion_to_queen"),
+                (move.promotion, "promotion"),
+                (move.capture, "capture"),
+                (self.board.is_check(move), "check")
+            ]
 
-            if move_val > max_val:
-                max_val = move_val
+            for condition, value_key in conditions:
+                if condition:
+                    move_value = self.MOVE_VALUES[value_key]
+                    break
+
+            if move_value > highest_move_value:
+                highest_move_value = move_value
                 best_move = {'chess_move_str': chess_move_str}
 
         if best_move is None:
@@ -185,12 +207,19 @@ class Agent:
         Returns:
             A pandas dataframe representing the Q table.
         """
-        unique_moves: pd.Index = pd.concat([chess_data.loc[:, f"{self.color}{i}"].value_counts() for i in range(1, self.settings.max_num_turns_per_player + 1)])
-        unique_moves = unique_moves.index.unique()
-        turns_list: pd.Index = chess_data.loc[:, self.color + '1': self.color + str(self.settings.max_num_turns_per_player): 2].columns
+        unique_moves: pd.Index = self.get_unique_moves(chess_data, self.color)
+        turns_list: pd.Index =  self.get_turns_list(chess_data, self.color)
         q_table: pd.DataFrame = pd.DataFrame(0, columns = turns_list, index = unique_moves, dtype = np.int32)
         return q_table
     ### end of init_Q_table ###
+
+    @log_config.log_execution_time_every_N
+    def get_unique_moves(chess_data: pd.DataFrame, color: str) -> pd.Index:
+        return pd.concat([chess_data.loc[:, f"{color}{i}"].value_counts() for i in range(1, self.settings.max_num_turns_per_player + 1)]).index.unique()
+
+    @log_config.log_execution_time_every_N
+    def get_turns_list(chess_data: pd.DataFrame, color: str) -> pd.Index: 
+        return chess_data.loc[:, f"{color}1": f"{color}{self.settings.max_num_turns_per_player}": 2].columns
 
     @log_config.log_execution_time_every_N
     def change_Q_table_pts(self, chess_move: str, curr_turn: str, pts: int) -> None:
@@ -211,28 +240,32 @@ class Agent:
     ### end of change_Q_table_pts ###
 
     @log_config.log_execution_time_every_N
-    def update_Q_table(self, new_chess_moves: list[str]) -> None:
+    def update_Q_table(self, new_chess_moves: list[str]) -> Union[None, List[str]]:
         """Updates the Q table with new chess moves.
 
-        This method filters out moves that are already in the Q table, creates a new DataFrame with the new chess moves, and appends it to the Q table. If the list of new chess moves is empty, a warning is logged and the method returns None.
+        This method filters out moves that are already in the Q table, creates a new DataFrame 
+        with the new chess moves, and appends it to the Q table. If the list of new chess moves 
+        is empty, a warning is logged and the method returns None.
 
         Args:
             new_chess_moves (list[str]): A list of chess moves (strings) that are not already in the Q table.
 
         Returns:
-            None
+            None of list of str
 
         """
         # Filter out moves that are already in the Q_table
-        new_chess_moves = [move for move in new_chess_moves if move not in self.Q_table.index]
+        # copying the list to avoid in-place modifications
+        filtered_moves = [move for move in new_chess_moves if move not in self.Q_table.index]
         
-        if new_chess_moves:
-            q_table_new_values: pd.DataFrame = pd.DataFrame(index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int32)
-            q_table_new_values.values[:] = 0
-            self.Q_table = self.Q_table.append(q_table_new_values)
-        else:
+        if not filtered_moves:
             logger.warning(f'new_chess_moves list was empty')
             return ["new_chess_moves list is empty"]
+
+        q_table_new_values: pd.DataFrame = pd.DataFrame(0, index = filtered_moves, columns = self.Q_table.columns, dtype = np.int32)
+        self.Q_table = self.Q_table.append(q_table_new_values)
+
+        return None
     ### update_Q_table ###
 
     @log_config.log_execution_time_every_N        
