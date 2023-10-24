@@ -8,8 +8,8 @@ settings = settings.Settings()
 
 logger = logging.getLogger(__name__)
 
-chess_data = pd.read_pickle(chess_data_path, compression = 'zip') # <-- this is a dataframe
-training_chess_data = chess_data.sample(training_sample_size) # <-- this is a dataframe
+chess_data = pd.read_pickle(chess_data_path, compression = 'zip') 
+training_chess_data = chess_data.sample(training_sample_size) 
 
 
 if __name__ == '__main__':
