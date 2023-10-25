@@ -36,7 +36,7 @@ def log_execution_time(func):
     return wrapper
 
 
-def log_execution_time_every_N(n = 1000):
+def log_execution_time_every_N(n = 10):
     """A decorator that logs the execution time of a function every N calls.
 
     Args:

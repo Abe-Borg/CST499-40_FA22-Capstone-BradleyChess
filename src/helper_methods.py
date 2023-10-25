@@ -211,7 +211,7 @@ def bootstrap_agent(bubs: imman.Bradley, rl_agent_color: str, existing_q_table_p
     rl_agent.is_trained = True
 ### end of bootstrap_agent
 
-def get_number_with_probability(probability):
+def get_number_with_probability(probability: float) -> int:
     """Generate a random number with a given probability.
 
     This function takes a probability value as an argument, which should be between 

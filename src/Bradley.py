@@ -54,7 +54,7 @@ class Bradley:
         # this is how we estimate the q value at each position, and also for anticipated next position
         self.engine = chess.engine.SimpleEngine.popen_uci(self.settings.stockfish_filepath)
 
-
+    @log_config.log_execution_time_every_N()
     def recv_opp_move(self, chess_move: str) -> bool:                                                                                 
         """Receives the opponent's chess move and loads it onto the chessboard.
 
@@ -77,7 +77,7 @@ class Bradley:
             return False
     ### end of recv_opp_move ###
 
-    @log_config.log_execution_time_every_N
+    @log_config.log_execution_time_every_N()
     def rl_agent_selects_chess_move(self, rl_agent_color: str) -> dict[str]:
         """Selects a chess move for the RL agent and loads it onto the chessboard.
 
@@ -140,7 +140,7 @@ class Bradley:
             return 'W'
     ### end of get_opp_agent_color
             
-    @log_config.log_execution_time_every_N        
+    @log_config.log_execution_time_every_N()        
     def get_curr_turn(self) -> str:
         """Returns the current turn as a string.
 
@@ -156,7 +156,7 @@ class Bradley:
         return self.environ.get_curr_turn()
     ### end of get_curr_turn
 
-    @log_config.log_execution_time_every_N
+    @log_config.log_execution_time_every_N()
     def game_on(self) -> bool:
         """Determines whether the game is still ongoing.
 
@@ -176,7 +176,7 @@ class Bradley:
             return True
     ### end of game_on
 
-    @log_config.log_execution_time_every_N
+    @log_config.log_execution_time_every_N()
     def get_legal_moves(self) -> list[str]:
         """Returns a list of legal moves for the current turn and state of the chessboard.
 
@@ -207,7 +207,7 @@ class Bradley:
         return self.rl_agent.color
     ### end of get_rl_agent_color
     
-    @log_config.log_execution_time_every_N
+    @log_config.log_execution_time_every_N()
     def get_game_outcome(self) -> chess.Outcome or str:   
         """Returns the outcome of the chess game.
 
@@ -230,7 +230,7 @@ class Bradley:
             return 'outcome not available, most likely game ended because turn_index was too high or player resigned'
     ### end of get_game_outcome
     
-    @log_config.log_execution_time_every_N
+    @log_config.log_execution_time_every_N()
     def get_game_termination_reason(self) -> str:
         """Determines why the game ended.
 
@@ -253,7 +253,6 @@ class Bradley:
             return 'termination reason not available, most likely game ended because turn_index was too high or player resigned'
     ### end of get_game_termination_reason
     
-    @log_config.log_execution_time
     def get_chessboard(self) -> chess.Board:
         """Returns the current state of the chessboard.
 
@@ -364,8 +363,8 @@ class Bradley:
                     B_est_Qval: int = self.find_estimated_Q_value()
 
                 # ***CRITICAL STEP***, this is the main part of the SARSA algorithm. 
-                W_next_Qval: int = find_next_Qval(W_curr_Qval, self.W_rl_agent.settings.learn_rate, W_reward, self.W_rl_agent.settings.discount_factor, W_est_Qval)
-                B_next_Qval: int = find_next_Qval(B_curr_Qval, self.B_rl_agent.settings.learn_rate, B_reward, self.B_rl_agent.settings.discount_factor, B_est_Qval)
+                W_next_Qval: int = self.find_next_Qval(W_curr_Qval, self.W_rl_agent.settings.learn_rate, W_reward, self.W_rl_agent.settings.discount_factor, W_est_Qval)
+                B_next_Qval: int = self.find_next_Qval(B_curr_Qval, self.B_rl_agent.settings.learn_rate, B_reward, self.B_rl_agent.settings.discount_factor, B_est_Qval)
             
                 # on the next turn, this Q value will be added to the Q table. so if this is the end of the first round,
                 # next round it will be W2 and then we assign the q value at W2 col
@@ -459,8 +458,8 @@ class Bradley:
                     B_est_Qval: int = self.find_estimated_Q_value()
 
                 # *** CRITICAL STEP ***, this is the main part of the SARSA algorithm.
-                W_next_Qval: int = find_next_Qval(W_curr_Qval, self.W_rl_agent.settings.learn_rate, W_reward, self.W_rl_agent.settings.discount_factor, W_est_Qval)
-                B_next_Qval: int = find_next_Qval(B_curr_Qval, self.B_rl_agent.settings.learn_rate, B_reward, self.B_rl_agent.settings.discount_factor, B_est_Qval)
+                W_next_Qval: int = self.find_next_Qval(W_curr_Qval, self.W_rl_agent.settings.learn_rate, W_reward, self.W_rl_agent.settings.discount_factor, W_est_Qval)
+                B_next_Qval: int = self.find_next_Qval(B_curr_Qval, self.B_rl_agent.settings.learn_rate, B_reward, self.B_rl_agent.settings.discount_factor, B_est_Qval)
                 
                 W_curr_Qval = W_next_Qval
                 B_curr_Qval = B_next_Qval
@@ -480,11 +479,10 @@ class Bradley:
         self.reset_environ()
     ### end of continue_training_rl_agents
 
-
     ########## TRAINING HELPER METHODS ####################
     
-    @log_config.log_execution_time_every_N
-    def rl_agent_PICKS_move_training_mode(curr_state: dict[str, str, list[str]], rl_agent_color: str, game_num_str: str = 'Game 1') -> str:
+    @log_config.log_execution_time_every_N()
+    def rl_agent_PICKS_move_training_mode(self, curr_state: dict[str, str, list[str]], rl_agent_color: str, game_num_str: str = 'Game 1') -> str:
         """
         This method is used by the RL agent to pick a move during training mode. It takes in the current state of the chessboard,
         the color of the RL agent, and the game number as input parameters. It returns the chess move as a string that the RL agent
@@ -508,8 +506,8 @@ class Bradley:
         return chess_move
     # end of rl_agent_picks_move_training_mode
     
-    @log_config.log_execution_time_every_N
-    def assign_points_to_Q_table_training_mode(chess_move: str, curr_turn: str, curr_Qval: int, rl_agent_color: str) -> None:
+    @log_config.log_execution_time_every_N()
+    def assign_points_to_Q_table_training_mode(self, chess_move: str, curr_turn: str, curr_Qval: int, rl_agent_color: str) -> None:
         """
         Assigns points to the Q table for the given chess move, current turn, current Q value, and RL agent color.
 
@@ -538,8 +536,8 @@ class Bradley:
                 self.B_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
     # enf of assign_points_to_Q_table_training_mode
 
-    @log_config.log_execution_time_every_N
-    def rl_agent_PLAYS_move_training_mode(chess_move: str) -> int:
+    @log_config.log_execution_time_every_N()
+    def rl_agent_PLAYS_move_training_mode(self, chess_move: str) -> int:
         """
         Simulates the RL agent playing a given chess move in training mode and returns the reward for that move.
     
@@ -577,8 +575,8 @@ class Bradley:
         return reward
     # end of rl_agent_PLAYS_move_training_mode
 
-    @log_config.log_execution_time_every_N
-    def find_estimated_Q_value() -> int:
+    @log_config.log_execution_time_every_N()
+    def find_estimated_Q_value(self) -> int:
         """
         Estimates the Q-value for the RL agent's next action without actually playing the move.
     
@@ -639,8 +637,8 @@ class Bradley:
         return est_Qval
     # end of find_estimated_Q_value
 
-    @log_config.log_execution_time_every_N
-    def find_next_Qval(curr_Qval: int, learn_rate: float, reward: int, discount_factor: float, est_Qval: int) -> int:
+    @log_config.log_execution_time_every_N()
+    def find_next_Qval(self, curr_Qval: int, learn_rate: float, reward: int, discount_factor: float, est_Qval: int) -> int:
         """
         Calculates the next Q-value based on the current Q-value, learning rate, reward, discount factor, and estimated Q-value.
     
@@ -662,14 +660,13 @@ class Bradley:
         Raises:
             None
         """
-        next_Qval = curr_Qval + learn_rate * (W_reward + ((discount_factor * est_Qval) - curr_Qval))
+        next_Qval = curr_Qval + learn_rate * (reward + ((discount_factor * est_Qval) - curr_Qval))
         return next_Qval
     # end of find_next_Qval
 
     ########## END OF TRAINING HELPER METHODS ####################
 
-
-    @log_config.log_execution_time_every_N
+    @log_config.log_execution_time_every_N()
     def analyze_board_state(self, board: chess.Board, is_for_est_Qval_analysis: bool = True) -> dict:
         """Analyzes the current state of the chessboard using the Stockfish engine.
 
@@ -685,7 +682,7 @@ class Bradley:
 
         """
         # analysis_result is an InfoDict (see python-chess documentation)
-        analysis_result = self.engine.analyse(board, self.search_limit, multipv = self.num_moves_to_return)
+        analysis_result = self.engine.analyse(board, self.settings.search_limit, multipv = self.settings.num_moves_to_return)
         
         # normalize by looking at it from White's perspective
         # score datatype is Cp (centipawn) or Mate
@@ -701,7 +698,7 @@ class Bradley:
             return {'mate_score': mate_score, 'centipawn_score': centipawn_score} 
     ### end of analyze_board_state
  
-    @log_config.log_execution_time_every_N
+    @log_config.log_execution_time_every_N()
     def get_reward(self, chess_move_str: str) -> int:                                     
         """Calculates the reward for a given chess move.
 
@@ -732,7 +729,7 @@ class Bradley:
         return total_reward
     ## end of get_reward
 
-    @log_config.log_execution_time_every_N
+    @log_config.log_execution_time_every_N()
     def reset_environ(self) -> None:
         """Resets the environment for a new game.
 

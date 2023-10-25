@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 class Environ:
     """Manages the chessboard and determines its state.
 
-        This class passes the state to the agent. It is the only thing that should make changes to the chessboard.
+        This class passes the state to the agent. It is the only thing that 
+        should make changes to the chessboard.
     """
     def __init__(self, chess_data: pd.DataFrame):
         """Initializes the Environ object.
@@ -24,7 +25,7 @@ class Environ:
             chess_data (pd.DataFrame): A pandas DataFrame representing the chess games database.
             board (chess.Board): An object representing the chessboard.
             settings (Settings.Settings): An object representing the settings for the chess game.
-            turn_list (List[str]): A list that is utilized to keep track of the current turn (W1, B1 ... W50, B50).
+            turn_list (list[str]): A list that is utilized to keep track of the current turn (W1, B1 ... W50, B50).
             turn_index (int): An integer that is incremented as each player makes a move.
 
         """
@@ -35,10 +36,11 @@ class Environ:
         # turn_list and turn_index work together to track the current turn (a string like this, 'W1')
         # max_num_turns_per_player, so multiply by 2, then to make sure we get all moves, add 1.
         # column 1 in the chess data pd dataframe corresponds to 'W1'
-        self.turn_list: List[str] = self.chess_data.columns[1 : self.settings.max_num_turns_per_player * 2 + 1].tolist()
+        self.turn_list: list[str] = self.chess_data.columns[1 : self.settings.max_num_turns_per_player * 2 + 1].tolist()
         self.turn_index: int = 0
     ### end of constructor
 
+    @log_config.log_execution_time_every_N()
     def get_curr_state(self) -> dict[str, str, list[str]]:
         """Returns a dictionary that describes the current state of the chessboard and the current turn.
 
@@ -49,6 +51,7 @@ class Environ:
         return {'turn_index': self.turn_index, 'curr_turn': self.get_curr_turn(), 'legal_moves': self.get_legal_moves()}
     ### end of get_curr_state
     
+    @log_config.log_execution_time_every_N()
     def update_curr_state(self) -> None:
         """Updates the current state of the chessboard.
 
@@ -60,6 +63,7 @@ class Environ:
             IndexError: If the maximum turn index is reached.
 
         """
+        # in this case, subtract 1, not add 1 (like we did in the constructor)
         max_turn_index: int = self.settings.max_num_turns_per_player * 2 - 1
         
         if self.turn_index < max_turn_index:
@@ -67,7 +71,8 @@ class Environ:
         else:
             raise IndexError(f"Maximum turn index ({max_turn_index}) reached!")
     ### end of update_curr_state
-        
+    
+    @log_config.log_execution_time_every_N()
     def get_curr_turn(self) -> str:                        
         """Returns the string of the current turn.
 
@@ -85,6 +90,7 @@ class Environ:
             return 'ERROR: list index out of range'
     ### end of get_curr_turn
     
+    @log_config.log_execution_time_every_N()
     def load_chessboard(self, chess_move_str: str) -> bool:
         """Loads a chess move on the chessboard.
 
@@ -106,6 +112,7 @@ class Environ:
             return False
     ### end of load_chessboard    
 
+    @log_config.log_execution_time_every_N()
     def pop_chessboard(self) -> None:
         """Pops the most recent move applied to the chessboard.
 
@@ -121,6 +128,7 @@ class Environ:
             logger.error(f'unable to pop last move as the move stack is empty: {e}')
     ### end of pop_chessboard
 
+    @log_config.log_execution_time_every_N()
     def undo_move(self) -> None:
         """Undoes the most recent move applied to the chessboard.
 
@@ -135,7 +143,8 @@ class Environ:
             logger.error(f'unable to pop last move as the move stack is empty: {e}')
     ### end of undo_move
 
-    def load_chessboard_for_Q_est(self, analysis_results) -> None:
+    @log_config.log_execution_time_every_N()
+    def load_chessboard_for_Q_est(self, analysis_results: list[dict]) -> None:
         """Loads the chessboard using a Move.uci string during training.
 
         This method works in tandem with the Stockfish analysis during training.
@@ -157,6 +166,7 @@ class Environ:
             logger.warning(f'unable to push move: {e}')
     ### end of load_chessboard_for_Q_est
 
+    @log_config.log_execution_time_every_N()
     def reset_environ(self) -> None:
         """Resets the Environ object.
 
@@ -167,6 +177,7 @@ class Environ:
         self.turn_index = 0
     ### end of reset_environ
     
+    @log_config.log_execution_time_every_N()
     def get_legal_moves(self) -> list[str]:   
         """Returns a list of legal moves at the current turn.
 
