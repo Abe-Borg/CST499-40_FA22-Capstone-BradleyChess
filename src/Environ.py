@@ -2,10 +2,10 @@ import chess
 import Settings
 import pandas as pd
 import copy
-import logging
-import log_config
+# import logging
+# import log_config
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 class Environ:
     """Manages the chessboard and determines its state.
@@ -40,7 +40,7 @@ class Environ:
         self.turn_index: int = 0
     ### end of constructor
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def get_curr_state(self) -> dict[str, str, list[str]]:
         """Returns a dictionary that describes the current state of the chessboard and the current turn.
 
@@ -51,7 +51,7 @@ class Environ:
         return {'turn_index': self.turn_index, 'curr_turn': self.get_curr_turn(), 'legal_moves': self.get_legal_moves()}
     ### end of get_curr_state
     
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def update_curr_state(self) -> None:
         """Updates the current state of the chessboard.
 
@@ -72,7 +72,7 @@ class Environ:
             raise IndexError(f"Maximum turn index ({max_turn_index}) reached!")
     ### end of update_curr_state
     
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def get_curr_turn(self) -> str:                        
         """Returns the string of the current turn.
 
@@ -86,11 +86,12 @@ class Environ:
         try: 
             return self.turn_list[self.turn_index]
         except IndexError as e:
-            logger.error(f'list index out of range, turn index is {self.turn_index}: {e}')
+            print(f'An error occurred: {e}')
+            # logger.error(f'list index out of range, turn index is {self.turn_index}: {e}')
             return 'ERROR: list index out of range'
     ### end of get_curr_turn
     
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def load_chessboard(self, chess_move_str: str) -> bool:
         """Loads a chess move on the chessboard.
 
@@ -108,11 +109,12 @@ class Environ:
             self.board.push_san(chess_move_str)
             return True
         except ValueError as e:
-            logger.error(f'unable to load chessboard with {chess_move_str}: {e}')            
+            print(f'An error occurred: {e}')
+            # logger.error(f'unable to load chessboard with {chess_move_str}: {e}')            
             return False
     ### end of load_chessboard    
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def pop_chessboard(self) -> None:
         """Pops the most recent move applied to the chessboard.
 
@@ -125,10 +127,11 @@ class Environ:
         try:
             self.board.pop()
         except IndexError as e:
-            logger.error(f'unable to pop last move as the move stack is empty: {e}')
+            print(f'An error occurred: {e}')
+            # logger.error(f'unable to pop last move as the move stack is empty: {e}')
     ### end of pop_chessboard
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def undo_move(self) -> None:
         """Undoes the most recent move applied to the chessboard.
 
@@ -140,10 +143,11 @@ class Environ:
             self.board.pop()
             self.turn_index -= 1
         except IndexError as e:
-            logger.error(f'unable to pop last move as the move stack is empty: {e}')
+            print(f'An error occurred: {e}')
+            # logger.error(f'unable to pop last move as the move stack is empty: {e}')
     ### end of undo_move
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def load_chessboard_for_Q_est(self, analysis_results: list[dict]) -> None:
         """Loads the chessboard using a Move.uci string during training.
 
@@ -163,10 +167,11 @@ class Environ:
         try:
             self.board.push(anticipated_chess_move)
         except ValueError as e:
-            logger.warning(f'unable to push move: {e}')
+            print(f'An error occurred: {e}')
+            # logger.warning(f'unable to push move: {e}')
     ### end of load_chessboard_for_Q_est
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def reset_environ(self) -> None:
         """Resets the Environ object.
 
@@ -177,7 +182,7 @@ class Environ:
         self.turn_index = 0
     ### end of reset_environ
     
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def get_legal_moves(self) -> list[str]:   
         """Returns a list of legal moves at the current turn.
 
@@ -192,7 +197,7 @@ class Environ:
         if legal_moves:
             return legal_moves
         else:
-            logger.warning(f'legal_moves list was empty')
+            # logger.warning(f'legal_moves list was empty')
             return ["legal moves list is empty"]
     ### end of get_legal_moves
     

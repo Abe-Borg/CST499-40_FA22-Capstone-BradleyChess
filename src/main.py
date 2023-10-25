@@ -1,12 +1,12 @@
 import pandas as pd
 from helper_methods import *
 import time
-import logging
-import log_config
+# import logging
+# import log_config
 import Settings
 settings = Settings.Settings()
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 chess_data = pd.read_pickle(settings.chess_data_path, compression = 'zip') 
 training_chess_data = chess_data.sample(settings.training_sample_size) 

@@ -6,11 +6,11 @@ import re
 import copy
 import random
 import chess
-import logging
-import log_config
+# import logging
+# import log_config
 from typing import Union
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 class Agent:
     """The `Agent` class is responsible for deciding what chess move to play based on the current state.
@@ -27,7 +27,6 @@ class Agent:
         settings (Settings.Settings): An instance of the `Settings` class containing the settings for the agent.
         is_trained (bool): A boolean indicating whether the agent has been trained.
         Q_table (pd.DataFrame): A Pandas DataFrame containing the Q-values for the agent.
-
     """
 
     MOVE_VALUES: dict[str, int] = {
@@ -44,7 +43,7 @@ class Agent:
         self.is_trained: bool = False
         self.Q_table: pd.DataFrame = self.init_Q_table(self.chess_data)
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def choose_action(self, environ_state: dict[str, str, list[str]], curr_game: str = 'Game 1') -> dict[str]:
         """Chooses the next chess move for the agent based on the current state.
 
@@ -91,7 +90,7 @@ class Agent:
             return self.policy_training_mode() # this function call returns a dict that contains a chess move.
     ### end of choose_action ###
     
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def policy_training_mode(self) -> dict[str]:
         """Determines how the agents choose a move at each turn during training.
 
@@ -107,7 +106,7 @@ class Agent:
         return {'chess_move_str': self.chess_data.at[self.curr_game, self.curr_turn]}
     ### end of policy_training_mode ###
 
-    @log_config.log_execution_time_every_N()        
+    # @log_config.log_execution_time_every_N()        
     def policy_game_mode(self) -> dict[str]:
         """Determines how the agent chooses a move during a game between a human player and the agent.
 
@@ -146,7 +145,7 @@ class Agent:
         return {'chess_move_str': chess_move_str}
     ### end of policy_game_mode ###
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def choose_high_val_move(self) -> dict[str]:
         """ Selects the best chess move from a list of legal moves during training mode.
         
@@ -194,7 +193,7 @@ class Agent:
         return best_move
     ### end of choose_high_val_move ###
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
         """Creates the Q table so the agent can be trained.
 
@@ -213,15 +212,15 @@ class Agent:
         return q_table
     ### end of init_Q_table ###
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def get_unique_moves(self, chess_data: pd.DataFrame, color: str) -> pd.Index:
         return pd.concat([chess_data.loc[:, f"{color}{i}"].value_counts() for i in range(1, self.settings.max_num_turns_per_player + 1)]).index.unique()
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def get_turns_list(self, chess_data: pd.DataFrame, color: str) -> pd.Index: 
         return chess_data.loc[:, f"{color}1": f"{color}{self.settings.max_num_turns_per_player}": 2].columns
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def change_Q_table_pts(self, chess_move: str, curr_turn: str, pts: int) -> None:
         """Adds points to a cell in the Q table.
 
@@ -239,7 +238,7 @@ class Agent:
         self.Q_table.at[chess_move, curr_turn] += pts
     ### end of change_Q_table_pts ###
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def update_Q_table(self, new_chess_moves: list[str]) -> Union[None, list[str]]:
         """Updates the Q table with new chess moves.
 
@@ -259,16 +258,16 @@ class Agent:
         filtered_moves = [move for move in new_chess_moves if move not in self.Q_table.index]
         
         if not filtered_moves:
-            logger.warning(f'new_chess_moves list was empty')
+            # logger.warning(f'new_chess_moves list was empty')
             return ["new_chess_moves list is empty"]
 
         q_table_new_values: pd.DataFrame = pd.DataFrame(0, index = filtered_moves, columns = self.Q_table.columns, dtype = np.int32)
-        self.Q_table = self.Q_table.append(q_table_new_values)
+        self.Q_table = pd.concat([self.Q_table, q_table_new_values])
 
         return None
     ### update_Q_table ###
 
-    @log_config.log_execution_time_every_N()        
+    # @log_config.log_execution_time_every_N()        
     def reset_Q_table(self) -> None:
         """Resets the Q table to all zeros.
 
@@ -284,7 +283,7 @@ class Agent:
         self.Q_table.iloc[:, :] = 0
     ### end of reset_Q_table ###
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def get_Q_values(self) -> pd.Series:
         """Returns a Pandas series of Q values for the current turn.
 

@@ -15,7 +15,7 @@ class Settings:
         # learn_rate and discount factor can be different for each agent. range is 0 to 1 for both parameters
         self.learn_rate = 0.6 # too high num here means too focused on recent knowledge, 
         self.discount_factor = 0.35   # lower number means more opportunistic, but not good long term planning
-        self.training_sample_size = 1000
+        self.training_sample_size = 100
         self.agent_vs_agent_num_games = 100
         self.max_num_turns_per_player = 50
 

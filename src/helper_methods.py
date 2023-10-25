@@ -1,10 +1,10 @@
-import Bradley as imman #in case brad or imman ever read this code, I love you.
+import Bradley as imman
 import pandas as pd
 import random
-import logging
-import log_config
+# import logging
+# import log_config
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
     """Initializes a Bradley object with the given chess data.
@@ -39,7 +39,7 @@ def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
 
     """
     if rl_agent_color not in ['W', 'B']:
-        logger.warning(f"invalid input: {rl_agent_color}")
+        # logger.warning(f"invalid input: {rl_agent_color}")
         raise ValueError("rl_agent_color must be 'W' or 'B'")
         
     W_turn: bool = True
@@ -64,7 +64,8 @@ def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
                 chess_move_str = chess_move['chess_move_str']
                 print(f'RL agent played {chess_move_str}\n')
             except Exception as e:
-                logger.error(f'Error occurred during RL agent turn: {e}')
+                print(f'An error occurred: {e}')
+                # logger.error(f'Error occurred during RL agent turn: {e}')
                 break
         else:
             print('=== OPPONENT\' TURN ===')
@@ -79,7 +80,8 @@ def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
                         W_turn = not W_turn
                         continue
                     except Exception as e:
-                        logger.error(f'Error occurred while undoing move: {e}')
+                        print(f'An error occurred: {e}')
+                        # logger.error(f'Error occurred while undoing move: {e}')
                         continue
                 elif chess_move == 'pop 2x':
                     try:
@@ -89,14 +91,16 @@ def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
                         W_turn = not W_turn
                         continue
                     except Exception as e:
-                        logger.error(f'Error occurred while undoing move: {e}')
+                        print(f'An error occurred: {e}')
+                        # logger.error(f'Error occurred while undoing move: {e}')
                         continue
                 else:
                     while not bubs.recv_opp_move(chess_move):
                         print('Invalid move, try again.')
                         chess_move = str(input('Enter chess move: '))
             except Exception as e:
-                logger.error(f'Error occured durring humans turn: {e}')
+                print(f'An error occurred: {e}')
+                # logger.error(f'Error occured durring humans turn: {e}')
                 break
             
             print('\n')
@@ -110,7 +114,8 @@ def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
     try:
         bubs.reset_environ()
     except Exception as e:
-        logger.error(f'Error occurred while resetting game environment: {e}')
+        print(f'An error occurred: {e}')
+        # logger.error(f'Error occurred while resetting game environment: {e}')
 ### end of play_game
 
 def agent_vs_agent(bubs: imman.Bradley) -> None:

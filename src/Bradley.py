@@ -7,10 +7,10 @@ import chess
 import chess.engine
 import pandas as pd
 import copy
-import logging
-import log_config
+# import logging
+# import log_config
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 ## note to reader: throughout this code you will see dictionaries for things that
 ## don't necessily need a dictionary. chess_move is a good example.
@@ -54,7 +54,7 @@ class Bradley:
         # this is how we estimate the q value at each position, and also for anticipated next position
         self.engine = chess.engine.SimpleEngine.popen_uci(self.settings.stockfish_filepath)
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def recv_opp_move(self, chess_move: str) -> bool:                                                                                 
         """Receives the opponent's chess move and loads it onto the chessboard.
 
@@ -73,11 +73,11 @@ class Bradley:
             self.environ.update_curr_state()
             return True
         else:
-            logger.warning("failed to receive opponent's move")
+            # logger.warning("failed to receive opponent's move")
             return False
     ### end of recv_opp_move ###
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def rl_agent_selects_chess_move(self, rl_agent_color: str) -> dict[str]:
         """Selects a chess move for the RL agent and loads it onto the chessboard.
 
@@ -118,7 +118,7 @@ class Bradley:
             return fen
         except Exception as e:
             print(f'An error occurred: {e}')
-            logger.error("invalid board state, fen string was not valid.")
+            # logger.error("invalid board state, fen string was not valid.")
             return 'invalid board state, no fen str'
     ### end of get_gen_str ###
 
@@ -140,7 +140,7 @@ class Bradley:
             return 'W'
     ### end of get_opp_agent_color
             
-    @log_config.log_execution_time_every_N()        
+    # @log_config.log_execution_time_every_N()        
     def get_curr_turn(self) -> str:
         """Returns the current turn as a string.
 
@@ -156,7 +156,7 @@ class Bradley:
         return self.environ.get_curr_turn()
     ### end of get_curr_turn
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def game_on(self) -> bool:
         """Determines whether the game is still ongoing.
 
@@ -176,7 +176,7 @@ class Bradley:
             return True
     ### end of game_on
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def get_legal_moves(self) -> list[str]:
         """Returns a list of legal moves for the current turn and state of the chessboard.
 
@@ -207,7 +207,7 @@ class Bradley:
         return self.rl_agent.color
     ### end of get_rl_agent_color
     
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def get_game_outcome(self) -> chess.Outcome or str:   
         """Returns the outcome of the chess game.
 
@@ -226,11 +226,12 @@ class Bradley:
         try:
             return self.environ.board.outcome().result()
         except AttributeError:
-            logger.error("game outcome not available")
+            # logger.error("game outcome not available")
+            print(f'An error occurred: {e}')
             return 'outcome not available, most likely game ended because turn_index was too high or player resigned'
     ### end of get_game_outcome
     
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def get_game_termination_reason(self) -> str:
         """Determines why the game ended.
 
@@ -249,7 +250,8 @@ class Bradley:
         try:
             return str(self.environ.board.outcome().termination)
         except AttributeError:
-            logger.error('termination reason not available')
+            print(f'An error occurred: {e}')
+            # logger.error('termination reason not available')
             return 'termination reason not available, most likely game ended because turn_index was too high or player resigned'
     ### end of get_game_termination_reason
     
@@ -268,7 +270,7 @@ class Bradley:
         return self.environ.board
     ### end of get_chess_board
 
-    @log_config.log_execution_time
+    # @log_config.log_execution_time_every_N()
     def train_rl_agents(self, training_results_filepath: str) -> None:
         """Trains the RL agents using the SARSA algorithm and sets their `is_trained` flag to True.
         
@@ -392,7 +394,7 @@ class Bradley:
         self.reset_environ()
     ### end of train_rl_agents
 
-    @log_config.log_execution_time
+    # @log_config.log_execution_time_every_N()
     def continue_training_rl_agents(self, training_results_filepath: str, num_games_to_play: int) -> None:
         """ continues to train the agent, this time the agents make their own decisions instead 
             of playing through the database.
@@ -481,7 +483,7 @@ class Bradley:
 
     ########## TRAINING HELPER METHODS ####################
     
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def rl_agent_PICKS_move_training_mode(self, curr_state: dict[str, str, list[str]], rl_agent_color: str, game_num_str: str = 'Game 1') -> str:
         """
         This method is used by the RL agent to pick a move during training mode. It takes in the current state of the chessboard,
@@ -506,7 +508,7 @@ class Bradley:
         return chess_move
     # end of rl_agent_picks_move_training_mode
     
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def assign_points_to_Q_table_training_mode(self, chess_move: str, curr_turn: str, curr_Qval: int, rl_agent_color: str) -> None:
         """
         Assigns points to the Q table for the given chess move, current turn, current Q value, and RL agent color.
@@ -536,7 +538,7 @@ class Bradley:
                 self.B_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
     # enf of assign_points_to_Q_table_training_mode
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def rl_agent_PLAYS_move_training_mode(self, chess_move: str) -> int:
         """
         Simulates the RL agent playing a given chess move in training mode and returns the reward for that move.
@@ -575,7 +577,7 @@ class Bradley:
         return reward
     # end of rl_agent_PLAYS_move_training_mode
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def find_estimated_Q_value(self) -> int:
         """
         Estimates the Q-value for the RL agent's next action without actually playing the move.
@@ -637,7 +639,7 @@ class Bradley:
         return est_Qval
     # end of find_estimated_Q_value
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def find_next_Qval(self, curr_Qval: int, learn_rate: float, reward: int, discount_factor: float, est_Qval: int) -> int:
         """
         Calculates the next Q-value based on the current Q-value, learning rate, reward, discount factor, and estimated Q-value.
@@ -666,7 +668,7 @@ class Bradley:
 
     ########## END OF TRAINING HELPER METHODS ####################
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def analyze_board_state(self, board: chess.Board, is_for_est_Qval_analysis: bool = True) -> dict:
         """Analyzes the current state of the chessboard using the Stockfish engine.
 
@@ -698,7 +700,7 @@ class Bradley:
             return {'mate_score': mate_score, 'centipawn_score': centipawn_score} 
     ### end of analyze_board_state
  
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def get_reward(self, chess_move_str: str) -> int:                                     
         """Calculates the reward for a given chess move.
 
@@ -729,7 +731,7 @@ class Bradley:
         return total_reward
     ## end of get_reward
 
-    @log_config.log_execution_time_every_N()
+    # @log_config.log_execution_time_every_N()
     def reset_environ(self) -> None:
         """Resets the environment for a new game.
 
