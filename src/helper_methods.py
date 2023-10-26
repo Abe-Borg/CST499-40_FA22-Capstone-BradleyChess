@@ -6,42 +6,46 @@ import random
 
 # logger = logging.getLogger(__name__)
 
-print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\print_statements.txt'
+print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\HELPER_METHODS_print_statements.txt'
 print_statements_debug = open(print_debug_statements_filepath, 'a')
 PRINT_RESULTS_DEBUG: bool = True
-# print_statements_debug.write(f'\n\n Start of {game_num_str} training\n\n')
+
+error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\HELPER_METHODS_error_log.txt'
+error_log = open(error_log_filepath, 'a')
 
 def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
     """Initializes a Bradley object with the given chess data.
-
     The Bradley object is used to calculate the Bradley-Terry scores for each player in the chess data.
 
     Args:
         chess_data (pd.DataFrame): A Pandas DataFrame containing the chess data.
-
     Returns:
         imman.Bradley: An object of the Bradley class.
-
     """
+    if PRINT_RESULTS_DEBUG:
+        print_statements_debug.write('========== Hello from Helper Methods init_bradley ==========\n\n')
+        print_statements_debug.write(f'chess_data: {chess_data.head()}\n')
+
     bubs = imman.Bradley(chess_data)
+
+    if PRINT_RESULTS_DEBUG:
+        print_debug_statements_filepath.write(f'bubs: {bubs.chess_data.head()}\n')
+        print_debug_statements_filepath.write("========== Bye from Helper Methods init_bradley ==========\n\n\n")
+
     return bubs
 ### end of init_bradley
 
 def play_game(bubs: imman.Bradley, rl_agent_color: str) -> None:
     """Plays a game of chess against a human player using the terminal.
-
     The function alternates between the human player and the RL agent's turns until the game is over. The function prints the current turn number and prompts the human player to enter their chess move. If it is the RL agent's turn, the function calls the `rl_agent_selects_chess_move` method to select a move. The function also prints the move played by the RL agent. If the human player enters an invalid move, the function prompts them to enter a valid move. The function prints the game outcome and the reason for the game termination.
 
     Args:
         bubs (imman.Bradley): An object of the Bradley class.
         rl_agent_color (str): A string representing the color of the RL agent, either 'W' or 'B'.
-
     Returns:
         None
-
     Raises:
         ValueError: If `rl_agent_color` is not 'W' or 'B'.
-
     """
     if rl_agent_color not in ['W', 'B']:
         # logger.warning(f"invalid input: {rl_agent_color}")
@@ -223,7 +227,6 @@ def bootstrap_agent(bubs: imman.Bradley, rl_agent_color: str, existing_q_table_p
 
 def get_number_with_probability(probability: float) -> int:
     """Generate a random number with a given probability.
-
     This function takes a probability value as an argument, which should be between 
     0 and 1 (inclusive). The function generates a random number between 0 and 1 
     using the `random` module of the Python standard library. 
@@ -232,14 +235,18 @@ def get_number_with_probability(probability: float) -> int:
 
     Args:
         probability (float): A float representing the probability of generating a 1.
-
     Returns:
         int: A random integer value of either 0 or 1.
-
-    Raises:
-        None
     """
+    if PRINT_RESULTS_DEBUG:
+        print_statements_debug.write('========== Hello from Helper Methods get_number_with_probability ==========\n\n')
+        print_statements_debug.write(f'probability: {probability}\n')
+
     if random.random() < probability:
+        if PRINT_RESULTS_DEBUG:
+            print_statements_debug.write("========== Bye from Helper Methods get_number_with_probability ==========\n\n\n")
         return 1
     else:
+        if PRINT_RESULTS_DEBUG:
+            print_statements_debug.write("========== Bye from Helper Methods get_number_with_probability ==========\n\n\n")
         return 0
