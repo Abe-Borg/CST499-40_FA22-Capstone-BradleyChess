@@ -12,9 +12,13 @@ from typing import Union
 
 # logger = logging.getLogger(__name__)
 
-print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\print_statements.txt'
+print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\AGENT_print_statements.txt'
 print_statements_debug = open(print_debug_statements_filepath, 'a')
 PRINT_RESULTS_DEBUG: bool = True
+
+error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\AGENT_error_log.txt'
+error_log = open(error_log_filepath, 'a')
+
 # print_statements_debug.write(f'\n\n Start of {game_num_str} training\n\n')
 
 class Agent:
@@ -46,7 +50,11 @@ class Agent:
         'promotion_to_queen': 50
     }
 
-    def __init__(self, color: str, chess_data: pd.DataFrame):        
+    def __init__(self, color: str, chess_data: pd.DataFrame):   
+
+        if PRINT_RESULTS_DEBUG:
+            print_statements_debug.write(f'========== Hello from Agent __init__ ==========\n\n')
+
         self.color = color
         self.chess_data = chess_data
         self.settings: Settings.Settings = Settings.Settings()
@@ -54,11 +62,10 @@ class Agent:
         self.Q_table: pd.DataFrame = self.init_Q_table(self.chess_data)
 
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent __init__\n')
             print_statements_debug.write(f'chess_data: {self.chess_data.head()}\n')
             print_statements_debug.write(f'is_trained: {self.is_trained}\n')
             print_statements_debug.write(f'Q_table: {self.Q_table.head()}\n')
-            print_statements_debug.write(f'Bye from Agent __init__\n\n\n')
+            print_statements_debug.write(f'========== Bye from Agent __init__ ==========\n\n\n')
 
     # @log_config.log_execution_time_every_N()
     def choose_action(self, environ_state: dict[str, str, list[str]], curr_game: str = 'Game 1') -> dict[str]:
@@ -97,7 +104,7 @@ class Agent:
         self.curr_game: str = curr_game
 
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent choose_action\n')
+            print_statements_debug.write(f'========== Hello from Agent choose_action ========== \n\n')
             print_statements_debug.write(f'environ_state: {environ_state}\n')
             print_statements_debug.write(f'legal_moves: {self.legal_moves}\n')
             print_statements_debug.write(f'curr_turn: {self.curr_turn}\n')
@@ -110,18 +117,18 @@ class Agent:
 
         if moves_not_in_Q_table:
             if PRINT_RESULTS_DEBUG:
-                print_statements_debug.write(f'bye from Agent choose_action, going to update_Q_table\n\n\n')
+                print_statements_debug.write(f'========== bye from Agent choose_action, going to update_Q_table =========== \n\n\n')
 
             self.update_Q_table(moves_not_in_Q_table)
                 
         if self.is_trained:
             if PRINT_RESULTS_DEBUG:
-                print_statements_debug.write(f'bye from Agent choose_action, going to policy_game_mode\n\n\n')
+                print_statements_debug.write(f'========== bye from Agent choose_action, going to policy_game_mode ========== \n\n\n')
 
             return self.policy_game_mode() # this function call returns a dict that contains a chess move.
         else:
             if PRINT_RESULTS_DEBUG:
-                print_statements_debug.write(f'bye from Agent choose_action, going to policy_training_mode\n\n\n')
+                print_statements_debug.write(f'========== bye from Agent choose_action, going to policy_training_mode ==========\n\n\n')
 
             return self.policy_training_mode() # this function call returns a dict that contains a chess move.
     ### end of choose_action ###
@@ -140,9 +147,9 @@ class Agent:
 
         """
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent policy_training_mode\n')
-            print_statements_debug.write(f"the selected chess move from db is: chess_move_str = {self.chess_data.at[self.curr_game, self.curr_turn]}\n")
-            print_statements_debug.write(f'bye from Agent policy_training_mode\n\n\n')
+            print_statements_debug.write(f'========== Hello from Agent policy_training_mode ========== \n\n')
+            print_statements_debug.write(f"the selected chess move from db is: {self.chess_data.at[self.curr_game, self.curr_turn]}\n")
+            print_statements_debug.write(f'========== bye from Agent policy_training_mode ========== \n\n\n')
 
         return {'chess_move_str': self.chess_data.at[self.curr_game, self.curr_turn]}
     ### end of policy_training_mode ###
@@ -163,13 +170,13 @@ class Agent:
 
         """
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent policy_game_mode\n')
+            print_statements_debug.write(f'========== Hello from Agent policy_game_mode ==========\n\n')
 
         # dice roll will be 0 or 1
         dice_roll: int = helper_methods.get_number_with_probability(self.settings.chance_for_random)
 
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'dice roll val: {dice_roll}\n')
+            print_statements_debug.write(f'dice roll val is: {dice_roll}\n')
         
         # get the list of chess moves in the q table, then filter that so that 
         # only the legal moves for this turn remain.
@@ -202,7 +209,7 @@ class Agent:
         #     self.change_Q_table_pts(chess_move_str, self.curr_turn, self.settings.new_move_pts)
 
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'bye from Agent policy_game_mode\n\n\n')
+            print_statements_debug.write(f'========== bye from Agent policy_game_mode ==========\n\n\n')
 
         return {'chess_move_str': chess_move_str}
     ### end of policy_game_mode ###
@@ -210,7 +217,6 @@ class Agent:
     # @log_config.log_execution_time_every_N()
     def choose_high_val_move(self) -> dict[str]:
         """ Selects the best chess move from a list of legal moves during training mode.
-        
         The method is used during training mode to select the 
         best chess move from a list of legal moves. The method assigns a value to each 
         move based on whether it results in a check, capture, or promotion, and selects the 
@@ -219,14 +225,12 @@ class Agent:
         
         Args:
                 None
-
         Returns:
             dict[str]: A dictionary containing the selected chess move as a string.
-
         """
 
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent choose_high_val_move\n')
+            print_statements_debug.write(f'========== Hello from Agent choose_high_val_move ==========\n\n')
 
         highest_move_value: int = 0
         best_move: dict[str] = None
@@ -258,7 +262,7 @@ class Agent:
         
         if PRINT_RESULTS_DEBUG:
             print_statements_debug.write(f'best_move: {best_move}\n')
-            print_statements_debug.write(f'bye from Agent choose_high_val_move\n\n\n')
+            print_statements_debug.write(f'========== bye from Agent choose_high_val_move ==========\n\n\n')
         
         return best_move
     ### end of choose_high_val_move ###
@@ -271,12 +275,11 @@ class Agent:
 
         Args:
             chess_data: A pandas dataframe containing chess data.
-
         Returns:
             A pandas dataframe representing the Q table.
         """
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent init_Q_table\n')
+            print_statements_debug.write(f'========== Hello from Agent init_Q_table ==========\n\n')
 
         unique_moves: pd.Index = self.get_unique_moves(chess_data, self.color)
         turns_list: pd.Index =  self.get_turns_list(chess_data, self.color)
@@ -285,15 +288,15 @@ class Agent:
         if PRINT_RESULTS_DEBUG:
             print_statements_debug.write(f'unique_moves: {unique_moves}\n')
             print_statements_debug.write(f'turns_list: {turns_list}\n')
-            print_statements_debug.write(f'q_table: {q_table.head(2)}\n')
-            print_statements_debug.write(f'bye from Agent init_Q_table\n\n\n')
+            print_statements_debug.write(f'q_table: {q_table.head()}\n')
+            print_statements_debug.write(f'q_table shape: {q_table.shape}\n')
+            print_statements_debug.write(f'========== bye from Agent init_Q_table ==========\n\n\n')
 
         return q_table
     ### end of init_Q_table ###
 
     # @log_config.log_execution_time_every_N()
     def get_unique_moves(self, chess_data: pd.DataFrame, color: str) -> pd.Index:
-
         move_columns = [col for col in chess_data.columns if col.startswith(color)]
 
         # Flatten all the values in these columns and find unique values
@@ -304,9 +307,10 @@ class Agent:
         # unique_moves = pd.concat([chess_data.loc[:, f"{color}{i}"].value_counts() for i in range(1, self.settings.max_num_turns_per_player + 1)]).index.unique()
 
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent get_unique_moves\n')
+            print_statements_debug.write(f'========== Hello from Agent get_unique_moves ==========\n\n')
             print_statements_debug.write(f'unique_moves: {unique_moves}\n')
-            print_statements_debug.write(f'bye from Agent get_unique_moves\n\n\n')
+            print_statements_debug.write(f'unique_moves len: {len(unique_moves)}\n')
+            print_statements_debug.write(f'========== bye from Agent get_unique_moves ==========\n\n\n')
 
         return unique_moves
 
@@ -315,9 +319,9 @@ class Agent:
         turns_list = chess_data.loc[:, f"{color}1": f"{color}{self.settings.max_num_turns_per_player}": 2].columns
         
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent get_turns_list\n')
+            print_statements_debug.write(f'========== Hello from Agent get_turns_list ==========\n\n')
             print_statements_debug.write(f'turns_list: {turns_list}\n')
-            print_statements_debug.write(f'bye from Agent get_turns_list\n\n\n')
+            print_statements_debug.write(f'========== bye from Agent get_turns_list==========\n\n\n')
 
         return turns_list
 
@@ -331,17 +335,15 @@ class Agent:
             chess_move (str): A string representing the chess move, e.g. 'e4'.
             curr_turn (str): A string representing the turn number, e.g. 'W10'.
             pts (int): An integer representing the number of points to add to the Q table cell.
-
         Returns:
             None
-
         """
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent change_Q_table_pts\n')
+            print_statements_debug.write(f'========== Hello from Agent change_Q_table_pts ==========\n\n')
             print_statements_debug.write(f'chess_move: {chess_move}\n')
             print_statements_debug.write(f'curr_turn: {curr_turn}\n')
             print_statements_debug.write(f'pts: {pts}\n')
-            print_statements_debug.write(f'bye from Agent change_Q_table_pts\n\n\n')
+            print_statements_debug.write(f'========== bye from Agent change_Q_table_pts ==========\n\n\n')
 
         self.Q_table.at[chess_move, curr_turn] += pts
     ### end of change_Q_table_pts ###
@@ -355,16 +357,14 @@ class Agent:
 
         Args:
             new_chess_moves (list[str]): A list of chess moves (strings) that are not already in the Q table.
-
         Returns:
-            None of list of str
-
+            None or list of str
         """
         # Filter out moves that are already in the Q_table
         # copying the list to avoid in-place modifications
 
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent update_Q_table\n')
+            print_statements_debug.write(f'========== Hello from Agent update_Q_table ==========\n\n')
             print_statements_debug.write(f'new_chess_moves: {new_chess_moves}\n')
 
         filtered_moves = [move for move in new_chess_moves if move not in self.Q_table.index]
@@ -373,7 +373,7 @@ class Agent:
             print_statements_debug.write(f'filtered_moves: {filtered_moves}\n')
         
         if not filtered_moves:
-            # logger.warning(f'new_chess_moves list was empty')
+            error_log.write(f'at update_Q_table: new_chess_moves list is empty\n')
             return ["new_chess_moves list is empty"]
 
         q_table_new_values: pd.DataFrame = pd.DataFrame(0, index = filtered_moves, columns = self.Q_table.columns, dtype = np.int32)
@@ -382,7 +382,7 @@ class Agent:
         if PRINT_RESULTS_DEBUG:
             print_statements_debug.write(f'q_table_new_values: {q_table_new_values.head()}\n')
             print_statements_debug.write(f'Q_table: {self.Q_table.head(2)}\n')
-            print_statements_debug.write(f'bye from Agent update_Q_table\n\n\n')
+            print_statements_debug.write(f'========== bye from Agent update_Q_table ==========\n\n\n')
 
         return None
     ### update_Q_table ###
@@ -390,46 +390,40 @@ class Agent:
     # @log_config.log_execution_time_every_N()        
     def reset_Q_table(self) -> None:
         """Resets the Q table to all zeros.
-
         This method sets all cells in the Q table to zero. Call this method when you want to retrain the agent.
 
         Args:
             None
-
         Returns:
             None
-
         """
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent reset_Q_table\n')
-            print_statements_debug.write(f'Q_table: {self.Q_table.head(2)}\n')
+            print_statements_debug.write(f'========== Hello from Agent reset_Q_table ==========\n\n')
+            print_statements_debug.write(f'Q_table: {self.Q_table.head()}\n')
 
         self.Q_table.iloc[:, :] = 0
         
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Q_table: {self.Q_table.head(2)}\n')
+            print_statements_debug.write(f'Q_table: {self.Q_table.head()}\n')
             print_statements_debug.write(f'bye from Agent reset_Q_table\n\n\n')
-
     ### end of reset_Q_table ###
 
     # @log_config.log_execution_time_every_N()
     def get_Q_values(self) -> pd.Series:
         """Returns a Pandas series of Q values for the current turn.
         The series index represents the unique moves that have been found in the chess data for the current turn.
-
+        
         Args:
             None
-
         Returns:
             pd.Series: A Pandas series where the index represents the chess moves, and the column is the current turn in the game.
-
         """
         if PRINT_RESULTS_DEBUG:
-            print_statements_debug.write(f'Hello from Agent get_Q_values\n')
+            print_statements_debug.write(f'========== Hello from Agent get_Q_values ==========\n\n')
             print_statements_debug.write(f'Q_table: {self.Q_table.head()}\n')
             print_statements_debug.write(f'curr_turn: {self.curr_turn}\n')
             print_statements_debug.write(f'Q_table[curr_turn]: {self.Q_table[self.curr_turn].head()}\n')
-            print_statements_debug.write(f'bye from Agent get_Q_values\n\n\n')
+            print_statements_debug.write(f'========== bye from Agent get_Q_values ==========\n\n\n')
 
         return self.Q_table[self.curr_turn]
     ### end of get_Q_values

@@ -11,21 +11,20 @@ import copy
 # import log_config
 # logger = logging.getLogger(__name__)
 
-print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\print_statements.txt'
+print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\BRADLEY_print_statements.txt'
 print_statements_debug = open(print_debug_statements_filepath, 'a')
 PRINT_RESULTS_DEBUG: bool = True
-# print_statements_debug.write(f'\n\n Start of {game_num_str} training\n\n')
 
+error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\BRADLEY_error_log.txt'
+error_log = open(error_log_filepath, 'a')
 
 class Bradley:
     """Acts as the single point of communication between the RL agent and the player.
-
     This class trains the agent and helps to manage the chessboard during play between the computer and the user.
     This is a composite class with members of the Environ class and the Agent class.
 
     Args:
         chess_data (pd.DataFrame): A Pandas DataFrame containing the chess data.
-
     Attributes:
         chess_data (pd.DataFrame): A Pandas DataFrame containing the chess data.
         settings (Settings.Settings): A Settings object containing the settings for the RL agents.
@@ -33,7 +32,6 @@ class Bradley:
         W_rl_agent (Agent.Agent): A white RL Agent object.
         B_rl_agent (Agent.Agent): A black RL Agent object.
             engine (chess.engine.SimpleEngine): A Stockfish engine used to analyze positions during training.
-
     """
     def __init__(self, chess_data: pd.DataFrame):
         self.chess_data = chess_data

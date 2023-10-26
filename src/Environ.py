@@ -7,10 +7,12 @@ import copy
 
 # logger = logging.getLogger(__name__)
 
-print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\print_statements.txt'
+print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\ENVIRON_print_statements.txt'
 print_statements_debug = open(print_debug_statements_filepath, 'a')
 PRINT_RESULTS_DEBUG: bool = True
-# print_statements_debug.write(f'\n\n Start of {game_num_str} training\n\n')
+
+error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\ENVIRON_error_log.txt'
+error_log = open(error_log_filepath, 'a')
 
 class Environ:
     """Manages the chessboard and determines its state.
