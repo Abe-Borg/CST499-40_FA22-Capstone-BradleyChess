@@ -6,6 +6,11 @@ import random
 
 # logger = logging.getLogger(__name__)
 
+print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\print_statements.txt'
+print_statements_debug = open(print_debug_statements_filepath, 'a')
+PRINT_RESULTS_DEBUG: bool = True
+# print_statements_debug.write(f'\n\n Start of {game_num_str} training\n\n')
+
 def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
     """Initializes a Bradley object with the given chess data.
 

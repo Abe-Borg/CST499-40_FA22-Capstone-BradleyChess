@@ -9,13 +9,13 @@ import pandas as pd
 import copy
 # import logging
 # import log_config
-
 # logger = logging.getLogger(__name__)
 
-## note to reader: throughout this code you will see dictionaries for things that
-## don't necessily need a dictionary. chess_move is a good example.
-## I did this to make this implementation flexible. There is more
-## than one way to indicate the chess move, along with other info related to the chess move.
+print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\print_statements.txt'
+print_statements_debug = open(print_debug_statements_filepath, 'a')
+PRINT_RESULTS_DEBUG: bool = True
+# print_statements_debug.write(f'\n\n Start of {game_num_str} training\n\n')
+
 
 class Bradley:
     """Acts as the single point of communication between the RL agent and the player.
@@ -41,9 +41,7 @@ class Bradley:
         self.environ = Environ.Environ(self.chess_data)   
         self.W_rl_agent = Agent.Agent('W', self.chess_data)             
         self.B_rl_agent = Agent.Agent('B', self.chess_data)
-
-        # set the sarsa learning params for the agents here, 
-        # or you can do nothing and keep the defaults.  
+  
         self.W_rl_agent.settings.learn_rate = 0.6
         self.W_rl_agent.settings.discount_factor = 0.3
 
@@ -51,7 +49,8 @@ class Bradley:
         self.B_rl_agent.settings.discount_factor = 0.8
 
         # stockfish is used to analyze positions during training
-        # this is how we estimate the q value at each position, and also for anticipated next position
+        # this is how we estimate the q value at each position, 
+        # and also for anticipated next position
         self.engine = chess.engine.SimpleEngine.popen_uci(self.settings.stockfish_filepath)
 
     # @log_config.log_execution_time_every_N()
@@ -210,22 +209,18 @@ class Bradley:
     # @log_config.log_execution_time_every_N()
     def get_game_outcome(self) -> chess.Outcome or str:   
         """Returns the outcome of the chess game.
-
         Call this method to get the outcome of the chess game, either '1-0', '0-1', '1/2-1/2', or 'False' if the outcome is not available.
 
         Args:
             None
-
         Returns:
             chess.Outcome or str: An instance of the `chess.Outcome` class with a `result()` method that returns the outcome of the game, or a string indicating that the outcome is not available.
-
         Raises:
         AttributeError: If the outcome is not available due to an invalid board state.
-        
         """
         try:
             return self.environ.board.outcome().result()
-        except AttributeError:
+        except AttributeError as e:
             # logger.error("game outcome not available")
             print(f'An error occurred: {e}')
             return 'outcome not available, most likely game ended because turn_index was too high or player resigned'
@@ -234,22 +229,18 @@ class Bradley:
     # @log_config.log_execution_time_every_N()
     def get_game_termination_reason(self) -> str:
         """Determines why the game ended.
-
         Call this method to determine why the game ended. If the game ended due to a checkmate, a string 'termination.CHECKMATE' will be returned. This method will raise an `AttributeError` exception if the outcome is not available due to an invalid board state.
 
         Args:
             None
-
         Returns:
             str: A single string that describes the reason for the game ending.
-
         Raises:
             AttributeError: If the outcome is not available due to an invalid board state.
-
         """
         try:
             return str(self.environ.board.outcome().termination)
-        except AttributeError:
+        except AttributeError as e:
             print(f'An error occurred: {e}')
             # logger.error('termination reason not available')
             return 'termination reason not available, most likely game ended because turn_index was too high or player resigned'
@@ -257,15 +248,13 @@ class Bradley:
     
     def get_chessboard(self) -> chess.Board:
         """Returns the current state of the chessboard.
-
-        Call this method to get the current state of the chessboard as a `chess.Board` object. The `chess.Board` object can be printed to get an ASCII representation of the chessboard and current state of the game.
+        Call this method to get the current state of the chessboard as a `chess.Board` object. The `chess.Board` 
+        object can be printed to get an ASCII representation of the chessboard and current state of the game.
 
         Args:
             None
-
         Returns:
             chess.Board: A `chess.Board` object representing the current state of the chessboard.
-
         """
         return self.environ.board
     ### end of get_chess_board
@@ -273,7 +262,6 @@ class Bradley:
     # @log_config.log_execution_time_every_N()
     def train_rl_agents(self, training_results_filepath: str) -> None:
         """Trains the RL agents using the SARSA algorithm and sets their `is_trained` flag to True.
-        
         The algorithm used for training is SARSA. Two rl agents train each other
         A chess game can end at multiple places during training, so we need to 
         check for end-game conditions throughout this method.
@@ -288,7 +276,6 @@ class Bradley:
 
         Args:
             training_results_filepath (str): The file path to save the training results to.
-        
         Returns: 
                 None
         """ 
@@ -311,7 +298,6 @@ class Bradley:
             # loop plays through one game in the database, exactly as shown.
             while curr_state['turn_index'] < num_chess_moves_curr_training_game:
                 ##################### WHITE'S TURN ####################
-                #######################################################
                 ##### WHITE AGENT PICKS MOVE, DONT PLAY IT YET THOUGH!!! #####
                 # choose action a from state s, using policy
                 W_chess_move = self.rl_agent_PICKS_move_training_mode(curr_state, self.W_rl_agent.color, game_num_str)
@@ -337,7 +323,6 @@ class Bradley:
                     W_est_Qval: int = self.find_estimated_Q_value()
 
                 ##################### BLACK'S TURN ####################
-                #######################################################
                 ##### BLACK AGENT PICKS MOVE, DONT PLAY IT YET THOUGH!!! #####
                 B_chess_move = self.rl_agent_PICKS_move_training_mode(curr_state, self.B_rl_agent.color, game_num_str)
                 
@@ -413,7 +398,6 @@ class Bradley:
 
             while self.game_on():
                 #################### WHITE'S TURN ####################
-                ######################################################
                 ##### WHITE AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
                 W_chess_move = self.rl_agent_PICKS_move_training_mode(curr_state, self.W_rl_agent.color)
 
@@ -434,7 +418,6 @@ class Bradley:
                     W_est_Qval: int = self.find_estimated_Q_value()
 
                 #################### BLACK'S TURN ####################
-                ######################################################
                 ##### BLACK AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
                 B_chess_move = self.rl_agent_PICKS_move_training_mode(curr_state, self.B_rl_agent.color)
 
@@ -486,8 +469,10 @@ class Bradley:
     # @log_config.log_execution_time_every_N()
     def rl_agent_PICKS_move_training_mode(self, curr_state: dict[str, str, list[str]], rl_agent_color: str, game_num_str: str = 'Game 1') -> str:
         """
-        This method is used by the RL agent to pick a move during training mode. It takes in the current state of the chessboard,
-        the color of the RL agent, and the game number as input parameters. It returns the chess move as a string that the RL agent
+        This method is used by the RL agent to pick a move during training mode. 
+        It takes in the current state of the chessboard,
+        the color of the RL agent, and the game number as input parameters. 
+        It returns the chess move as a string that the RL agent
         has chosen to play.
 
         Parameters:
@@ -665,7 +650,7 @@ class Bradley:
         next_Qval = curr_Qval + learn_rate * (reward + ((discount_factor * est_Qval) - curr_Qval))
         return next_Qval
     # end of find_next_Qval
-
+    
     ########## END OF TRAINING HELPER METHODS ####################
 
     # @log_config.log_execution_time_every_N()

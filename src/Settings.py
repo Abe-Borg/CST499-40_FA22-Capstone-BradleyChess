@@ -20,7 +20,7 @@ class Settings:
         self.max_num_turns_per_player = 50
 
         # the following numbers are based on centipawn scores, but not exactly. for example, the checkmate point value is made up.
-        self.new_move_pts = 1_000
+        self.new_move_pts = 100
         self.chance_for_random = 0.10
         self.initial_q_val = 50  # this is about the centipawn score for W on its first move
         self.piece_dev_pts = 50

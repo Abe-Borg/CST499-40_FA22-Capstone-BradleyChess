@@ -8,6 +8,11 @@ settings = Settings.Settings()
 
 # logger = logging.getLogger(__name__)
 
+print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\print_statements.txt'
+print_statements_debug = open(print_debug_statements_filepath, 'a')
+PRINT_RESULTS_DEBUG: bool = True
+# print_statements_debug.write(f'\n\n Start of {game_num_str} training\n\n')
+
 chess_data = pd.read_pickle(settings.chess_data_path, compression = 'zip') 
 training_chess_data = chess_data.sample(settings.training_sample_size) 
 

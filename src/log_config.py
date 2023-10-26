@@ -2,7 +2,7 @@ import logging
 import functools
 import time
 
-logging.basicConfig(filename = 'app.log', filemode = 'w', format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s', level = logging.DEBUG)
+logging.basicConfig(filename = 'app.log', filemode = 'w', format = '%(message)s', level = logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -31,7 +31,7 @@ def log_execution_time(func):
         result = func(*args, **kwargs)
         end_time = time.perf_counter()
         elapsed_time = end_time - start_time
-        logger.info(f'Executed {func.__name__} in {elapsed_time: .4f} seconds.')
+        logger.info(f'{func.__name__}: {elapsed_time: .4f} seconds.')
         return result
     return wrapper
 
@@ -70,7 +70,7 @@ def log_execution_time_every_N(n = 10):
 
             if counter[0] % n == 0:
                 elapsed_time = end_time - start_time
-                logger.info(f"Executed {func.__name__} in {elapsed_time:.4f} seconds (Call #{counter[0]})")
+                logger.info(f"{func.__name__}: {elapsed_time:.4f} seconds (Call #{counter[0]})")
 
             return result
 
