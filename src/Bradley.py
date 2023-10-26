@@ -52,10 +52,10 @@ class Bradley:
         self.B_rl_agent.settings.discount_factor = 0.8
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'White agent learn rate is: {self.W_rl_agent.settings.learn_rate}\n')
-            print_debug_statements_filepath.write(f'White agent discount factor is: {self.W_rl_agent.settings.discount_factor}\n') 
-            print_debug_statements_filepath.write(f'Black agent learn rate is: {self.B_rl_agent.settings.learn_rate}\n')
-            print_debug_statements_filepath.write(f'Black agent discount factor is: {self.B_rl_agent.settings.discount_factor}\n')
+            print_statements_debug.write(f'White agent learn rate is: {self.W_rl_agent.settings.learn_rate}\n')
+            print_statements_debug.write(f'White agent discount factor is: {self.W_rl_agent.settings.discount_factor}\n') 
+            print_statements_debug.write(f'Black agent learn rate is: {self.B_rl_agent.settings.learn_rate}\n')
+            print_statements_debug.write(f'Black agent discount factor is: {self.B_rl_agent.settings.discount_factor}\n')
 
         # stockfish is used to analyze positions during training
         # this is how we estimate the q value at each position, 
@@ -76,7 +76,7 @@ class Bradley:
             bool: A boolean value indicating whether the move was successfully loaded.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.recv_opp_move ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.recv_opp_move ==========\n\n")
 
         # load_chessboard returns False if failure to add move to board,
         if self.environ.load_chessboard(chess_move):
@@ -84,12 +84,12 @@ class Bradley:
             self.environ.update_curr_state()
 
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Chessboard was successfully loaded with move: {chess_move}\n')
-                print_debug_statements_filepath.write(f'Chessboard looks like this:\n\n')
-                print_debug_statements_filepath.write(f'\n {self.environ.board}\n\n')
-                print_debug_statements_filepath.write(f'Current turn is: {self.environ.get_curr_turn()}\n')
-                print_debug_statements_filepath.write(f'Current turn index is: {self.environ.turn_index}\n')
-                print_debug_statements_filepath.write("Bye from Bradley.recv_opp_move\n\n\n")
+                print_statements_debug.write(f'Chessboard was successfully loaded with move: {chess_move}\n')
+                print_statements_debug.write(f'Chessboard looks like this:\n\n')
+                print_statements_debug.write(f'\n {self.environ.board}\n\n')
+                print_statements_debug.write(f'Current turn is: {self.environ.get_curr_turn()}\n')
+                print_statements_debug.write(f'Current turn index is: {self.environ.turn_index}\n')
+                print_statements_debug.write("Bye from Bradley.recv_opp_move\n\n\n")
 
             return True
         else:
@@ -109,7 +109,7 @@ class Bradley:
             dict[str]: A dictionary containing the selected chess move string.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.rl_agent_selects_chess_move ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.rl_agent_selects_chess_move ==========\n\n")
 
         if rl_agent_color == 'W':
             chess_move: dict[str] = self.W_rl_agent.choose_action(self.environ.get_curr_state()) # choose_action returns a dictionary
@@ -120,12 +120,12 @@ class Bradley:
             self.environ.update_curr_state()
             
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Chessboard was successfully loaded with move: {chess_move}\n')
-                print_debug_statements_filepath.write(f'Chessboard looks like this:\n\n')
-                print_debug_statements_filepath.write(f'\n {self.environ.board}\n\n')
-                print_debug_statements_filepath.write(f'Current turn is: {self.environ.get_curr_turn()}\n')
-                print_debug_statements_filepath.write(f'Current turn index is: {self.environ.turn_index}\n')
-                print_debug_statements_filepath.write("Bye from Bradley.rl_agent_selects_chess_move\n\n\n")
+                print_statements_debug.write(f'Chessboard was successfully loaded with move: {chess_move}\n')
+                print_statements_debug.write(f'Chessboard looks like this:\n\n')
+                print_statements_debug.write(f'\n {self.environ.board}\n\n')
+                print_statements_debug.write(f'Current turn is: {self.environ.get_curr_turn()}\n')
+                print_statements_debug.write(f'Current turn index is: {self.environ.turn_index}\n')
+                print_statements_debug.write("Bye from Bradley.rl_agent_selects_chess_move\n\n\n")
 
             return chess_move
         else:
@@ -146,13 +146,13 @@ class Bradley:
             such as 'rnbqkbnr/pppp1ppp/8/8/4p1P1/5P2/PPPPP2P/RNBQKBNR w KQkq - 0 3'.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.get_fen_str ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.get_fen_str ==========\n\n")
 
         try:
             fen: str = self.environ.board.fen()
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'FEN string is: {fen}\n')
-                print_debug_statements_filepath.write("Bye from Bradley.get_fen_str\n\n\n")
+                print_statements_debug.write(f'FEN string is: {fen}\n')
+                print_statements_debug.write("Bye from Bradley.get_fen_str\n\n\n")
             return fen
         except Exception as e:
             error_log.write(f'An error occurred: {e}\n')
@@ -170,17 +170,17 @@ class Bradley:
             str: A string indicating the color of the opposing RL agent, either 'W' or 'B'.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.get_opp_agent_color ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.get_opp_agent_color ==========\n\n")
 
         if rl_agent_color == 'W':
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Opposing agent color is: B\n')
-                print_debug_statements_filepath.write("Bye from Bradley.get_opp_agent_color\n\n\n")
+                print_statements_debug.write(f'Opposing agent color is: B\n')
+                print_statements_debug.write("Bye from Bradley.get_opp_agent_color\n\n\n")
             return 'B'
         else:
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Opposing agent color is: W\n')
-                print_debug_statements_filepath.write("Bye from Bradley.get_opp_agent_color\n\n\n")
+                print_statements_debug.write(f'Opposing agent color is: W\n')
+                print_statements_debug.write("Bye from Bradley.get_opp_agent_color\n\n\n")
             return 'W'
     ### end of get_opp_agent_color
             
@@ -195,13 +195,13 @@ class Bradley:
             str: A string representing the current turn.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.get_curr_turn ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.get_curr_turn ==========\n\n")
         
         curr_turn = self.environ.get_curr_turn()
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'Current turn is: {curr_turn}\n')
-            print_debug_statements_filepath.write("Bye from Bradley.get_curr_turn\n\n\n")
+            print_statements_debug.write(f'Current turn is: {curr_turn}\n')
+            print_statements_debug.write("Bye from Bradley.get_curr_turn\n\n\n")
 
         return curr_turn
     ### end of get_curr_turn
@@ -218,17 +218,17 @@ class Bradley:
             bool: A boolean value indicating whether the game is still ongoing (`True`) or not (`False`).
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.game_on ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.game_on ==========\n\n")
 
         if self.environ.board.is_game_over() or self.environ.turn_index >= self.settings.max_num_turns_per_player * 2 - 1:
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Game over, game_on is: False\n')
-                print_debug_statements_filepath.write("Bye from Bradley.game_on\n\n\n")
+                print_statements_debug.write(f'Game over, game_on is: False\n')
+                print_statements_debug.write("Bye from Bradley.game_on\n\n\n")
             return False
         else:
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Game is still ongoing, game_on is: True\n')
-                print_debug_statements_filepath.write("========== Bye from Bradley.game_on ==========\n\n\n")
+                print_statements_debug.write(f'Game is still ongoing, game_on is: True\n')
+                print_statements_debug.write("========== Bye from Bradley.game_on ==========\n\n\n")
             return True
     ### end of game_on
 
@@ -243,13 +243,13 @@ class Bradley:
             list[str]: A list of strings representing the legal moves for the current turn and state of the chessboard.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.get_legal_moves ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.get_legal_moves ==========\n\n")
 
         legal_moves = self.environ.get_legal_moves()
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'Legal moves are: {legal_moves}\n')
-            print_debug_statements_filepath.write("========== Bye from Bradley.get_legal_moves ===========\n\n\n")
+            print_statements_debug.write(f'Legal moves are: {legal_moves}\n')
+            print_statements_debug.write("========== Bye from Bradley.get_legal_moves ===========\n\n\n")
 
         return legal_moves
     ### end of get_legal_moves
@@ -264,9 +264,9 @@ class Bradley:
             str: A string indicating the color of the RL agent, either 'W' or 'B'.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.get_rl_agent_color ==========\n\n")
-            print_debug_statements_filepath.write(f'RL agent color is: {self.rl_agent.color}\n')
-            print_debug_statements_filepath.write("========== Bye from Bradley.get_rl_agent_color ===========\n\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.get_rl_agent_color ==========\n\n")
+            print_statements_debug.write(f'RL agent color is: {self.rl_agent.color}\n')
+            print_statements_debug.write("========== Bye from Bradley.get_rl_agent_color ===========\n\n\n")
 
         return self.rl_agent.color
     ### end of get_rl_agent_color
@@ -286,13 +286,13 @@ class Bradley:
         AttributeError: If the outcome is not available due to an invalid board state.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.get_game_outcome ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.get_game_outcome ==========\n\n")
 
         try:
             game_outcome = self.environ.board.outcome().result()
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Game outcome is: {game_outcome}\n')
-                print_debug_statements_filepath.write("========== Bye from Bradley.get_game_outcome ===========\n\n\n")
+                print_statements_debug.write(f'Game outcome is: {game_outcome}\n')
+                print_statements_debug.write("========== Bye from Bradley.get_game_outcome ===========\n\n\n")
 
             return game_outcome
         except AttributeError as e:
@@ -316,14 +316,14 @@ class Bradley:
             AttributeError: If the outcome is not available due to an invalid board state.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.get_game_termination_reason ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.get_game_termination_reason ==========\n\n")
 
         try:
             termination_reason = str(self.environ.board.outcome().termination)
 
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Termination reason is: {termination_reason}\n')
-                print_debug_statements_filepath.write("========== Bye from Bradley.get_game_termination_reason ===========\n\n\n")
+                print_statements_debug.write(f'Termination reason is: {termination_reason}\n')
+                print_statements_debug.write("========== Bye from Bradley.get_game_termination_reason ===========\n\n\n")
 
             return termination_reason
         except AttributeError as e:
@@ -343,10 +343,10 @@ class Bradley:
             chess.Board: A `chess.Board` object representing the current state of the chessboard.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.get_chessboard ==========\n\n")
-            print_debug_statements_filepath.write(f'Chessboard looks like this:\n\n')
-            print_debug_statements_filepath.write(f'\n {self.environ.board}\n\n')
-            print_debug_statements_filepath.write("========== Bye from Bradley.get_chessboard ===========\n\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.get_chessboard ==========\n\n")
+            print_statements_debug.write(f'Chessboard looks like this:\n\n')
+            print_statements_debug.write(f'\n {self.environ.board}\n\n')
+            print_statements_debug.write("========== Bye from Bradley.get_chessboard ===========\n\n\n")
 
         return self.environ.board
     ### end of get_chess_board
@@ -373,7 +373,7 @@ class Bradley:
         """ 
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.train_rl_agents ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.train_rl_agents ==========\n\n")
 
         training_results = open(training_results_filepath, 'a')
         PRINT_RESULTS: bool = True
@@ -382,8 +382,8 @@ class Bradley:
         B_curr_Qval: int = self.settings.initial_q_val
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'White agent initial Q value is: {W_curr_Qval}\n')
-            print_debug_statements_filepath.write(f'Black agent initial Q value is: {B_curr_Qval}\n')
+            print_statements_debug.write(f'White agent initial Q value is: {W_curr_Qval}\n')
+            print_statements_debug.write(f'Black agent initial Q value is: {B_curr_Qval}\n')
 
         # for each game in the training data set. game_num_str, this looks like 'W10'
         for game_num_str in self.chess_data.index:
@@ -397,7 +397,7 @@ class Bradley:
             curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
 
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Current state is: {curr_state}\n')
+                print_statements_debug.write(f'Current state is: {curr_state}\n')
 
             # loop plays through one game in the database, exactly as shown.
             while curr_state['turn_index'] < num_chess_moves_curr_training_game:
@@ -407,8 +407,8 @@ class Bradley:
                 W_chess_move = self.rl_agent_PICKS_move_training_mode(curr_state, self.W_rl_agent.color, game_num_str)
 
                 if PRINT_RESULTS_DEBUG:
-                    print_debug_statements_filepath.write(f'White agent picked move: {W_chess_move}\n')
-                    print_debug_statements_filepath.write(f'on turn: {curr_state["turn_index"]}\n')
+                    print_statements_debug.write(f'White agent picked move: {W_chess_move}\n')
+                    print_statements_debug.write(f'on turn: {curr_state["turn_index"]}\n')
 
                 ##### ASSIGN POINTS TO Q_TABLE FOR WHITE #####
                 # on the first turn for white, this would assign to W1 col at chess_move row.
@@ -421,34 +421,34 @@ class Bradley:
                 W_reward = self.rl_agent_PLAYS_move_training_mode(W_chess_move)
 
                 if PRINT_RESULTS_DEBUG:
-                    print_debug_statements_filepath.write(f'White agent played move: {W_chess_move}\n')
-                    print_debug_statements_filepath.write(f'White agent got reward: {W_reward}\n')
+                    print_statements_debug.write(f'White agent played move: {W_chess_move}\n')
+                    print_statements_debug.write(f'White agent got reward: {W_reward}\n')
                 
                 # the state changes each time a move is made, so get curr state again.    
                 curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
                 
                 if PRINT_RESULTS_DEBUG:
-                    print_debug_statements_filepath.write(f'Current state is: {curr_state}\n')
+                    print_statements_debug.write(f'Current state is: {curr_state}\n')
 
                 ##### FIND THE ESTIMATED Q VALUE FOR WHITE #####
                 # check for game end condition
                 if curr_state['turn_index'] >= num_chess_moves_curr_training_game:
                     if PRINT_RESULTS_DEBUG:
-                        print_debug_statements_filepath.write(f'Game ended on White turn\n')
-                        print_debug_statements_filepath.write(f'curr_state["turn_index"] is: {curr_state["turn_index"]}\n')
-                        print_debug_statements_filepath.write(f'num_chess_moves_curr_training_game is: {num_chess_moves_curr_training_game}\n')
+                        print_statements_debug.write(f'Game ended on White turn\n')
+                        print_statements_debug.write(f'curr_state["turn_index"] is: {curr_state["turn_index"]}\n')
+                        print_statements_debug.write(f'num_chess_moves_curr_training_game is: {num_chess_moves_curr_training_game}\n')
                     break
                 else:
                     W_est_Qval: int = self.find_estimated_Q_value()
                     if PRINT_RESULTS_DEBUG:
-                        print_debug_statements_filepath.write(f'Estimated Q value for White is: {W_est_Qval}\n')
+                        print_statements_debug.write(f'Estimated Q value for White is: {W_est_Qval}\n')
 
                 ##################### BLACK'S TURN ####################
                 ##### BLACK AGENT PICKS MOVE, DONT PLAY IT YET THOUGH!!! #####
                 B_chess_move = self.rl_agent_PICKS_move_training_mode(curr_state, self.B_rl_agent.color, game_num_str)
 
                 if PRINT_RESULTS_DEBUG:
-                    print_debug_statements_filepath.write(f"Black chess move is: {B_chess_move}\n")
+                    print_statements_debug.write(f"Black chess move is: {B_chess_move}\n")
                 
                 ##### ASSIGN POINTS TO Q_TABLE FOR BLACK #####
                 curr_turn: str = curr_state['curr_turn']
@@ -459,20 +459,20 @@ class Bradley:
                 B_reward = self.rl_agent_PLAYS_move_training_mode(B_chess_move)
 
                 if PRINT_RESULTS_DEBUG:
-                    print_debug_statements_filepath.write(f'B reward is: {B_reward} for playing move: {B_chess_move}\n')
+                    print_statements_debug.write(f'B reward is: {B_reward} for playing move: {B_chess_move}\n')
 
                 # the state changes each time a move is made, so get curr state again.                
                 curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
 
                 if PRINT_RESULTS_DEBUG:
-                    print_debug_statements_filepath.write(f'Current state is: {curr_state}\n')
+                    print_statements_debug.write(f'Current state is: {curr_state}\n')
 
                 if self.environ.turn_index >= self.settings.max_num_turns_per_player * 2:
                     # index has reached max value, this will only happen for Black at Black's final max turn, 
                     # White won't ever have this problem.
 
                     if PRINT_RESULTS_DEBUG:
-                        print_debug_statements_filepath.write(
+                        print_statements_debug.write(
                             f"game is over, max number of turns has been reached: "
                             f"{self.environ.turn_index} >= {self.settings.max_num_turns_per_player}\n")
                     break
@@ -481,24 +481,24 @@ class Bradley:
                 # check for game end condition
                 if curr_state['turn_index'] >= num_chess_moves_curr_training_game:
                     if PRINT_RESULTS_DEBUG:
-                        print_debug_statements_filepath.write(f'Game ended on Blacks turn\n')
-                        print_debug_statements_filepath.write(f'curr_state["turn_index"] is: {curr_state["turn_index"]}\n')
-                        print_debug_statements_filepath.write(f'num_chess_moves_curr_training_game is: {num_chess_moves_curr_training_game}\n')
+                        print_statements_debug.write(f'Game ended on Blacks turn\n')
+                        print_statements_debug.write(f'curr_state["turn_index"] is: {curr_state["turn_index"]}\n')
+                        print_statements_debug.write(f'num_chess_moves_curr_training_game is: {num_chess_moves_curr_training_game}\n')
                     break
                 else:
                     B_est_Qval: int = self.find_estimated_Q_value()
 
                     if PRINT_RESULTS_DEBUG:
-                        print_debug_statements_filepath.write(f'estimated b q val is: {B_est_Qval}\n')
+                        print_statements_debug.write(f'estimated b q val is: {B_est_Qval}\n')
 
                 # ***CRITICAL STEP***, this is the main part of the SARSA algorithm. 
                 W_next_Qval: int = self.find_next_Qval(W_curr_Qval, self.W_rl_agent.settings.learn_rate, W_reward, self.W_rl_agent.settings.discount_factor, W_est_Qval)
                 B_next_Qval: int = self.find_next_Qval(B_curr_Qval, self.B_rl_agent.settings.learn_rate, B_reward, self.B_rl_agent.settings.discount_factor, B_est_Qval)
 
                 if PRINT_RESULTS_DEBUG:
-                    print_debug_statements_filepath.write("SARSA calc was successful\n")
-                    print_debug_statements_filepath.write(f'W next Q val is: {W_next_Qval}\n')
-                    print_debug_statements_filepath.write(f'B next Q val is: {B_next_Qval}\n')
+                    print_statements_debug.write("SARSA calc was successful\n")
+                    print_statements_debug.write(f'W next Q val is: {W_next_Qval}\n')
+                    print_statements_debug.write(f'B next Q val is: {B_next_Qval}\n')
             
                 # on the next turn, this Q value will be added to the Q table. so if this is the end of the first round,
                 # next round it will be W2 and then we assign the q value at W2 col
@@ -509,7 +509,7 @@ class Bradley:
                 curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
                 
                 if PRINT_RESULTS_DEBUG:
-                    print_debug_statements_filepath.write(f'Current state is: {curr_state}\n')
+                    print_statements_debug.write(f'Current state is: {curr_state}\n')
             # end curr game while loop
 
             # this curr game is done, reset environ to prepare for the next game
@@ -521,11 +521,11 @@ class Bradley:
                 training_results.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
             
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Game {game_num_str} is over.\n')
-                print_debug_statements_filepath.write(f'\nThe Chessboard looks like this:\n')
-                print_debug_statements_filepath.write(f'\n {self.environ.board}\n\n')
-                print_debug_statements_filepath.write(f'Game result is: {self.get_game_outcome()}\n')
-                print_debug_statements_filepath.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
+                print_statements_debug.write(f'Game {game_num_str} is over.\n')
+                print_statements_debug.write(f'\nThe Chessboard looks like this:\n')
+                print_statements_debug.write(f'\n {self.environ.board}\n\n')
+                print_statements_debug.write(f'Game result is: {self.get_game_outcome()}\n')
+                print_statements_debug.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
 
             self.reset_environ()
         # end of training, all games in database have been processed
@@ -537,9 +537,9 @@ class Bradley:
         self.reset_environ()
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'White agent is trained: {self.W_rl_agent.is_trained}\n')
-            print_debug_statements_filepath.write(f'Black agent is trained: {self.B_rl_agent.is_trained}\n')
-            print_debug_statements_filepath.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
+            print_statements_debug.write(f'White agent is trained: {self.W_rl_agent.is_trained}\n')
+            print_statements_debug.write(f'Black agent is trained: {self.B_rl_agent.is_trained}\n')
+            print_statements_debug.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
     ### end of train_rl_agents
 
     # @log_config.log_execution_time_every_N()
@@ -646,21 +646,21 @@ class Bradley:
             str: A string representing the chess move that the RL agent has chosen to play.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.rl_agent_PICKS_move_training_mode ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.rl_agent_PICKS_move_training_mode ==========\n\n")
 
         if rl_agent_color == 'W':
             curr_action: dict[str] = self.W_rl_agent.choose_action(curr_state, game_num_str)
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'White agent picked move: {curr_action["chess_move_str"]}\n')
+                print_statements_debug.write(f'White agent picked move: {curr_action["chess_move_str"]}\n')
         else:
             curr_action: dict[str] = self.B_rl_agent.choose_action(curr_state, game_num_str)
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Black agent picked move: {curr_action["chess_move_str"]}\n')
+                print_statements_debug.write(f'Black agent picked move: {curr_action["chess_move_str"]}\n')
         
         chess_move: str = curr_action['chess_move_str']
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write("========== Bye from Bradley.rl_agent_PICKS_move_training_mode ===========\n\n\n")
+            print_statements_debug.write("========== Bye from Bradley.rl_agent_PICKS_move_training_mode ===========\n\n\n")
 
         return chess_move
     # end of rl_agent_picks_move_training_mode
@@ -677,11 +677,11 @@ class Bradley:
             None
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.assign_points_to_Q_table_training_mode ==========\n\n")
-            print_debug_statements_filepath.write(f'Chess move is: {chess_move}\n')
-            print_debug_statements_filepath.write(f'Current turn is: {curr_turn}\n')
-            print_debug_statements_filepath.write(f'Current Q value is: {curr_Qval}\n')
-            print_debug_statements_filepath.write(f'RL agent color is: {rl_agent_color}\n')
+            print_statements_debug.write(f"========== Hello from Bradley.assign_points_to_Q_table_training_mode ==========\n\n")
+            print_statements_debug.write(f'Chess move is: {chess_move}\n')
+            print_statements_debug.write(f'Current turn is: {curr_turn}\n')
+            print_statements_debug.write(f'Current Q value is: {curr_Qval}\n')
+            print_statements_debug.write(f'RL agent color is: {rl_agent_color}\n')
 
         if rl_agent_color == 'W':
             try:
@@ -689,7 +689,7 @@ class Bradley:
             except KeyError: 
                 # chess move is not represented in the Q table, update Q table and try again.
                 if PRINT_RESULTS_DEBUG:
-                    print_debug_statements_filepath.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
+                    print_statements_debug.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
 
                 self.W_rl_agent.update_Q_table([chess_move])
                 self.W_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
@@ -699,13 +699,13 @@ class Bradley:
             except KeyError: 
                 # chess move is not represented in the Q table, update Q table and try again.
                 if PRINT_RESULTS_DEBUG:
-                    print_debug_statements_filepath.write(f'Chess move is not represented in the Black Q table, updating Q table and trying again...\n')
+                    print_statements_debug.write(f'Chess move is not represented in the Black Q table, updating Q table and trying again...\n')
 
                 self.B_rl_agent.update_Q_table([chess_move])
                 self.B_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
         
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write("========== Bye from Bradley.assign_points_to_Q_table_training_mode ===========\n\n\n")
+            print_statements_debug.write("========== Bye from Bradley.assign_points_to_Q_table_training_mode ===========\n\n\n")
     # enf of assign_points_to_Q_table_training_mode
 
     # @log_config.log_execution_time_every_N()
@@ -726,8 +726,8 @@ class Bradley:
             int: The reward for the given chess move.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.rl_agent_PLAYS_move_training_mode ==========\n\n")
-            print_debug_statements_filepath.write(f'Chess move is: {chess_move}\n')
+            print_statements_debug.write(f"========== Hello from Bradley.rl_agent_PLAYS_move_training_mode ==========\n\n")
+            print_statements_debug.write(f'Chess move is: {chess_move}\n')
 
         self.environ.load_chessboard(chess_move)
         self.environ.update_curr_state()
@@ -742,8 +742,8 @@ class Bradley:
             reward = analysis_results['mate_score'] * self.settings.mate_score_reward
         
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'Reward for move is: {reward}\n')
-            print_debug_statements_filepath.write("========== Bye from Bradley.rl_agent_PLAYS_move_training_mode ===========\n\n\n")
+            print_statements_debug.write(f'Reward for move is: {reward}\n')
+            print_statements_debug.write("========== Bye from Bradley.rl_agent_PLAYS_move_training_mode ===========\n\n\n")
 
         return reward
     # end of rl_agent_PLAYS_move_training_mode
@@ -771,7 +771,7 @@ class Bradley:
             int: The estimated Q-value for the agent's next action.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.find_estimated_Q_value ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.find_estimated_Q_value ==========\n\n")
 
         ##### RL AGENT CHOOSES NEXT ACTION, BUT DOES NOT PLAY IT !!! #####
         # observe next_state, s' (this would be after the player picks a move
@@ -787,7 +787,7 @@ class Bradley:
         analysis_results = self.analyze_board_state(self.get_chessboard())
         
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'Analysis results are: {analysis_results}\n')
+            print_statements_debug.write(f'Analysis results are: {analysis_results}\n')
 
         #load up the chess board with Black's anticipated chess move               
         self.environ.load_chessboard_for_Q_est(analysis_results) # anticipated next action is a str like, 'e6f2'
@@ -807,8 +807,8 @@ class Bradley:
         self.environ.pop_chessboard()
         
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'estimated q val is: {est_Qval}\n')
-            print_debug_statements_filepath.write("========== Bye from Bradley.find_estimated_Q_value ===========\n\n\n")
+            print_statements_debug.write(f'estimated q val is: {est_Qval}\n')
+            print_statements_debug.write("========== Bye from Bradley.find_estimated_Q_value ===========\n\n\n")
 
         return est_Qval
     # end of find_estimated_Q_value
@@ -832,18 +832,18 @@ class Bradley:
             int: The updated or next Q-value.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.find_next_Qval ==========\n\n")
-            print_debug_statements_filepath.write(f'Current Q value is: {curr_Qval}\n')
-            print_debug_statements_filepath.write(f'Learning rate is: {learn_rate}\n')
-            print_debug_statements_filepath.write(f'Reward is: {reward}\n')
-            print_debug_statements_filepath.write(f'Discount factor is: {discount_factor}\n')
-            print_debug_statements_filepath.write(f'Estimated Q value is: {est_Qval}\n')
+            print_statements_debug.write(f"========== Hello from Bradley.find_next_Qval ==========\n\n")
+            print_statements_debug.write(f'Current Q value is: {curr_Qval}\n')
+            print_statements_debug.write(f'Learning rate is: {learn_rate}\n')
+            print_statements_debug.write(f'Reward is: {reward}\n')
+            print_statements_debug.write(f'Discount factor is: {discount_factor}\n')
+            print_statements_debug.write(f'Estimated Q value is: {est_Qval}\n')
 
         next_Qval = curr_Qval + learn_rate * (reward + ((discount_factor * est_Qval) - curr_Qval))
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'Next Q value is: {next_Qval}\n')
-            print_debug_statements_filepath.write("========== Bye from Bradley.find_next_Qval ===========\n\n\n")
+            print_statements_debug.write(f'Next Q value is: {next_Qval}\n')
+            print_statements_debug.write("========== Bye from Bradley.find_next_Qval ===========\n\n\n")
         return next_Qval
     # end of find_next_Qval
     
@@ -862,15 +862,15 @@ class Bradley:
             If `is_for_est_Qval_analysis` is True, the anticipated next move from the opposing agent is also included in the analysis results.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.analyze_board_state ==========\n\n")
-            print_debug_statements_filepath.write(f'Board is: {board}\n')
-            print_debug_statements_filepath.write(f'is_for_est_Qval_analysis is: {is_for_est_Qval_analysis}\n')
+            print_statements_debug.write(f"========== Hello from Bradley.analyze_board_state ==========\n\n")
+            print_statements_debug.write(f'Board is: {board}\n')
+            print_statements_debug.write(f'is_for_est_Qval_analysis is: {is_for_est_Qval_analysis}\n')
 
         # analysis_result is an InfoDict (see python-chess documentation)
         analysis_result = self.engine.analyse(board, self.settings.search_limit, multipv = self.settings.num_moves_to_return)
         
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'Analysis result is: {analysis_result}\n')
+            print_statements_debug.write(f'Analysis result is: {analysis_result}\n')
 
         # normalize by looking at it from White's perspective
         # score datatype is Cp (centipawn) or Mate
@@ -879,20 +879,20 @@ class Bradley:
         centipawn_score = score.score()
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'Normalized mate score is: {mate_score}\n')
-            print_debug_statements_filepath.write(f'Normalized centipawn score is: {centipawn_score}\n')
+            print_statements_debug.write(f'Normalized mate score is: {mate_score}\n')
+            print_statements_debug.write(f'Normalized centipawn score is: {centipawn_score}\n')
 
         if is_for_est_Qval_analysis:
             anticipated_next_move = analysis_result[0]['pv'][0] # this would be the anticipated response from opposing agent
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'Anticipated next move is: {anticipated_next_move}\n')
-                print_debug_statements_filepath.write("========== Bye from Bradley.analyze_board_state ===========\n\n\n")
+                print_statements_debug.write(f'Anticipated next move is: {anticipated_next_move}\n')
+                print_statements_debug.write("========== Bye from Bradley.analyze_board_state ===========\n\n\n")
             
             return {'mate_score': mate_score, 'centipawn_score': centipawn_score, 'anticipated_next_move': anticipated_next_move}
         else:
             # we don't need the anticipated next move because we just want the points for our move.
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write("========== Bye from Bradley.analyze_board_state ===========\n\n\n")
+                print_statements_debug.write("========== Bye from Bradley.analyze_board_state ===========\n\n\n")
             
             return {'mate_score': mate_score, 'centipawn_score': centipawn_score} 
     ### end of analyze_board_state
@@ -908,8 +908,8 @@ class Bradley:
             int: The reward based on the type of move as an integer.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.get_reward ==========\n\n")
-            print_debug_statements_filepath.write(f'Chess move is: {chess_move_str}\n')
+            print_statements_debug.write(f"========== Hello from Bradley.get_reward ==========\n\n")
+            print_statements_debug.write(f'Chess move is: {chess_move_str}\n')
 
         total_reward = 0
         if re.search(r'N.', chess_move_str): # encourage development of pieces
@@ -928,8 +928,8 @@ class Bradley:
             total_reward += self.settings.checkmate_pts
         
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'Total reward is: {total_reward}\n')
-            print_debug_statements_filepath.write("========== Bye from Bradley.get_reward ===========\n\n\n")
+            print_statements_debug.write(f'Total reward is: {total_reward}\n')
+            print_statements_debug.write("========== Bye from Bradley.get_reward ===========\n\n\n")
 
         return total_reward
     ## end of get_reward
@@ -945,11 +945,11 @@ class Bradley:
             None
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f"========== Hello from Bradley.reset_environ ==========\n\n")
+            print_statements_debug.write(f"========== Hello from Bradley.reset_environ ==========\n\n")
         
         self.environ.reset_environ()
         
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write("Environment has been reset\n")
-            print_debug_statements_filepath.write("========== Bye from Bradley.reset_environ ===========\n\n\n")
+            print_statements_debug.write("Environment has been reset\n")
+            print_statements_debug.write("========== Bye from Bradley.reset_environ ===========\n\n\n")
     ### end of reset_environ

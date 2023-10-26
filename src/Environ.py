@@ -8,8 +8,10 @@ import copy
 # logger = logging.getLogger(__name__)
 
 print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\ENVIRON_print_statements.txt'
-print_statements_debug = open(print_debug_statements_filepath, 'a')
 PRINT_RESULTS_DEBUG: bool = True
+
+if PRINT_RESULTS_DEBUG:
+    print_statements_debug = open(print_debug_statements_filepath, 'a')
 
 error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\ENVIRON_error_log.txt'
 error_log = open(error_log_filepath, 'a')
@@ -37,15 +39,15 @@ class Environ:
 
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== Hello from Environ constructor ==========\n\n')
+            print_statements_debug.write(f'========== Hello from Environ constructor ==========\n\n')
 
         self.chess_data: pd.DataFrame = chess_data 
         self.board: chess.Board = chess.Board()
         self.settings: Settings.Settings = Settings.Settings()
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'chess_data: {self.chess_data.head()}\n')
-            print_debug_statements_filepath.write(f'board: {self.board}\n')
+            print_statements_debug.write(f'chess_data: {self.chess_data.head()}\n')
+            print_statements_debug.write(f'board: {self.board}\n')
 
         # turn_list and turn_index work together to track the current turn (a string like this, 'W1')
         # max_num_turns_per_player, so multiply by 2, then to make sure we get all moves, add 1.
@@ -54,9 +56,9 @@ class Environ:
         self.turn_index: int = 0
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'turn_list: {self.turn_list}\n')
-            print_debug_statements_filepath.write(f'turn_index: {self.turn_index}\n')
-            print_debug_statements_filepath.write(f'========== End of Environ constructor ==========\n\n')
+            print_statements_debug.write(f'turn_list: {self.turn_list}\n')
+            print_statements_debug.write(f'turn_index: {self.turn_index}\n')
+            print_statements_debug.write(f'========== End of Environ constructor ==========\n\n')
     ### end of constructor
 
     # @log_config.log_execution_time_every_N()
@@ -68,13 +70,13 @@ class Environ:
 
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== Hello from Environ.get_curr_state ==========\n\n')
+            print_statements_debug.write(f'========== Hello from Environ.get_curr_state ==========\n\n')
         
         state = {'turn_index': self.turn_index, 'curr_turn': self.get_curr_turn(), 'legal_moves': self.get_legal_moves()}
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'state: {state}\n')
-            print_debug_statements_filepath.write(f'========== End of Environ.get_curr_state ==========\n\n')
+            print_statements_debug.write(f'state: {state}\n')
+            print_statements_debug.write(f'========== End of Environ.get_curr_state ==========\n\n')
 
         return state
     ### end of get_curr_state
@@ -92,13 +94,13 @@ class Environ:
 
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== Hello from Environ.update_curr_state ==========\n\n')
+            print_statements_debug.write(f'========== Hello from Environ.update_curr_state ==========\n\n')
 
         # in this case, subtract 1, not add 1
         max_turn_index: int = self.settings.max_num_turns_per_player * 2 - 1
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'max_turn_index: {max_turn_index}\n')
+            print_statements_debug.write(f'max_turn_index: {max_turn_index}\n')
         
         if self.turn_index < max_turn_index:
             self.turn_index += 1
@@ -107,7 +109,7 @@ class Environ:
             raise IndexError(f"Maximum turn index ({max_turn_index}) reached!")
 
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== End of Environ.update_curr_state ==========\n\n')
+            print_statements_debug.write(f'========== End of Environ.update_curr_state ==========\n\n')
     ### end of update_curr_state
     
     # @log_config.log_execution_time_every_N()
@@ -119,14 +121,14 @@ class Environ:
             IndexError: If the turn index is out of range.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== Hello from Environ.get_curr_turn ==========\n\n')
-            print_debug_statements_filepath.write(f'turn_index: {self.turn_index}\n')
+            print_statements_debug.write(f'========== Hello from Environ.get_curr_turn ==========\n\n')
+            print_statements_debug.write(f'turn_index: {self.turn_index}\n')
         try: 
             curr_turn = self.turn_list[self.turn_index]
 
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'curr_turn: {curr_turn}\n')
-                print_debug_statements_filepath.write(f'========== End of Environ.get_curr_turn ==========\n\n')
+                print_statements_debug.write(f'curr_turn: {curr_turn}\n')
+                print_statements_debug.write(f'========== End of Environ.get_curr_turn ==========\n\n')
 
             return curr_turn
         except IndexError as e:
@@ -146,15 +148,15 @@ class Environ:
             bool: A boolean value indicating whether the move was successfully loaded.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== Hello from Environ.load_chessboard ==========\n\n')
-            print_debug_statements_filepath.write(f'chess_move_str: {chess_move_str}\n')
+            print_statements_debug.write(f'========== Hello from Environ.load_chessboard ==========\n\n')
+            print_statements_debug.write(f'chess_move_str: {chess_move_str}\n')
 
         try:
             self.board.push_san(chess_move_str)
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'chess move loaded successfully\n')
-                print_debug_statements_filepath.write(f'board: {self.board}\n')
-                print_debug_statements_filepath.write(f'========== End of Environ.load_chessboard ==========\n\n\n')
+                print_statements_debug.write(f'chess move loaded successfully\n')
+                print_statements_debug.write(f'board: {self.board}\n')
+                print_statements_debug.write(f'========== End of Environ.load_chessboard ==========\n\n\n')
 
             return True
         except ValueError as e:
@@ -172,14 +174,14 @@ class Environ:
             IndexError: If the move stack is empty.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== Hello from Environ.pop_chessboard ==========\n\n')
+            print_statements_debug.write(f'========== Hello from Environ.pop_chessboard ==========\n\n')
 
         try:
             self.board.pop()
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'chess move popped successfully\n')
-                print_debug_statements_filepath.write(f'board: {self.board}\n')
-                print_debug_statements_filepath.write(f'========== End of Environ.pop_chessboard ==========\n\n\n')
+                print_statements_debug.write(f'chess move popped successfully\n')
+                print_statements_debug.write(f'board: {self.board}\n')
+                print_statements_debug.write(f'========== End of Environ.pop_chessboard ==========\n\n\n')
         except IndexError as e:
             error_log.write(f'An error occurred: {e}, unable to pop chessboard')
             error_log.write(f'========== End of Environ.pop_chessboard ==========\n\n\n')
@@ -194,16 +196,16 @@ class Environ:
             IndexError: If the move stack is empty.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== Hello from Environ.undo_move ==========\n\n')
+            print_statements_debug.write(f'========== Hello from Environ.undo_move ==========\n\n')
 
         try:
             self.board.pop()
             self.turn_index -= 1
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'chess move popped successfully\n')
-                print_debug_statements_filepath.write(f'board: {self.board}\n')
-                print_debug_statements_filepath.write(f'turn_index: {self.turn_index}\n')
-                print_debug_statements_filepath.write(f'========== End of Environ.undo_move ==========\n\n\n')
+                print_statements_debug.write(f'chess move popped successfully\n')
+                print_statements_debug.write(f'board: {self.board}\n')
+                print_statements_debug.write(f'turn_index: {self.turn_index}\n')
+                print_statements_debug.write(f'========== End of Environ.undo_move ==========\n\n\n')
         except IndexError as e:
             error_log.write(f'An error occurred: {e}, unable to undo move')
             error_log.write(f'turn index: {self.turn_index}\n')
@@ -223,8 +225,8 @@ class Environ:
             None
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== Hello from Environ.load_chessboard_for_Q_est ==========\n\n')
-            print_debug_statements_filepath.write(f'analysis_results: {analysis_results}\n')
+            print_statements_debug.write(f'========== Hello from Environ.load_chessboard_for_Q_est ==========\n\n')
+            print_statements_debug.write(f'analysis_results: {analysis_results}\n')
 
         # this is the anticipated chess move due to opponent's previous chess move. so if White plays Ne4, what is Black like to play?
         anticipated_chess_move = analysis_results['anticipated_next_move']  # this has the form like this, Move.from_uci('e4f6')
@@ -232,9 +234,9 @@ class Environ:
         try:
             self.board.push(anticipated_chess_move)
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'chess move loaded successfully\n')
-                print_debug_statements_filepath.write(f'board: {self.board}\n')
-                print_debug_statements_filepath.write(f'========== End of Environ.load_chessboard_for_Q_est ==========\n\n\n')
+                print_statements_debug.write(f'chess move loaded successfully\n')
+                print_statements_debug.write(f'board: {self.board}\n')
+                print_statements_debug.write(f'========== End of Environ.load_chessboard_for_Q_est ==========\n\n\n')
         except ValueError as e:
             error_log.write(f'An error occurred: {e}, unable to load chessboard with {anticipated_chess_move}')
             error_log.write(f'========== End of Environ.load_chessboard_for_Q_est ==========\n\n\n')
@@ -246,14 +248,14 @@ class Environ:
         Call this method each time a game ends.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== Hello from Environ.reset_environ ==========\n\n')
+            print_statements_debug.write(f'========== Hello from Environ.reset_environ ==========\n\n')
         self.board.reset()
         self.turn_index = 0
         
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'board: {self.board}\n')
-            print_debug_statements_filepath.write(f'turn_index: {self.turn_index}\n')
-            print_debug_statements_filepath.write(f'========== End of Environ.reset_environ ==========\n\n\n')
+            print_statements_debug.write(f'board: {self.board}\n')
+            print_statements_debug.write(f'turn_index: {self.turn_index}\n')
+            print_statements_debug.write(f'========== End of Environ.reset_environ ==========\n\n\n')
     ### end of reset_environ
     
     # @log_config.log_execution_time_every_N()
@@ -266,23 +268,23 @@ class Environ:
             list[str]: A list of strings representing the legal moves at the current turn, given the board state.
         """
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'========== Hello from Environ.get_legal_moves ==========\n\n')
-            print_debug_statements_filepath.write(f'board: {self.board}\n')
+            print_statements_debug.write(f'========== Hello from Environ.get_legal_moves ==========\n\n')
+            print_statements_debug.write(f'board: {self.board}\n')
 
         legal_moves = [self.board.san(move) for move in self.board.legal_moves]
         if PRINT_RESULTS_DEBUG:
-            print_debug_statements_filepath.write(f'legal_moves: {legal_moves}\n')
+            print_statements_debug.write(f'legal_moves: {legal_moves}\n')
     
         if legal_moves:
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'legal_moves is NOT empty\n')
-                print_debug_statements_filepath.write(f'========== End of Environ.get_legal_moves ==========\n\n\n')
+                print_statements_debug.write(f'legal_moves is NOT empty\n')
+                print_statements_debug.write(f'========== End of Environ.get_legal_moves ==========\n\n\n')
                 
             return legal_moves
         else:
             if PRINT_RESULTS_DEBUG:
-                print_debug_statements_filepath.write(f'legal_moves is empty\n')
-                print_debug_statements_filepath.write(f'========== End of Environ.get_legal_moves ==========\n\n\n')
+                print_statements_debug.write(f'legal_moves is empty\n')
+                print_statements_debug.write(f'========== End of Environ.get_legal_moves ==========\n\n\n')
 
             return ["legal moves list is empty"]
     ### end of get_legal_moves

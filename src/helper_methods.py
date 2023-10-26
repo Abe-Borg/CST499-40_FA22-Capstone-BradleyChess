@@ -7,8 +7,10 @@ import random
 # logger = logging.getLogger(__name__)
 
 print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\HELPER_METHODS_print_statements.txt'
-print_statements_debug = open(print_debug_statements_filepath, 'a')
 PRINT_RESULTS_DEBUG: bool = True
+
+if PRINT_RESULTS_DEBUG:
+    print_statements_debug = open(print_debug_statements_filepath, 'a')
 
 error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\HELPER_METHODS_error_log.txt'
 error_log = open(error_log_filepath, 'a')
@@ -29,8 +31,8 @@ def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
     bubs = imman.Bradley(chess_data)
 
     if PRINT_RESULTS_DEBUG:
-        print_debug_statements_filepath.write(f'bubs: {bubs.chess_data.head()}\n')
-        print_debug_statements_filepath.write("========== Bye from Helper Methods init_bradley ==========\n\n\n")
+        print_statements_debug.write(f'bubs: {bubs.chess_data.head()}\n')
+        print_statements_debug.write("========== Bye from Helper Methods init_bradley ==========\n\n\n")
 
     return bubs
 ### end of init_bradley

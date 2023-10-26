@@ -13,8 +13,10 @@ from typing import Union
 # logger = logging.getLogger(__name__)
 
 print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\AGENT_print_statements.txt'
-print_statements_debug = open(print_debug_statements_filepath, 'a')
 PRINT_RESULTS_DEBUG: bool = True
+
+if PRINT_RESULTS_DEBUG:
+    print_statements_debug = open(print_debug_statements_filepath, 'a')
 
 error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\AGENT_error_log.txt'
 error_log = open(error_log_filepath, 'a')
