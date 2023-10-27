@@ -3,15 +3,10 @@ from helper_methods import *
 import time
 # import logging
 # import log_config
-import Settings
-settings = Settings.Settings()
-
 # logger = logging.getLogger(__name__)
 
-print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\print_statements.txt'
-print_statements_debug = open(print_debug_statements_filepath, 'a')
-PRINT_RESULTS_DEBUG: bool = True
-# print_statements_debug.write(f'\n\n Start of {game_num_str} training\n\n')
+import Settings
+settings = Settings.Settings()
 
 chess_data = pd.read_pickle(settings.chess_data_path, compression = 'zip') 
 training_chess_data = chess_data.sample(settings.training_sample_size) 
@@ -36,7 +31,7 @@ if __name__ == '__main__':
     # ========================= train new agents ========================= # 
     bradley = init_bradley(training_chess_data)    
     start_time = time.time() 
-    bradley.train_rl_agents(settings.initial_training_results_filepath)
+    bradley.train_rl_agents()
     end_time = time.time()
     pikl_q_table(bradley, 'W',settings.bradley_agent_q_table_path)
     pikl_q_table(bradley, 'B', settings.imman_agent_q_table_path)
@@ -52,7 +47,7 @@ if __name__ == '__main__':
     # bootstrap_agent(bradley, 'B', settings.imman_agent_q_table_path)
 
     # start_time = time.time()
-    # bradley.continue_training_rl_agents(settings.additional_training_results_filepath, settings.agent_vs_agent_num_games)
+    # bradley.continue_training_rl_agents(settings.agent_vs_agent_num_games)
     # pikl_q_table(bradley, 'W', settings.bradley_agent_q_table_path)
     # pikl_q_table(bradley, 'B', settings.imman_agent_q_table_path)
     # end_time = time.time()

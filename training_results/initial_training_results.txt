@@ -1,0 +1,20 @@
+
+
+ Start of Game 50329 training
+
+Number of chess moves in this game is: 43
+Game Game 50329 is over.
+
+The Chessboard looks like this:
+
+ . . . r n r . .
+. p . q . p p k
+p . p . p B . p
+. . P . . . . Q
+. . . P . . . .
+. . N . . . R R
+P P . . . P P P
+. . . . . . K .
+
+Game result is: outcome not available, most likely game ended because turn_index was too high or player resigned
+The game ended because of: termination reason not available, most likely game ended because turn_index was too high or player resigned

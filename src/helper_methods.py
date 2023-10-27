@@ -32,6 +32,7 @@ def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
 
     if PRINT_RESULTS_DEBUG:
         print_statements_debug.write(f'bubs: {bubs.chess_data.head()}\n')
+        print_statements_debug.write(f'bubs: {bubs.W_rl_agent.Q_table.head()}\n')
         print_statements_debug.write("========== Bye from Helper Methods init_bradley ==========\n\n\n")
 
     return bubs
