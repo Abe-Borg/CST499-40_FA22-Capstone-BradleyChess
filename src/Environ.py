@@ -2,11 +2,12 @@ import chess
 import Settings
 import pandas as pd
 import copy
+from typing import IO
 # import logging
 # import log_config
 # logger = logging.getLogger(__name__)
 
-print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\ENVIRON_print_statements.txt'
+# print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\ENVIRON_print_statements.txt'
 error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\ENVIRON_error_log.txt'
 PRINT_RESULTS_DEBUG: bool = True
 
@@ -16,7 +17,7 @@ class Environ:
         This class passes the state to the agent. It is the only thing that 
         should make changes to the chessboard.
     """
-    def __init__(self, chess_data: pd.DataFrame):
+    def __init__(self, chess_data: pd.DataFrame, debug_print_file: IO[str]):
         """
         Args:
             chess_data (pd.DataFrame): A pandas DataFrame representing the chess games database.
@@ -31,7 +32,7 @@ class Environ:
             turn_index (int): An integer that is incremented as each player makes a move.
         """
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug = open(print_debug_statements_filepath, 'a')
+            self.print_statements_debug = debug_print_file
             self.print_statements_debug.write(f'========== Hello from Environ constructor ==========\n\n')
 
         self.error_log = open(error_log_filepath, 'a')
@@ -40,8 +41,8 @@ class Environ:
         self.settings: Settings.Settings = Settings.Settings()
 
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write(f'chess_data: {self.chess_data.head()}\n')
-            self.print_statements_debug.write(f'board: {self.board}\n')
+            self.print_statements_debug.write(f'chess_data:\n{self.chess_data.head()}\n')
+            self.print_statements_debug.write(f'board:\n{self.board}\n\n')
 
         # turn_list and turn_index work together to track the current turn (a string like this, 'W1')
         # max_num_turns_per_player, so multiply by 2, then to make sure we get all moves, add 1.
@@ -66,14 +67,15 @@ class Environ:
 
         Returns:
             dict[str, str, list[str]]: A dictionary that defines the current state that an agent will act on.
-
         """
         if PRINT_RESULTS_DEBUG:
             self.print_statements_debug.write(f'========== Hello from Environ.get_curr_state ==========\n\n')
+            self.print_statements_debug.write("going to get curr turn and get_legal_moves\n")
         
         state = {'turn_index': self.turn_index, 'curr_turn': self.get_curr_turn(), 'legal_moves': self.get_legal_moves()}
 
         if PRINT_RESULTS_DEBUG:
+            self.print_statements_debug.write("back from get_curr_turn and get_legal_moves\n")
             self.print_statements_debug.write(f'state: {state}\n')
             self.print_statements_debug.write(f'========== End of Environ.get_curr_state ==========\n\n')
 
@@ -83,14 +85,12 @@ class Environ:
     # @log_config.log_execution_time_every_N()
     def update_curr_state(self) -> None:
         """Updates the current state of the chessboard.
-
         The current state is the current turn and the legal moves at that turn. The state is updated each time a
         chess_move str is loaded to the chessboard. Each time a move is made, the current state needs to be updated.
         Only the index needs to be updated here. The board is updated by other methods.
 
         Raises:
             IndexError: If the maximum turn index is reached.
-
         """
         if PRINT_RESULTS_DEBUG:
             self.print_statements_debug.write(f'========== Hello from Environ.update_curr_state ==========\n\n')
@@ -100,9 +100,14 @@ class Environ:
 
         if PRINT_RESULTS_DEBUG:
             self.print_statements_debug.write(f'max_turn_index: {max_turn_index}\n')
+            self.print_statements_debug.write(f'currtent turn_index: {self.turn_index}\n')
         
         if self.turn_index < max_turn_index:
             self.turn_index += 1
+
+            if PRINT_RESULTS_DEBUG:
+                self.print_statements_debug.write(f'updated turn index is: {self.turn_index}\n')
+
         else:
             self.error_log.write(f'ERROR: max_turn_index reached: {self.turn_index} >= {max_turn_index}\n')
             raise IndexError(f"Maximum turn index ({max_turn_index}) reached!")
@@ -152,6 +157,7 @@ class Environ:
 
         try:
             self.board.push_san(chess_move_str)
+
             if PRINT_RESULTS_DEBUG:
                 self.print_statements_debug.write(f'chess move loaded successfully\n')
                 self.print_statements_debug.write(f'board: {self.board}\n')
@@ -177,10 +183,12 @@ class Environ:
 
         try:
             self.board.pop()
+            
             if PRINT_RESULTS_DEBUG:
                 self.print_statements_debug.write(f'chess move popped successfully\n')
                 self.print_statements_debug.write(f'board: {self.board}\n')
                 self.print_statements_debug.write(f'========== End of Environ.pop_chessboard ==========\n\n\n')
+        
         except IndexError as e:
             self.error_log.write(f'An error occurred: {e}, unable to pop chessboard')
             self.error_log.write(f'========== End of Environ.pop_chessboard ==========\n\n\n')
@@ -200,11 +208,13 @@ class Environ:
         try:
             self.board.pop()
             self.turn_index -= 1
+
             if PRINT_RESULTS_DEBUG:
                 self.print_statements_debug.write(f'chess move popped successfully\n')
                 self.print_statements_debug.write(f'board: {self.board}\n')
                 self.print_statements_debug.write(f'turn_index: {self.turn_index}\n')
                 self.print_statements_debug.write(f'========== End of Environ.undo_move ==========\n\n\n')
+
         except IndexError as e:
             self.error_log.write(f'An error occurred: {e}, unable to undo move')
             self.error_log.write(f'turn index: {self.turn_index}\n')
@@ -215,6 +225,7 @@ class Environ:
     def load_chessboard_for_Q_est(self, analysis_results: list[dict]) -> None:
         """Loads the chessboard using a Move.uci string during training.
         This method works in tandem with the Stockfish analysis during training.
+        the method loads the anticipated next move from the analysis results.
 
         Args:
             analysis_results (list[dict]): A list of dictionaries containing the analysis results.
@@ -232,10 +243,12 @@ class Environ:
         
         try:
             self.board.push(anticipated_chess_move)
+
             if PRINT_RESULTS_DEBUG:
                 self.print_statements_debug.write(f'chess move loaded successfully\n')
                 self.print_statements_debug.write(f'board: {self.board}\n')
                 self.print_statements_debug.write(f'========== End of Environ.load_chessboard_for_Q_est ==========\n\n\n')
+        
         except ValueError as e:
             self.error_log.write(f'An error occurred: {e}, unable to load chessboard with {anticipated_chess_move}')
             self.error_log.write(f'========== End of Environ.load_chessboard_for_Q_est ==========\n\n\n')
@@ -248,6 +261,7 @@ class Environ:
         """
         if PRINT_RESULTS_DEBUG:
             self.print_statements_debug.write(f'========== Hello from Environ.reset_environ ==========\n\n')
+        
         self.board.reset()
         self.turn_index = 0
         
@@ -268,9 +282,10 @@ class Environ:
         """
         if PRINT_RESULTS_DEBUG:
             self.print_statements_debug.write(f'========== Hello from Environ.get_legal_moves ==========\n\n')
-            self.print_statements_debug.write(f'board: {self.board}\n')
+            self.print_statements_debug.write(f'board:\n{self.board}\n\n')
 
         legal_moves = [self.board.san(move) for move in self.board.legal_moves]
+        
         if PRINT_RESULTS_DEBUG:
             self.print_statements_debug.write(f'legal_moves: {legal_moves}\n')
     
@@ -284,7 +299,7 @@ class Environ:
             if PRINT_RESULTS_DEBUG:
                 self.print_statements_debug.write(f'legal_moves is empty\n')
                 self.print_statements_debug.write(f'========== End of Environ.get_legal_moves ==========\n\n\n')
-
+                
             return ["legal moves list is empty"]
     ### end of get_legal_moves
     

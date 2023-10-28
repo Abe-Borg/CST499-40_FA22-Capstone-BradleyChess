@@ -1,0 +1,18 @@
+An error occurred: 'NoneType' object has no attribute 'result'
+outcome not available, most likely game ended because turn_index was too high or player resigned
+========== Bye from Bradley.get_game_outcome ===========
+
+
+An error occurred: 'NoneType' object has no attribute 'termination'
+termination reason not available, most likely game ended because turn_index was too high or player resigned========== Bye from Bradley.get_game_termination_reason ===========
+
+
+An error occurred: 'NoneType' object has no attribute 'result'
+outcome not available, most likely game ended because turn_index was too high or player resigned
+========== Bye from Bradley.get_game_outcome ===========
+
+
+An error occurred: 'NoneType' object has no attribute 'termination'
+termination reason not available, most likely game ended because turn_index was too high or player resigned========== Bye from Bradley.get_game_termination_reason ===========
+
+

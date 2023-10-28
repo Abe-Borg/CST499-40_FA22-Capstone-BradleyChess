@@ -25,14 +25,15 @@ def init_bradley(chess_data: pd.DataFrame) -> imman.Bradley:
         imman.Bradley: An object of the Bradley class.
     """
     if PRINT_RESULTS_DEBUG:
-        print_statements_debug.write('========== Hello from Helper Methods init_bradley ==========\n\n')
-        print_statements_debug.write(f'chess_data: {chess_data.head()}\n')
-
+        print_statements_debug.write('\n========== Hello from Helper Methods init_bradley ==========\n')
+        
     bubs = imman.Bradley(chess_data)
 
     if PRINT_RESULTS_DEBUG:
-        print_statements_debug.write(f'bubs: {bubs.chess_data.head()}\n')
-        print_statements_debug.write(f'bubs: {bubs.W_rl_agent.Q_table.head()}\n')
+        print_statements_debug.write(f'white agent q table\n:{bubs.W_rl_agent.Q_table.head()}\n')
+        print_statements_debug.write(f'white agent q table shape: {bubs.W_rl_agent.Q_table.shape}\n')
+        print_statements_debug.write(f'black agent q table\n:{bubs.B_rl_agent.Q_table.head()}\n')
+        print_statements_debug.write(f'black agent q table shape: {bubs.B_rl_agent.Q_table.shape}\n')
         print_statements_debug.write("========== Bye from Helper Methods init_bradley ==========\n\n\n")
 
     return bubs

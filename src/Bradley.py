@@ -11,7 +11,8 @@ import copy
 # import log_config
 # logger = logging.getLogger(__name__)
 
-print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\BRADLEY_print_statements.txt'
+# print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\BRADLEY_print_statements.txt'
+print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\debug.txt'
 error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\BRADLEY_error_log.txt'
 initial_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\training_results\initial_training_results.txt'
 additional_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\training_results\additional_training_results.txt'
@@ -37,38 +38,38 @@ class Bradley:
     def __init__(self, chess_data: pd.DataFrame):
         if PRINT_RESULTS_DEBUG:
             self.print_statements_debug = open(print_debug_statements_filepath, 'a')
-            self.print_statements_debug.write(f"========== Hello from Bradley Constructor ==========\n\n")
+            self.print_statements_debug.write(f"\n========== Hello from Bradley Constructor ==========\n")
 
-        self.initial_training_results = open(training_results_filepath, 'a')
-        self.additional_training_results = open(additional_training_results_filepath, 'a')
-
+        if PRINT_TRAINING_RESULTS: 
+            self.initial_training_results = open(initial_training_results_filepath, 'a')
+            self.additional_training_results = open(additional_training_results_filepath, 'a')
+        
         self.error_log = open(error_log_filepath, 'a')
         self.chess_data = chess_data
 
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write(f'Chess data is: {self.chess_data}\n')
+            self.chess_data.set_option('display.max_rows', None)
+            self.chess_data.set_option('display.max_columns', None)
+            self.chess_data.set_option('display.width', None)
+            self.chess_data.set_option('display.max_colwidth', None)
 
         self.settings = Settings.Settings()
+        self.environ = Environ.Environ(self.chess_data, self.print_statements_debug)
 
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write("settings object has been initialized\n")
-
-        if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write("Initializing Environ object\n")
-
-        self.environ = Environ.Environ(self.chess_data)
-
-        if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write("and we're back from Environ constructor\n")
             self.print_statements_debug.write("Initializing White & Black RL Agents\n")
 
-        self.W_rl_agent = Agent.Agent('W', self.chess_data)
-        self.B_rl_agent = Agent.Agent('B', self.chess_data)
+        self.W_rl_agent = Agent.Agent('W', self.chess_data, self.print_statements_debug)
 
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write("and we're back from Agent constructor\n")
-            self.print_statements_debug.write("Initializing White & Black RL Agents\n")
-  
+            self.print_statements_debug.write("White agent initialized\n")
+
+        self.B_rl_agent = Agent.Agent('B', self.chess_data, self.print_statements_debug)
+
+        if PRINT_RESULTS_DEBUG:
+            self.print_statements_debug.write("Black agent initialized\n")
+
+        # set the learn rate and discount factor for each agent
         self.W_rl_agent.settings.learn_rate = 0.6
         self.W_rl_agent.settings.discount_factor = 0.3
 
@@ -87,10 +88,7 @@ class Bradley:
         self.engine = chess.engine.SimpleEngine.popen_uci(self.settings.stockfish_filepath)
 
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write("and we're back from stockfish constructor\n")
-
-        if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write(f"========== End of Bradley Constructor ==========\n\n\n")
+            self.print_statements_debug.write(f"========== End of Bradley Constructor ==========\n\n")
     ### end of Bradley constructor ###
 
     def __del__(self):
@@ -415,9 +413,9 @@ class Bradley:
             chess.Board: A `chess.Board` object representing the current state of the chessboard.
         """
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write(f"========== Hello from Bradley.get_chessboard ==========\n\n")
+            self.print_statements_debug.write(f"\n========== Hello from Bradley.get_chessboard ==========\n\n")
             self.print_statements_debug.write(f'Chessboard looks like this:\n\n')
-            self.print_statements_debug.write(f'\n {self.environ.board}\n\n')
+            self.print_statements_debug.write(f'{self.environ.board}\n\n')
             self.print_statements_debug.write("========== Bye from Bradley.get_chessboard ===========\n\n\n")
 
         return self.environ.board
@@ -515,11 +513,12 @@ class Bradley:
                     self.print_statements_debug.write(f'White agent played move: {W_chess_move}\n')
                     self.print_statements_debug.write(f'White agent got reward: {W_reward}\n')
                 
-                # the state changes each time a move is made, so get curr state again.
+                
 
                 if PRINT_RESULTS_DEBUG:
                     self.print_statements_debug.write("going to self.environ.get_curr_state\n")
-        
+                
+                # the state changes each time a move is made, so get curr state again.
                 curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
                 
                 if PRINT_RESULTS_DEBUG:
@@ -539,6 +538,7 @@ class Bradley:
                         self.print_statements_debug.write("going to self.find_estimated_Q_value\n")
 
                     W_est_Qval: int = self.find_estimated_Q_value()
+
                     if PRINT_RESULTS_DEBUG:
                         self.print_statements_debug.write("and we're back from self.find_estimated_Q_value\n")
                         self.print_statements_debug.write(f'Estimated Q value for White is: {W_est_Qval}\n')
@@ -546,12 +546,13 @@ class Bradley:
                 ##################### BLACK'S TURN ####################
                 ##### BLACK AGENT PICKS MOVE, DONT PLAY IT YET THOUGH!!! #####
                 if PRINT_RESULTS_DEBUG:
+                    self.print_statements_debug.write("\nIt's black's turn now:\n")
                     self.print_statements_debug.write("going to rl.agent_PICKS_MOVE_training_mode\n")
 
                 B_chess_move = self.rl_agent_PICKS_move_training_mode(curr_state, self.B_rl_agent.color, game_num_str)
 
                 if PRINT_RESULTS_DEBUG:
-                    self.print_statements_debug.write("and we're back from rl.agent_PICKS_move_training_mode\n")
+                    self.print_statements_debug.write("and we're back to Bradley.train_agents, arrived from rl.agent_PICKS_move_training_mode\n")
                     self.print_statements_debug.write(f"Black chess move is: {B_chess_move}\n")
                 
                 ##### ASSIGN POINTS TO Q_TABLE FOR BLACK #####
@@ -563,7 +564,7 @@ class Bradley:
                 self.assign_points_to_Q_table_training_mode(B_chess_move, curr_turn, B_curr_Qval, self.B_rl_agent.color)
 
                 if PRINT_RESULTS_DEBUG:
-                    self.print_statements_debug.write("and we're back from assign_points_to_Q_table_training_mode\n")
+                    self.print_statements_debug.write("and we're back to Bradley.train_agents, arrived from assign_points_to_Q_table_training_mode\n")
                     self.print_statements_debug.write(f'Black agent assigned points to Q table for move: {B_chess_move}\n')
 
                 ##### BLACK AGENT PLAYS SELECTED MOVE and GET REWARD FOR THAT MOVE #####
@@ -932,8 +933,11 @@ class Bradley:
     # @log_config.log_execution_time_every_N()
     def find_estimated_Q_value(self) -> int:
         """ Estimates the Q-value for the RL agent's next action without actually playing the move.
+        
         This method simulates the agent's next action and the anticipated response from the opposing agent 
-        to estimate the Q-value. The method:
+        to estimate the Q-value. 
+        
+        The method:
         1. Observes the next state of the chessboard after the agent's move.
         2. Analyzes the current state of the board to predict the opposing agent's response.
         3. Loads the board with the anticipated move of the opposing agent.
