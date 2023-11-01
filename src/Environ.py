@@ -9,7 +9,7 @@ from typing import IO
 
 # print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\ENVIRON_print_statements.txt'
 error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\ENVIRON_error_log.txt'
-PRINT_RESULTS_DEBUG: bool = True
+PRINT_RESULTS_DEBUG: bool = False
 
 class Environ:
     """Manages the chessboard and determines its state.
@@ -57,7 +57,6 @@ class Environ:
     ### end of constructor
 
     def __del__(self):
-        self.print_statements_debug.close()
         self.error_log.close()
     ### end of Bradley destructor ###
 

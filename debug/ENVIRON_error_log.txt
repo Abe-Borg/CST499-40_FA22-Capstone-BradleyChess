@@ -1,0 +1,300 @@
+An error occurred: illegal san: 'Kb4' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Kb4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Kd6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Kd6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rb1' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rb1========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rf3' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rf3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rb3' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rb3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rxg3' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rxg3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'c5+' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with c5+========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Kc7' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Kc7========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Kc4' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Kc4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rxh3' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rxh3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rb6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rb6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'g5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with g5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Re6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Re6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rxe5' in rnbqkbnr/pppppppp/8/8/6P1/8/PPPPPP1P/RNBQKBNR b KQkq - 0 1, unable to load chessboard with Rxe5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'g3' in rnbqkbnr/pppppppp/8/8/6P1/8/PPPPPP1P/RNBQKBNR b KQkq - 0 1, unable to load chessboard with g3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Re7+' in rnbqkbnr/pppppppp/8/8/6P1/8/PPPPPP1P/RNBQKBNR b KQkq - 0 1, unable to load chessboard with Re7+========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Kc8' in rnbqkbnr/pppppppp/8/8/6P1/8/PPPPPP1P/RNBQKBNR b KQkq - 0 1, unable to load chessboard with Kc8========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rg7' in rnbqkbnr/pppppppp/8/8/6P1/8/PPPPPP1P/RNBQKBNR b KQkq - 0 1, unable to load chessboard with Rg7========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'a5' in rnbqkbnr/ppppppp1/8/7p/6P1/8/PPPPPP1P/RNBQKBNR w KQkq - 0 2, unable to load chessboard with a5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'bxa6' in rnbqkbnr/1pppppp1/p7/7p/6PP/8/PPPPPP2/RNBQKBNR w KQkq - 0 3, unable to load chessboard with bxa6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Kd5' in rnbqkbnr/1pppppp1/p7/7p/6PP/8/PPPPPP2/RNBQKBNR w KQkq - 0 3, unable to load chessboard with Kd5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rh1' in rnbqkbnr/1pppppp1/p7/7p/6PP/8/PPPPPP2/RNBQKBNR w KQkq - 0 3, unable to load chessboard with Rh1========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Kd6' in rnbqkbnr/1pppppp1/p7/7p/6PP/8/PPPPPP2/RNBQKBNR w KQkq - 0 3, unable to load chessboard with Kd6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rf1' in rnbqkbnr/1pppppp1/p7/7p/6PP/8/PPPPPP2/RNBQKBNR w KQkq - 0 3, unable to load chessboard with Rf1========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rg8+' in rnbqkbnr/1pppppp1/p7/7p/6PP/8/PPPPPP2/RNBQKBNR w KQkq - 0 3, unable to load chessboard with Rg8+========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Kb7' in rnbqkbnr/1pppppp1/p7/7p/6PP/8/PPPPPP2/RNBQKBNR w KQkq - 0 3, unable to load chessboard with Kb7========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rg7+' in rnbqkbnr/1pppppp1/p7/7p/6PP/8/PPPPPP2/RNBQKBNR w KQkq - 0 3, unable to load chessboard with Rg7+========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '...', unable to load chessboard with ...========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'c5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with c5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nd6' in rnbqk1nr/pppp2bp/6p1/4pp1P/2P5/4P3/PPQP1PP1/RNB1KBNR b KQkq - 1 5, unable to load chessboard with Nd6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'hxg6' in rnbqk1nr/pppp2bp/6p1/4pp1P/2P5/4P3/PPQP1PP1/RNB1KBNR b KQkq - 1 5, unable to load chessboard with hxg6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'hxg6' in rnbqk1nr/pppp2bp/6p1/4pp1P/2P5/4P3/PPQP1PP1/RNB1KBNR b KQkq - 1 5, unable to load chessboard with hxg6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rxh8' in rnbqk1nr/pppp2bp/6p1/4pp1P/2P5/4P3/PPQP1PP1/RNB1KBNR b KQkq - 1 5, unable to load chessboard with Rxh8========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Bxh8' in rnbqk1nr/pppp2bp/6p1/4pp1P/2P5/4P3/PPQP1PP1/RNB1KBNR b KQkq - 1 5, unable to load chessboard with Bxh8========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Qc3' in rnbqk1nr/pppp2bp/6p1/4pp1P/2P5/4P3/PPQP1PP1/RNB1KBNR b KQkq - 1 5, unable to load chessboard with Qc3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Ne4' in rnbqk1nr/pppp2bp/6p1/4pp1P/2P5/4P3/PPQP1PP1/RNB1KBNR b KQkq - 1 5, unable to load chessboard with Ne4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Qa3' in rnbqk1nr/pppp2bp/6p1/4pp1P/2P5/4P3/PPQP1PP1/RNB1KBNR b KQkq - 1 5, unable to load chessboard with Qa3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Ke8' in rnbqk1nr/pppp2bp/6p1/4pp1P/2P5/4P3/PPQP1PP1/RNB1KBNR b KQkq - 1 5, unable to load chessboard with Ke8========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nac2' in rnbqk1nr/pppp2bp/6p1/4pp1P/2P5/4P3/PPQP1PP1/RNB1KBNR b KQkq - 1 5, unable to load chessboard with Nac2========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'c4' in rnbqk1nr/p1pp2bp/6p1/1P2pp1P/8/4P3/PPQP1PP1/RNB1KBNR b KQkq - 0 6, unable to load chessboard with c4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'd3' in rnbqk1nr/p1pp2bp/6p1/1P2pp1P/8/4P3/PPQP1PP1/RNB1KBNR b KQkq - 0 6, unable to load chessboard with d3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nc5' in rnbqk1nr/p1pp2bp/6p1/1P2pp1P/8/4P3/PPQP1PP1/RNB1KBNR b KQkq - 0 6, unable to load chessboard with Nc5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'dxc4' in rnbqk1nr/p1pp2bp/6p1/1P2pp1P/8/4P3/PPQP1PP1/RNB1KBNR b KQkq - 0 6, unable to load chessboard with dxc4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nb6' in rnbqk1nr/p1pp2bp/6p1/1P2pp1P/8/4P3/PPQP1PP1/RNB1KBNR b KQkq - 0 6, unable to load chessboard with Nb6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'b3' in rnbqk1nr/p1pp2bp/6p1/1P2pp1P/8/4P3/PPQP1PP1/RNB1KBNR b KQkq - 0 6, unable to load chessboard with b3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nb4' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/8/4P3/PPQP1PP1/RNB1KBNR w KQkq - 0 7, unable to load chessboard with Nb4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'dxc4' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/8/4P3/PPQP1PP1/RNB1KBNR w KQkq - 0 7, unable to load chessboard with dxc4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nc6' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/8/4P3/PPQP1PP1/RNB1KBNR w KQkq - 0 7, unable to load chessboard with Nc6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rxc6' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/8/4P3/PPQP1PP1/RNB1KBNR w KQkq - 0 7, unable to load chessboard with Rxc6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'bxc6' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/8/4P3/PPQP1PP1/RNB1KBNR w KQkq - 0 7, unable to load chessboard with bxc6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Ne4' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/8/4P3/PPQP1PP1/RNB1KBNR w KQkq - 0 7, unable to load chessboard with Ne4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'c3' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/1P6/4P3/P1QP1PP1/RNB1KBNR b KQkq - 0 7, unable to load chessboard with c3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nc2' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/1P6/4P3/P1QP1PP1/RNB1KBNR b KQkq - 0 7, unable to load chessboard with Nc2========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nd5' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/1P6/4P3/P1QP1PP1/RNB1KBNR b KQkq - 0 7, unable to load chessboard with Nd5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Bc4' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/1P6/4P3/P1QP1PP1/RNB1KBNR b KQkq - 0 7, unable to load chessboard with Bc4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nef6' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/1P6/4P3/P1QP1PP1/RNB1KBNR b KQkq - 0 7, unable to load chessboard with Nef6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Qa5' in rnbqk1nr/p1p3bp/6p1/1P1ppp1P/1P6/4P3/P1QP1PP1/RNB1KBNR b KQkq - 0 7, unable to load chessboard with Qa5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Ne2', unable to load chessboard with .Ne2========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.g5', unable to load chessboard with .g5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.h4', unable to load chessboard with .h4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Qf6', unable to load chessboard with .Qf6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.hxg5', unable to load chessboard with .hxg5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.hxg5', unable to load chessboard with .hxg5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Nc1', unable to load chessboard with .Nc1========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Kb7', unable to load chessboard with .Kb7========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Nd3', unable to load chessboard with .Nd3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.a5', unable to load chessboard with .a5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Ng4', unable to load chessboard with .Ng4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Bxg4', unable to load chessboard with .Bxg4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Qxg4', unable to load chessboard with .Qxg4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Ne6', unable to load chessboard with .Ne6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Qf5', unable to load chessboard with .Qf5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Qe7', unable to load chessboard with .Qe7========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.c3', unable to load chessboard with .c3========== End of Environ.load_chessboard ==========
+
+
+An error occurred: invalid san: '.Kc7', unable to load chessboard with .Kc7========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rh1' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rh1========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rf8' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rf8========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Qg4' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Qg4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nf4' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Nf4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Nxf4' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Nxf4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'gxf4' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with gxf4========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rh6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rh6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rf6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rf6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rh8' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rh8========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rf8' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rf8========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rh6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rh6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rf6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rf6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rh5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rh5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Qf7' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Qf7========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rg5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rg5========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Kb7' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Kb7========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rg8' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rg8========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rh6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rh6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rf8' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rf8========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Qe7' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Qe7========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rg8' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rg8========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Qe6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Qe6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Qxe6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Qxe6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rxe6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rxe6========== End of Environ.load_chessboard ==========
+
+
+An error occurred: illegal san: 'Rd1' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rd1========== End of Environ.load_chessboard ==========
+
+

@@ -1,4 +1,4 @@
-import Settings
+import game_settings
 import pandas as pd
 import numpy as np
 import helper_methods
@@ -8,13 +8,19 @@ import random
 import chess
 from typing import Union
 from typing import IO
+
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
+pd.set_option('display.max_colwidth', None)
+
 # import logging
 # import log_config
 # logger = logging.getLogger(__name__)
 
 # print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\AGENT_print_statements.txt'
 error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\AGENT_error_log.txt'
-PRINT_RESULTS_DEBUG: bool = True
+PRINT_RESULTS_DEBUG: bool = False
 
 class Agent:
     """The `Agent` class is responsible for deciding what chess move to play 
@@ -45,27 +51,26 @@ class Agent:
         'promotion_to_queen': 50
     }
 
-    def __init__(self, color: str, chess_data: pd.DataFrame, debug_print_file: IO[str]):   
+    def __init__(self, color: str, chess_data: pd.DataFrame, debug_print_file: IO[str]):
+           
         if PRINT_RESULTS_DEBUG:
             self.print_statements_debug = debug_print_file
             self.print_statements_debug.write(f'\n\n========== Hello from Agent __init__ ==========\n')
 
         self.error_log = open(error_log_filepath, 'a')
+
+        # learn rate and discount factor are hyperparameters that can be adjusted
+        # these numbers need to be between 0 and 1
+        self.learn_rate = 0.6 # too high num here means too focused on recent knowledge, 
+        self.discount_factor = 0.35 # lower number means more opportunistic, but not good long term planning
         self.color = color
         self.chess_data = chess_data
-        self.settings: Settings.Settings = Settings.Settings()
         self.is_trained: bool = False
 
         if PRINT_RESULTS_DEBUG:
             self.print_statements_debug.write("going to init_Q_table\n\n")
 
         self.Q_table: pd.DataFrame = self.init_Q_table(self.chess_data)
-        
-        if PRINT_RESULTS_DEBUG:
-            self.Q_table.set_option('display.max_rows', None)
-            self.Q_table.set_option('display.max_columns', None)
-            self.Q_table.set_option('display.width', None)
-            self.Q_table.set_option('display.max_colwidth', None)
 
         if PRINT_RESULTS_DEBUG:
             self.print_statements_debug.write("and we're back to Agent __init__ just arrived from init_Q_table\n")
@@ -76,7 +81,6 @@ class Agent:
     ### end of __init__ ###
 
     def __del__(self):
-        self.print_statements_debug.close()
         self.error_log.close()
     ### end of __del__ ###
 
@@ -123,6 +127,7 @@ class Agent:
             self.print_statements_debug.write(f'moves_not_in_Q_table: {moves_not_in_Q_table}\n')
 
         if moves_not_in_Q_table:
+
             if PRINT_RESULTS_DEBUG:
                 self.print_statements_debug.write(f'========== going to update_Q_table =========== \n')
 
@@ -191,8 +196,7 @@ class Agent:
         legal_moves_in_q_table: pd.DataFrame = q_values.loc[q_values.index.intersection(self.legal_moves)]
 
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write(f'back from get_Q_values\n')
-            self.print_statements_debug.write(f'q_values are: {q_values}\n')
+            self.print_statements_debug.write(f'back to Agent.policy_game_mode, arrived from get_Q_values\n')
             self.print_statements_debug.write(f'legal_moves_in_q_table: {legal_moves_in_q_table}\n')
         
         if dice_roll == 1:

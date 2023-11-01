@@ -6,6 +6,12 @@ from helper_methods import *
 import chess
 import chess.engine
 import pandas as pd
+
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
+pd.set_option('display.max_colwidth', None)
+
 import copy
 # import logging
 # import log_config
@@ -16,8 +22,8 @@ print_debug_statements_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub
 error_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\BRADLEY_error_log.txt'
 initial_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\training_results\initial_training_results.txt'
 additional_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\training_results\additional_training_results.txt'
-PRINT_RESULTS_DEBUG: bool = True
-PRINT_TRAINING_RESULTS: bool = True
+PRINT_RESULTS_DEBUG: bool = False
+PRINT_TRAINING_RESULTS: bool = False
 
 
 class Bradley:
@@ -36,23 +42,15 @@ class Bradley:
             engine (chess.engine.SimpleEngine): A Stockfish engine used to analyze positions during training.
     """
     def __init__(self, chess_data: pd.DataFrame):
+        self.print_statements_debug = open(print_debug_statements_filepath, 'a')
+        self.initial_training_results = open(initial_training_results_filepath, 'a')
+        self.additional_training_results = open(additional_training_results_filepath, 'a')
+        self.error_log = open(error_log_filepath, 'a')
+
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug = open(print_debug_statements_filepath, 'a')
             self.print_statements_debug.write(f"\n========== Hello from Bradley Constructor ==========\n")
 
-        if PRINT_TRAINING_RESULTS: 
-            self.initial_training_results = open(initial_training_results_filepath, 'a')
-            self.additional_training_results = open(additional_training_results_filepath, 'a')
-        
-        self.error_log = open(error_log_filepath, 'a')
         self.chess_data = chess_data
-
-        if PRINT_RESULTS_DEBUG:
-            self.chess_data.set_option('display.max_rows', None)
-            self.chess_data.set_option('display.max_columns', None)
-            self.chess_data.set_option('display.width', None)
-            self.chess_data.set_option('display.max_colwidth', None)
-
         self.settings = Settings.Settings()
         self.environ = Environ.Environ(self.chess_data, self.print_statements_debug)
 
@@ -157,14 +155,16 @@ class Bradley:
             chess_move = self.B_rl_agent.choose_action(self.environ.get_curr_state()) # choose_action returns a dictionary
         
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write("and we're back from rl_agent.choose_action\n")
+            self.print_statements_debug.write("and we're back to Bradley.rl_agent_selects_chess_move, arrived from rl_agent.choose_action\n")
             self.print_statements_debug.write(f'Chess move is: {chess_move}\n')
             self.print_statements_debug.write("we MAY be going to environ.load_chessboard\n")
 
         if self.environ.load_chessboard(chess_move['chess_move_str']):
+            
             if PRINT_RESULTS_DEBUG:
                 self.print_statements_debug.write("and we're back from environ.load_chessboard\n")
                 self.print_statements_debug.write("going to environ.update_curr_state\n")
+            
             self.environ.update_curr_state()
             
         if PRINT_RESULTS_DEBUG:
@@ -265,7 +265,7 @@ class Bradley:
     ### end of get_curr_turn
 
     # @log_config.log_execution_time_every_N()
-    def game_on(self) -> bool:
+    def is_game_on(self) -> bool:
         """Determines whether the game is still ongoing.
         Call this method to determine whether the game is still ongoing. The game can end if the Python chess board determines the game is over,
         or if the game is at `max_num_turns_per_player * 2 - 1` moves per player (minus 1 because the index starts at 0).
@@ -276,22 +276,22 @@ class Bradley:
             bool: A boolean value indicating whether the game is still ongoing (`True`) or not (`False`).
         """
         if PRINT_RESULTS_DEBUG:
-            self.print_statements_debug.write(f"========== Hello from Bradley.game_on ==========\n\n")
+            self.print_statements_debug.write(f"========== Hello from Bradley.is_game_on ==========\n\n")
             self.print_statements_debug.write("we MAY be going to self.environ.board.is_game_over()\n")
 
         if self.environ.board.is_game_over() or self.environ.turn_index >= self.settings.max_num_turns_per_player * 2 - 1:
             
             if PRINT_RESULTS_DEBUG:
-                self.print_statements_debug.write(f'Game over, game_on is: False\n')
-                self.print_statements_debug.write("Bye from Bradley.game_on\n\n\n")
+                self.print_statements_debug.write(f'Game over, is_game_on is: False\n')
+                self.print_statements_debug.write("Bye from Bradley.is_game_on\n\n\n")
             
             return False
         else:
             if PRINT_RESULTS_DEBUG:
-                self.print_statements_debug.write(f'Game is still ongoing, game_on is: True\n')
-                self.print_statements_debug.write("========== Bye from Bradley.game_on ==========\n\n\n")
+                self.print_statements_debug.write(f'Game is still ongoing, is_game_on is: True\n')
+                self.print_statements_debug.write("========== Bye from Bradley.is_game_on ==========\n\n\n")
             return True
-    ### end of game_on
+    ### end of is_game_on
 
     # @log_config.log_execution_time_every_N()
     def get_legal_moves(self) -> list[str]:
@@ -690,7 +690,7 @@ class Bradley:
             
             curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
 
-            while self.game_on():
+            while self.is_game_on():
                 #################### WHITE'S TURN ####################
                 ##### WHITE AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
                 W_chess_move = self.rl_agent_PICKS_move_training_mode(curr_state, self.W_rl_agent.color)
@@ -706,7 +706,7 @@ class Bradley:
                 curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
 
                 ##### FIND THE ESTIMATED Q VALUE FOR WHITE #####
-                if not self.game_on():
+                if self.is_game_on() = False:
                     break
                 else:
                     W_est_Qval: int = self.find_estimated_Q_value()
@@ -731,7 +731,7 @@ class Bradley:
                     break
 
                 ##### FIND THE ESTIMATED Q VALUE FOR BLACK #####
-                if not self.game_on():
+                if self.is_game_on() == False:
                     break
                 else:
                     B_est_Qval: int = self.find_estimated_Q_value()
