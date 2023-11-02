@@ -2,6 +2,7 @@ import chess
 
 PRINT_DEBUG: bool = False
 PRINT_ERRORS: bool = False
+PRINT_TRAINING_RESULTS = False
 
 PIECE_VALUES: dict[str, int] = {
         'pawn': 1,
@@ -12,10 +13,12 @@ PIECE_VALUES: dict[str, int] = {
     }
 
 # the following numbers are based on centipawn scores
-REWARD_POINTS_FOR_CHESS_MOVES: dict[str, int] = {
+CHESS_MOVE_VALUES: dict[str, int] = {
         'new_move': 100, # a move that has never been made before
-        'piece_development': 300,
-        'capture': 100,
+        'capture': 150,
+        'piece_development': 200,
+        'check': 300,
+        'promotion': 500,
         'promotion_queen': 900,
         'mate_score': 1_000
     }
@@ -24,7 +27,7 @@ initial_q_val = 50 # this is relevant when first training an agent. SARSA algori
 training_sample_size = 1 # number of games in database to use for training
 agent_vs_agent_num_games = 100 # number of games that agents will play against each other
 max_num_turns_per_player = 50
-chance_for_random = 0.10 # 10% chance that RL agent selects random chess move
+chance_for_random_move = 0.10 # 10% chance that RL agent selects random chess move
         
 # The following values are for the chess engine analysis of moves.
 # we only want to look ahead one move, that's the anticipated q value at next state, and next action
@@ -40,6 +43,19 @@ chess_data_path = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40
 bradley_agent_q_table_path = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\Q_Tables\bradley_agent_q_table.pkl"
 imman_agent_q_table_path = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\Q_Tables\imman_agent_q_table.pkl"
 
-helper_methods_debug_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\helper_methods_debug.txt'
-helper_methods_errors_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\helper_methods_errors_log.txt'
 agent_vs_agent_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\training_results\agent_vs_agent_games.txt'
+
+helper_methods_debug_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\helper_methods_debug_log.txt'
+helper_methods_errors_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\helper_methods_errors_log.txt'
+
+agent_debug_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\agent_debug_log.txt'
+agent_errors_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\agent_errors_log.txt'
+
+bradley_debug_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\bradley_debug_log.txt'
+bradley_errors_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\bradley_errors_log.txt'
+
+initial_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\training_results\initial_training_results.txt'
+additional_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\training_results\additional_training_results.txt'
+
+environ_debug_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\environ_debug_log.txt'
+environ_errors_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\environ_errors_log.txt'

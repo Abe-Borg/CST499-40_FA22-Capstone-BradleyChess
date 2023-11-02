@@ -5,10 +5,7 @@ import game_settings
 # import logging
 # import log_config
 # logger = logging.getLogger(__name__)
-
-if game_settings.PRINT_DEBUG:
-    debug_file = open(game_settings.debug_filepath, 'a')
-
+    
 def init_bradley(chess_data: pd.DataFrame) -> Bradley.Bradley:
     """Initializes a Bradley object with the given chess data.
     Args:
@@ -17,16 +14,19 @@ def init_bradley(chess_data: pd.DataFrame) -> Bradley.Bradley:
         imman.Bradley: An object of the Bradley class.
     """
     if game_settings.PRINT_DEBUG:
+        debug_file = open(game_settings.helper_methods_debug_filepath, 'a')
         debug_file.write('\n========== Hello from Helper Methods init_bradley ==========\n')
         
     bubs = Bradley.Bradley(chess_data)
 
-    if PRINT_DEBUG:
+    if game_settings.PRINT_DEBUG:
         debug_file.write(f'white agent q table\n:{bubs.W_rl_agent.Q_table.head()}\n')
         debug_file.write(f'white agent q table shape: {bubs.W_rl_agent.Q_table.shape}\n')
         debug_file.write(f'black agent q table\n:{bubs.B_rl_agent.Q_table.head()}\n')
         debug_file.write(f'black agent q table shape: {bubs.B_rl_agent.Q_table.shape}\n')
         debug_file.write("========== Bye from Helper Methods init_bradley ==========\n\n\n")
+    
+    debug_file.close()
     
     return bubs
 ### end of init_bradley
@@ -89,6 +89,7 @@ def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
     except Exception as e:
         error_file.write(f'An error occurred: {e}')
         # logger.error(f'Error occurred while resetting game environment: {e}')
+
     errors_file.close()
 ### end of play_game
 
@@ -160,23 +161,25 @@ def bootstrap_agent(bubs: Bradley.Bradley, rl_agent_color: str, existing_q_table
 
 def get_number_with_probability(probability: float) -> int:
     """Generate a random number with a given probability.
-
     Args:
         probability (float): A float representing the probability of generating a 1.
     Returns:
         int: A random integer value of either 0 or 1.
     """
-    if PRINT_DEBUG:
+    if game_settings.PRINT_DEBUG:
+        debug_file = open(game_settings.helper_methods_debug_filepath, 'a')
         debug_file.write('========== Hello from Helper Methods get_number_with_probability ==========\n')
         debug_file.write(f'probability: {probability}\n')
 
     if random.random() < probability:
-        if PRINT_DEBUG:
+        if game_settings.PRINT_DEBUG:
             debug_file.write("Random number is less than probability, returning 1\n")
             debug_file.write("========== Bye from Helper Methods get_number_with_probability ==========\n\n\n")
+        debug_file.close()
         return 1
     else:
-        if PRINT_DEBUG:
+        if game_settings.PRINT_DEBUG:
             debug_file.write("Random number is >= than probability, returning 0\n")
             debug_file.write("========== Bye from Helper Methods get_number_with_probability ==========\n\n\n")
+        debug_file.close()
         return 0

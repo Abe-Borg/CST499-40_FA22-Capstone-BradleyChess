@@ -1,8 +1,0 @@
-Error: failed to load chessboard with move: {'chess_move_str': 'e4'}
-========== Bye from Bradley.rl_agent_selects_chess_move ==========
-
-
-Error: failed to load chessboard with move: {'chess_move_str': 'Nf3'}
-========== Bye from Bradley.rl_agent_selects_chess_move ==========
-
-
