@@ -58,7 +58,7 @@ def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
         if rl_agent.color == player_turn:
             print('=== RL AGENT\'S TURN ===\n')
             try:
-                chess_move: dict[str] = bubs.rl_agent_selects_chess_move(rl_agent.color)
+                chess_move: dict[str] = bubs.rl_agent_selects_chess_move(rl_agent.color) 
                 chess_move_str = chess_move['chess_move_str']
                 print(f'RL agent played {chess_move_str}\n')
             except Exception as e:

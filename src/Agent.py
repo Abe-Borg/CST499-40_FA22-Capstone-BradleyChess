@@ -7,7 +7,6 @@ import copy
 import random
 import chess
 from typing import Union
-from typing import IO
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -72,12 +71,8 @@ class Agent:
     ### end of __del__ ###
 
     # @log_config.log_execution_time_every_N()
-    def choose_action(self, environ_state: dict[str, str, list[str]], curr_game: str = 'Game 1') -> dict[str]:
+    def choose_action(self, environ_state: dict[str, str, list[str]], curr_game: str = 'Game 1') -> str:
         """Chooses the next chess move for the agent based on the current state.
-        This method does two things. First, it helps to train the agent. Each agent will play through the 
-        database games exactly as shown during training. Once the agent is trained, this 
-        method helps to pick the appropriate move based on the highest value in the Q table for a given turn. 
-    
         Preconditions:
             The `environ_state` dictionary must contain the following keys:
                 'turn_index': A string representing the current turn number.
@@ -94,7 +89,7 @@ class Agent:
             curr_game (str): A string indicating the current game being played. 
                 Relevant when initially training the agents. Defaults to 'Game 1'.
         Returns:
-            dict[str]: A dictionary containing the chosen chess move.
+            str: A string representing the chess move chosen by the agent.
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'========== Hello from Agent choose_action ========== \n\n')
@@ -126,38 +121,36 @@ class Agent:
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'========== going to Agent policy_training_mode ==========\n\n\n')
 
-            return self.policy_training_mode(curr_game, environ_state["curr_turn"]) # this function call returns a dict that contains a chess move.
+            return self.policy_training_mode(curr_game, environ_state["curr_turn"])
     ### end of choose_action ###
     
-    # @log_config.log_execution_time_every_N()
-    def policy_training_mode(self, curr_game: str, curr_turn: str) -> dict[str]:
+    def policy_training_mode(self, curr_game: str, curr_turn: str) -> str:
         """Determines how the agents choose a move at each turn during training.
         In this implementation, the agents will play out the games in the database exactly as shown.
         Args:
             curr_game: A string representing the current game being played.
             curr_turn: A string representing the current turn, e.g. 'W1'.
         Returns:
-            dict[str]: A dictionary containing the selected chess move as a string.
+            str: A string representing the chess move chosen by the agent.
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'========== Hello from Agent policy_training_mode ========== \n\n')
             self.debug_file.write(f"the selected chess move from db is: {self.chess_data.at[curr_game, curr_turn]}\n")
             self.debug_file.write(f'========== bye from Agent policy_training_mode ========== \n\n\n')
 
-        return {'chess_move_str': self.chess_data.at[curr_game, curr_turn]}
+        return self.chess_data.at[curr_game, curr_turn]
     ### end of policy_training_mode ###
 
     # @log_config.log_execution_time_every_N()        
-    def policy_game_mode(self, legal_moves: list[str]) -> dict[str]:
+    def policy_game_mode(self, legal_moves: list[str]) -> str:
         """Determines how the agent chooses a move during a game between a human player and the agent.
         The agent searches its Q table to find the moves with the highest Q values at each turn. 
         However, sometimes the agent will pick a random move. 
-        This method is also used when the two agents continue to be trained (when the play agains each other).
 
         Args:
             legal_moves: A list of strings representing the legal moves for the current turn.
         Returns:
-            dict[str]: A dictionary containing the selected chess move as a string.
+            str: A string representing the chess move chosen by the agent.
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'\n========== Hello from Agent policy_game_mode ==========\n')
@@ -182,75 +175,24 @@ class Agent:
         
         if dice_roll == 1:
             # pick random move, that would be an index value of the pandas series (legal_moves_in_q_table)
-            chess_move_str: str = legal_moves_in_q_table.sample().index[0]
+            chess_move: str = legal_moves_in_q_table.sample().index[0]
 
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Dice Roll was a 1, random move will be selected.\n')
-                self.debug_file.write(f'chess_move_str: {chess_move_str}\n')
+                self.debug_file.write(f'chess_move_str: {chess_move}\n')
         else:
             # pick existing move in the q table that has the highest q value
-            chess_move_str = legal_moves_in_q_table.idxmax()
+            chess_move = legal_moves_in_q_table.idxmax()
 
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Dice roll was not a 1\n')
-                self.debug_file.write(f'chess_move_str: {chess_move_str}\n')
+                self.debug_file.write(f'chess_move_str: {chess_move}\n')
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'========== bye from Agent policy_game_mode ==========\n\n\n')
 
-        return {'chess_move_str': chess_move_str}
+        return chess_move
     ### end of policy_game_mode ###
-
-    # @log_config.log_execution_time_every_N()
-    def choose_high_val_move(self, legal_moves: list[str]) -> dict[str]:
-        """ Selects the best chess move from a list of legal moves during training mode.
-        The method assigns a value to each move based on whether it results in a check, 
-        capture, or promotion, and selects the move with the highest value. 
-        If there are no moves with a value greater than 0, 
-        the method selects a random move from the list of legal moves. 
-        
-        Args:
-            legal_moves: A list of strings representing the legal moves for the current turn.
-        Returns:
-            dict[str]: A dictionary containing the selected chess move as a string.
-        """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Agent choose_high_val_move ==========\n\n')
-
-        highest_move_value: int = 0
-        best_move: dict[str] = None
-        
-        # loop through legal moves list to find the best move
-        for chess_move_str in legal_moves:
-            move: chess.Move = chess.Move.from_uci(chess_move_str)
-            move_value: int = 0
-
-            conditions: list[bool] = [
-                (move.promotion == chess.QUEEN,"promotion_queen"),
-                (move.promotion, "promotion"),
-                (move.capture, "capture"),
-                (self.board.is_check(move), "check")
-            ]
-
-            for condition, value_key in conditions:
-                if condition:
-                    move_value = game_settings.CHESS_MOVE_VALUES[value_key]
-                    break
-
-            if move_value > highest_move_value:
-                highest_move_value = move_value
-                best_move = {'chess_move_str': chess_move_str}
-
-        if best_move is None:
-            chess_move_str: str = random.sample(legal_moves, 1)
-            best_move = {'chess_move_str': chess_move_str[0]}
-        
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'best_move: {best_move}\n')
-            self.debug_file.write(f'========== bye from Agent choose_high_val_move ==========\n\n\n')
-        
-        return best_move
-    ### end of choose_high_val_move ###
 
     # @log_config.log_execution_time_every_N()
     def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
@@ -324,7 +266,7 @@ class Agent:
         Returns:
             pd.Index: Columns representing turns for the specified color.
         """ 
-        turns_list = chess_data.loc[:, f"{color}1": f"{color}{self.settings.max_num_turns_per_player}": 2].columns
+        turns_list = chess_data.loc[:, f"{color}1": f"{color}{game_settings.max_num_turns_per_player}": 2].columns
         
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'========== Hello from Agent get_turns_list ==========\n\n')
@@ -354,7 +296,14 @@ class Agent:
             self.debug_file.write(f'pts: {pts}\n')
             self.debug_file.write(f'========== bye from Agent change_Q_table_pts ==========\n\n\n')
 
-        self.Q_table.at[chess_move, curr_turn] += pts
+        try:
+            self.Q_table.at[chess_move, curr_turn] += pts
+        except KeyError as e:
+            self.errors_file.write(f'KeyError: {e}\n')
+            self.errors_file.write(f'chess_move: {chess_move}\n')
+            self.errors_file.write(f'curr_turn: {curr_turn}\n')
+            self.errors_file.write(f'pts: {pts}\n')
+            raise KeyError from e
     ### end of change_Q_table_pts ###
 
     # @log_config.log_execution_time_every_N()
