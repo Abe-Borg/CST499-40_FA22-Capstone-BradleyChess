@@ -1,6 +1,5 @@
 import Bradley
 import pandas as pd
-import random
 import game_settings
 # import logging
 # import log_config
@@ -13,8 +12,9 @@ def init_bradley(chess_data: pd.DataFrame) -> Bradley.Bradley:
     Returns:
         imman.Bradley: An object of the Bradley class.
     """
+    debug_file = open(game_settings.helper_methods_debug_filepath, 'a')
+
     if game_settings.PRINT_DEBUG:
-        debug_file = open(game_settings.helper_methods_debug_filepath, 'a')
         debug_file.write('\n========== Hello from Helper Methods init_bradley ==========\n')
         
     bubs = Bradley.Bradley(chess_data)
@@ -54,17 +54,20 @@ def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
         else:
             player_turn = 'B'
         
-        print(f'\nCurrent turn is :  {bubs.get_curr_turn()}\n')
+        try:
+            print(f'\nCurrent turn is :  {bubs.get_curr_turn()}\n')
+        except Exception as e:
+            errors_file.write(f'An error occurred: {e}')
+            # logger.error(f'Error occurred while getting current turn: {e}')
+        
         if rl_agent.color == player_turn:
             print('=== RL AGENT\'S TURN ===\n')
             try:
-                chess_move: dict[str] = bubs.rl_agent_selects_chess_move(rl_agent.color) 
-                chess_move_str = chess_move['chess_move_str']
-                print(f'RL agent played {chess_move_str}\n')
+                chess_move: str = bubs.rl_agent_selects_chess_move(rl_agent.color) 
+                print(f'RL agent played {chess_move}\n')
             except Exception as e:
                 errors_file.write(f'An error occurred: {e}')
                 # logger.error(f'Error occurred during RL agent turn: {e}')
-                break
         else:
             print('=== OPPONENT\' TURN ===')
             try:
@@ -75,19 +78,27 @@ def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
             except Exception as e:
                 error_file.write(f'An error occurred: {e}')
                 # logger.error(f'Error occured durring humans turn: {e}')
-                break
             print('\n')
 
         is_W_turn = not is_W_turn    
         # end single turn where a turn is W and B moving once each
     
-    print(f'Game is over, result is: {bubs.get_game_outcome()}')
-    print(f'The game ended because of: {bubs.get_game_termination_reason()}')
-    
+    try:
+        print(f'Game is over, result is: {bubs.get_game_outcome()}')
+    except Exception as e:
+        error_file.write(f'An error occurred while getting game outcome: {e}')
+        # logger.error(f'Error occurred while getting game outcome: {e}')
+
+    try:
+        print(f'The game ended because of: {bubs.get_game_termination_reason()}')
+    except Exception as e:
+        error_file.write(f'An error occurred while getting game termination reason: {e}')
+        # logger.error(f'Error occurred while getting game termination reason: {e}')
+        #     
     try:
         bubs.reset_environ()
     except Exception as e:
-        error_file.write(f'An error occurred: {e}')
+        error_file.write(f'An error occurred while resetting environ: {e}')
         # logger.error(f'Error occurred while resetting game environment: {e}')
 
     errors_file.close()
@@ -96,30 +107,53 @@ def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
 def agent_vs_agent(bubs: Bradley.Bradley) -> None:
     """Play two trained agents against each other.
     Args:
-        bubs (imman.Bradley): An object of the `Bradley` class representing the chess game environment.
+        bubs: An object of the `Bradley` class representing the chess game environment.
     """    
     agent_vs_agent_file = open(game_settings.agent_vs_agent_filepath, 'a')
     
     agent_vs_agent_file.write(f'starting chess board is: {bubs.environ.board}\n')
 
-    while bubs.is_game_on():        
-        agent_vs_agent_file.write(f'\nCurrent turn: {bubs.get_curr_turn()}')
-        chess_move_bubs: dict[str] = bubs.rl_agent_selects_chess_move('W')
-        bubs_chess_move_str: str = chess_move_bubs['chess_move_str']
-        agent_vs_agent_file.write(f'Bubs played {bubs_chess_move_str}\n')
+    while bubs.is_game_on():
+        try:        
+            agent_vs_agent_file.write(f'\nCurrent turn: {bubs.get_curr_turn()}')
+        except Exception as e:
+            agent_vs_agent_file.write(f'An error occurred: {e}')
+            # logger.error(f'Error occurred while getting current turn: {e}')
+        
+        try:
+            chess_move_bubs: str = bubs.rl_agent_selects_chess_move('W')
+        except Exception as e:
+            agent_vs_agent_file.write(f'An error occurred: {e}')
+            # logger.error(f'Error occurred during RL agent turn: {e}')
+
+        agent_vs_agent_file.write(f'Bubs played {chess_move_bubs}\n')
 
         # imman's turn, check for end of game again, since the game could have ended after W's move.
         if bubs.is_game_on():
             agent_vs_agent_file.write(f'Current turn:  {turn_num}')
-            chess_move_imman: dict[str] = bubs.rl_agent_selects_chess_move('B')
-            imman_chess_move_str: str = chess_move_imman['chess_move_str']
-            agent_vs_agent_file.write(f'Imman played {imman_chess_move_str}\n')
+            try:
+                chess_move_imman: str = bubs.rl_agent_selects_chess_move('B')
+            except Exception as e:
+                agent_vs_agent_file.write(f'An error occurred: {e}')
+                # logger.error(f'Error occurred during RL agent turn: {e}')
+        
+        agent_vs_agent_file.write(f'Imman played {chess_move_imman}\n')
             
     agent_vs_agent_file.write('Game is over, chessboard looks like this:\n')
-    agent_vs_agent_file.write(bubs.environ.board)
+    agent_vs_agent_file.write(bubs.get_chessboard())
     agent_vs_agent_file.write('\n\n')
-    agent_vs_agent_file.write(f'Game result is: {bubs.get_game_outcome()}')
-    agent_vs_agent_file.write(f'Game ended because of: {bubs.get_game_termination_reason()}')
+    try:
+        agent_vs_agent_file.write(f'Game result is: {bubs.get_game_outcome()}')
+    except Exception as e:
+        agent_vs_agent_file.write(f'An error occurred: {e}')
+        # logger.error(f'Error occurred while getting game outcome: {e}')
+
+    try:
+        agent_vs_agent_file.write(f'Game ended because of: {bubs.get_game_termination_reason()}')
+    except Exception as e:
+        agent_vs_agent_file.write(f'An error occurred: {e}')
+        # logger.error(f'Error occurred while getting game termination reason: {e}')
+
     bubs.reset_environ()
     agent_vs_agent_file.close()
 ### end of agent_vs_agent

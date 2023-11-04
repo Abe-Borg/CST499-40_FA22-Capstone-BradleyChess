@@ -1,13 +1,9 @@
 import Environ
 import Agent
 import game_settings
-import re
-from helper_methods import *
 import chess
-import chess.engine
 import pandas as pd
-import copy
-from typing import Union
+import re
 # import logging
 # import log_config
 # logger = logging.getLogger(__name__)
@@ -33,8 +29,8 @@ class Bradley:
     def __init__(self, chess_data: pd.DataFrame):
         self.debug_file = open(game_settings.bradley_debug_filepath, 'a')
         self.errors_file = open(game_settings.bradley_errors_filepath, 'a')
-        self.initial_training_results = open(initial_training_results_filepath, 'a')
-        self.additional_training_results = open(additional_training_results_filepath, 'a')
+        self.initial_training_results = open(game_settings.initial_training_results_filepath, 'a')
+        self.additional_training_results = open(game_settings.additional_training_results_filepath, 'a')
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f"\n========== Hello from Bradley Constructor ==========\n")
@@ -125,26 +121,31 @@ class Bradley:
             self.debug_file.write("going to environ.load_chessboard\n")
 
         # load_chessboard returns False if failure to add move to board,
-        if self.environ.load_chessboard(chess_move):
+        try:
+            self.environ.load_chessboard(chess_move)
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write("and to Bradley recv_opp_move, arrived from environ.load_chessboard\n")
                 self.debug_file.write("going to environ.update_curr_state\n")
 
             # loading the chessboard was a success, now just update the curr state
-            self.environ.update_curr_state()
+            try:
+                self.environ.update_curr_state()
 
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write("and we're back to Bradley recv_opp_move, arrived from environ.update_curr_state\n")
-                self.debug_file.write(f'Chessboard was successfully loaded with move: {chess_move}\n')
-                self.debug_file.write(f'Chessboard looks like this:\n\n')
-                self.debug_file.write(f'\n {self.environ.board}\n\n')
-                self.debug_file.write(f'Current turn is: {self.environ.get_curr_turn()}\n')
-                self.debug_file.write(f'Current turn index is: {self.environ.turn_index}\n')
-                self.debug_file.write("Bye from Bradley.recv_opp_move\n\n\n")
+                if game_settings.PRINT_DEBUG:
+                    self.debug_file.write("and we're back to Bradley recv_opp_move, arrived from environ.update_curr_state\n")
+                    self.debug_file.write(f'Chessboard was successfully loaded with move: {chess_move}\n')
+                    self.debug_file.write(f'Chessboard looks like this:\n\n')
+                    self.debug_file.write(f'\n {self.environ.board}\n\n')
+                    self.debug_file.write(f'Current turn index is: {self.environ.turn_index}\n')
+                    self.debug_file.write("Bye from Bradley.recv_opp_move\n\n\n")
 
-            return True
-        else:
-            self.errors_file.write(f'Error: failed to load chessboard with move: {chess_move}\n')
+                return True
+            except Exception as e:
+                self.errors_file.write(f'Error: {e}, failed to update_curr_state\n')
+                self.errors_file.write("========== Bye from Bradley.recv_opp_move ==========\n\n\n")
+                return False
+        except Exception as e:
+            self.errors_file.write(f'Error: {e}, failed to load chessboard with move: {chess_move}\n')
             self.errors_file.write("========== Bye from Bradley.recv_opp_move ==========\n\n\n")
             return False
     ### end of recv_opp_move ###
@@ -164,33 +165,52 @@ class Bradley:
             self.debug_file.write("going to Agent.choose_action\n")
 
         if rl_agent_color == 'W':
-            chess_move: dict[str] = self.W_rl_agent.choose_action(self.environ.get_curr_state())
+            try:
+                curr_state = self.environ.get_curr_state()
+            except Exception as e:
+                self.errors_file.write(f'Error: {e}, failed to get_curr_state\n')
+                self.errors_file.write("========== Bye from Bradley.rl_agent_selects_chess_move ==========\n\n\n")
+                raise Exception(f'Error: {e}, failed to choose_action\n')
+            
+            chess_move: str= self.W_rl_agent.choose_action(curr_state)
         else:
-            chess_move = self.B_rl_agent.choose_action(self.environ.get_curr_state())
+            try:
+                curr_state = self.environ.get_curr_state()
+            except Exception as e:
+                self.errors_file.write(f'Error: {e}, failed to get_curr_state\n')
+                self.errors_file.write("========== Bye from Bradley.rl_agent_selects_chess_move ==========\n\n\n")
+                raise Exception(f'Error: {e}, failed to get_curr_state\n')
+
+            chess_move = self.B_rl_agent.choose_action(curr_state)
         
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("and we're back to Bradley.rl_agent_selects_chess_move, arrived from Agent.choose_action\n")
             self.debug_file.write(f'Chess move is: {chess_move}\n')
             self.debug_file.write("we MAY be going to environ.load_chessboard\n")
 
-        if self.environ.load_chessboard(chess_move['chess_move_str']):
+        try:
+            self.environ.load_chessboard(chess_move)
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write("and we're back from environ.load_chessboard\n")
                 self.debug_file.write("going to environ.update_curr_state\n")
             
-            self.environ.update_curr_state()
+            try:
+                self.environ.update_curr_state()
             
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write("and we're back from environ.update_curr_state\n")
-                self.debug_file.write(f'Chessboard was successfully loaded with move: {chess_move}\n')
-                self.debug_file.write(f'Chessboard looks like this:\n\n')
-                self.debug_file.write(f'\n {self.environ.board}\n\n')
-                self.debug_file.write(f'Current turn is: {self.environ.get_curr_turn()}\n')
-                self.debug_file.write(f'Current turn index is: {self.environ.turn_index}\n')
-                self.debug_file.write("Bye from Bradley.rl_agent_selects_chess_move\n\n\n")
+                if game_settings.PRINT_DEBUG:
+                    self.debug_file.write("and we're back from environ.update_curr_state\n")
+                    self.debug_file.write(f'Chessboard was successfully loaded with move: {chess_move}\n')
+                    self.debug_file.write(f'Chessboard looks like this:\n\n')
+                    self.debug_file.write(f'\n {self.environ.board}\n\n')
+                    self.debug_file.write(f'Current turn index is: {self.environ.turn_index}\n')
+                    self.debug_file.write("Bye from Bradley.rl_agent_selects_chess_move\n\n\n")
 
-            return chess_move
-        else:
+                return chess_move
+            except Exception as e:
+                self.errors_file.write(f'Error: {e}, failed to update_curr_state\n')
+                self.errors_file.write("========== Bye from Bradley.rl_agent_selects_chess_move ==========\n\n\n")
+            
+        except Exception as e:
             self.errors_file.write(f'Error: failed to load chessboard with move: {chess_move}\n')
             self.errors_file.write("========== Bye from Bradley.rl_agent_selects_chess_move ==========\n\n\n")
             raise Exception(f'Error: failed to load chessboard with move: {chess_move}')
@@ -255,7 +275,11 @@ class Bradley:
         Returns:
             str: A string representing the current turn. eg "W1"
         """
-        return self.environ.get_curr_turn()
+        try: 
+            return self.environ.get_curr_turn()
+        except Exception as e:
+            self.errors_file.write(f'An error occurred: {e}, unable to get curr_turn\n')
+            raise Exception(f'An error occurred: {e}, unable to get curr_turn\n')
     ### end of get_curr_turn
 
     # @log_config.log_execution_time_every_N()
@@ -313,7 +337,7 @@ class Bradley:
     ### end of get_legal_moves
         
     # @log_config.log_execution_time_every_N()
-    def get_game_outcome(self) -> Union[chess.Outcome, str]:
+    def get_game_outcome(self) -> str:
         """ Returns the outcome of the chess game.
         Call this method to get the outcome of the chess game, either '1-0', '0-1', '1/2-1/2', 
         or 'False' if the outcome is not available.
@@ -406,7 +430,7 @@ class Bradley:
         for game_num_str in self.chess_data.index:
             num_chess_moves_curr_training_game: int = self.chess_data.at[game_num_str, 'Num Moves']
             
-            if PRINT_TRAINING_RESULTS:
+            if game_settings.PRINT_TRAINING_RESULTS:
                 self.initial_training_results.write(f'\nStart of {game_num_str} training\n\n')
                 self.initial_training_results.write(f'Number of chess moves in this game is: {num_chess_moves_curr_training_game}\n')
 
@@ -414,7 +438,14 @@ class Bradley:
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write("entering self.environ.get_curr_state()\n")
 
-            curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
+            try:
+                curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
+            except Exception as e:
+                self.errors_file.write(f'An error occurred: {e}\n')
+                self.errors_file.write("failed to get_curr_state\n")
+                self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
+                self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
+                raise Exception from e
 
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write("and we're back from self.environ.get_curr_state()\n")
@@ -462,7 +493,14 @@ class Bradley:
                     self.debug_file.write("going to self.environ.get_curr_state\n")
                 
                 # the state changes each time a move is made, so get curr state again.
-                curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
+                try:
+                    curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
+                except Exception as e:
+                    self.errors_file.write(f'An error occurred: {e}\n')
+                    self.errors_file.write("failed to get_curr_state\n")
+                    self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
+                    self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
+                    raise Exception from e
                 
                 if game_settings.PRINT_DEBUG:
                     self.debug_file.write("and we're back from self.environ.get_curr_state\n")
@@ -479,7 +517,13 @@ class Bradley:
                     if game_settings.PRINT_DEBUG:
                         self.debug_file.write("going to self.find_estimated_Q_value\n")
 
-                    W_est_Qval: int = self.find_estimated_Q_value()
+                    try:
+                        W_est_Qval: int = self.find_estimated_Q_value()
+                    except Exception as e:
+                        self.errors_file.write(f'An error occurred: {e}\n')
+                        self.errors_file.write("failed to find_estimated_Q_value\n")
+                        self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
+                        raise Exception from e
 
                     if game_settings.PRINT_DEBUG:
                         self.debug_file.write("and we're back from self.find_estimated_Q_value\n")
@@ -521,7 +565,14 @@ class Bradley:
                     self.debug_file.write("going to self.environ.get_curr_state\n")
 
                 # the state changes each time a move is made, so get curr state again.                
-                curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
+                try:
+                    curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
+                except Exception as e:
+                    self.errors_file.write(f'An error occurred: {e}\n')
+                    self.errors_file.write("failed to get_curr_state\n")
+                    self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
+                    self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
+                    raise Exception from e
 
                 if game_settings.PRINT_DEBUG:
                     self.debug_file.write("and we're back from self.environ.get_curr_state\n")
@@ -550,7 +601,11 @@ class Bradley:
                     if game_settings.PRINT_DEBUG:
                         self.debug_file.write("going to find_estimated_Q_value")
 
-                    B_est_Qval: int = self.find_estimated_Q_value()
+                    try:
+                        B_est_Qval: int = self.find_estimated_Q_value()
+                    except Exception as e:
+                        self.errors_file.write(f"failed to find_estimated_Qvalue because error: {e}")
+                        raise Exception from e
 
                     if game_settings.PRINT_DEBUG:
                         self.debug_file.write("and we're back from find_estimated_Q_value")
@@ -574,7 +629,14 @@ class Bradley:
                 B_curr_Qval = B_next_Qval
 
                 # this is the next state, s'  the next action, a' is handled at the beginning of the while loop
-                curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
+                try:
+                    curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
+                except Exception as e:
+                    self.errors_file.write(f'An error occurred: {e}\n')
+                    self.errors_file.write("failed to get_curr_state\n")
+                    self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
+                    self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
+                    raise Exception from e
                 
                 if game_settings.PRINT_DEBUG:
                     self.debug_file.write("and we're back from self.environ.get_curr_state\n")
@@ -582,12 +644,26 @@ class Bradley:
             # end curr game while loop
 
             # this curr game is done, reset environ to prepare for the next game
-            if PRINT_TRAINING_RESULTS:
+            if game_settings.PRINT_TRAINING_RESULTS:
                 self.initial_training_results.write(f'Game {game_num_str} is over.\n')
                 self.initial_training_results.write(f'\nThe Chessboard looks like this:\n')
                 self.initial_training_results.write(f'\n {self.environ.board}\n\n')
-                self.initial_training_results.write(f'Game result is: {self.get_game_outcome()}\n')
-                self.initial_training_results.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
+                try:
+                    self.initial_training_results.write(f'Game result is: {self.get_game_outcome()}\n')
+                except AttributeError as e:
+                    self.errors_file.write(f'An error occurred: {e}\n')
+                    self.errors_file.write("failed to get_game_outcome\n")
+                    self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
+                    self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
+                    raise AttributeError from e
+                
+                try:
+                    self.initial_training_results.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
+                except AttributeError as e:
+                    self.errors_file.write(f'An error occurred: {e}\n')
+                    self.errors_file.write("failed to get_game_termination_reason\n")
+                    self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
+                    raise AttributeError from e
             
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Game {game_num_str} is over.\n')
@@ -619,7 +695,7 @@ class Bradley:
         B_curr_Qval: int = game_settings.initial_q_val
 
         for curr_training_game in range(num_games_to_play):
-            if PRINT_TRAINING_RESULTS:
+            if game_settings.PRINT_TRAINING_RESULTS:
                 self.additional_training_results.write(f'\n\n Start of game {curr_training_game} training\n\n') 
             
             curr_state: dict[str, str, list[str]] = self.environ.get_curr_state()
@@ -643,7 +719,13 @@ class Bradley:
                 if self.is_game_on() == False:
                     break
                 else:
-                    W_est_Qval: int = self.find_estimated_Q_value()
+                    try:
+                        W_est_Qval: int = self.find_estimated_Q_value()
+                    except Exception as e:
+                        self.errors_file.write(f'An error occurred: {e}\n')
+                        self.errors_file.write("failed to find_estimated_Q_value\n")
+                        self.errors_file.write("========== Bye from Bradley.continue_training_rl_agents ===========\n\n\n")
+                        raise Exception from e
 
                 #################### BLACK'S TURN ####################
                 ##### BLACK AGENT PICKS MOVE, DONT PLAY IT YET THOUGH #####
@@ -668,7 +750,11 @@ class Bradley:
                 if self.is_game_on() == False:
                     break
                 else:
-                    B_est_Qval: int = self.find_estimated_Q_value()
+                    try:
+                        B_est_Qval: int = self.find_estimated_Q_value()
+                    except Exception as e:
+                        self.errors_file.write(f'failed to find_estimated_Q_value because: {e}')
+                        raise Exception from e
 
                 # *** CRITICAL STEP ***, this is the main part of the SARSA algorithm.
                 W_next_Qval: int = self.find_next_Qval(W_curr_Qval, self.W_rl_agent.learn_rate, W_reward, self.W_rl_agent.discount_factor, W_est_Qval)
@@ -712,23 +798,21 @@ class Bradley:
             self.debug_file.write("going to Agent.choose_action\n")
 
         if rl_agent_color == 'W':
-            curr_action: dict[str] = self.W_rl_agent.choose_action(curr_state, game_num_str)
+            curr_action: str = self.W_rl_agent.choose_action(curr_state, game_num_str)
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write("and we're back to Bradley.rl_agent_PICKS_move, arrived from Agent.choose_action\n")
-                self.debug_file.write(f'White agent picked move: {curr_action["chess_move_str"]}\n')
+                self.debug_file.write(f'White agent picked move: {curr_action}\n')
         else:
-            curr_action: dict[str] = self.B_rl_agent.choose_action(curr_state, game_num_str)
+            curr_action: str = self.B_rl_agent.choose_action(curr_state, game_num_str)
 
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write("and we're back to Bradley.rl_agent_PICKS_move, arrived from Agent.choose_action\n")
-                self.debug_file.write(f'Black agent picked move: {curr_action["chess_move_str"]}\n')
+                self.debug_file.write(f'Black agent picked move: {curr_action}\n')
         
-        chess_move: str = curr_action['chess_move_str']
-
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("========== Bye from Bradley.rl_agent_PICKS_move ===========\n\n\n")
 
-        return chess_move
+        return curr_action
     # end of rl_agent_PICKS_move
     
     # @log_config.log_execution_time_every_N()
@@ -829,7 +913,17 @@ class Bradley:
             self.debug_file.write("and we're back to Bradley.rl_agent_PLAYS_move, arrived from self.environ.load_chessboard\n")
             self.debug_file.write("going to self.environ.update_curr_state\n")
 
-        self.environ.update_curr_state()
+        try:
+            self.environ.update_curr_state()
+        except Exception as e:
+            if game_settings.PRINT_DEBUG:
+                self.debug_file.write(f'faile to update_curr_state, Caught exception: {e}\n')
+                self.debug_file.write(f'Chess move is: {chess_move}\n')
+                self.debug_file.write(f'Chessboard is: {self.environ.board}\n')
+                self.debug_file.write(f'Chessboard stack is: {self.environ.chessboard_stack}\n')
+                self.debug_file.write(f'Chessboard stack length is: {len(self.environ.chessboard_stack)}\n')
+                self.debug_file.write(f'Chessboard stack top is: {self.environ.chessboard_stack[-1]}\n')
+                self.debug_file.write(f'Chessboard stack top type is: {type(self.environ.chessboard_stack[-1])}\n')
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("and we're back to Bradley.rl_agent_PLAYS_move arrived from self.environ.update_curr_state\n")
@@ -904,8 +998,15 @@ class Bradley:
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("going to self.environ.pop_chessboard\n")
 
-        self.environ.pop_chessboard()
-        
+        try:
+            self.environ.pop_chessboard()
+        except Exception as e:
+            self.errors_file.write(f'An error occurred: {e}\n')
+            self.errors_file.write("failed to pop_chessboard\n")
+            self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
+            self.errors_file.write("========== Bye from Bradley.find_estimated_Q_value ===========\n\n\n")
+            raise Exception from e
+
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("and we're back from self.environ.pop_chessboard\n")
             self.debug_file.write(f'estimated q val is: {est_Qval}\n')

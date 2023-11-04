@@ -1,4 +1,5 @@
-import chess
+import chess.engine
+import pandas as pd
 
 PRINT_DEBUG: bool = False
 PRINT_TRAINING_RESULTS = False
@@ -22,11 +23,16 @@ CHESS_MOVE_VALUES: dict[str, int] = {
         'mate_score': 1_000
     }
 
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
+pd.set_option('display.max_colwidth', None)
+
+max_num_turns_per_player = 50
 max_turn_index = max_num_turns_per_player * 2 - 1
 initial_q_val = 50 # this is relevant when first training an agent. SARSA algorithm requires an initial value
 training_sample_size = 1 # number of games in database to use for training
-agent_vs_agent_num_games = 100 # number of games that agents will play against each other
-max_num_turns_per_player = 50
+agent_vs_agent_num_games = 1 # number of games that agents will play against each other
 chance_for_random_move = 0.10 # 10% chance that RL agent selects random chess move
         
 # The following values are for the chess engine analysis of moves.
@@ -36,7 +42,7 @@ chance_for_random_move = 0.10 # 10% chance that RL agent selects random chess mo
 num_moves_to_return = 1
 depth_limit = 4
 time_limit = None
-search_limit = chess.engine.Limit(depth = self.depth_limit, time = self.time_limit)
+search_limit = chess.engine.Limit(depth = depth_limit, time = time_limit)
 
 stockfish_filepath = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\stockfish_15_win_x64_avx2\stockfish_15_x64_avx2.exe"
 chess_data_path = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\chess_data\kaggle_chess_data.pkl"

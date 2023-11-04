@@ -1,8 +1,6 @@
-import chess
 import game_settings
 import pandas as pd
-import copy
-from typing import IO
+import chess
 # import logging
 # import log_config
 # logger = logging.getLogger(__name__)
@@ -10,9 +8,6 @@ from typing import IO
 
 class Environ:
     """Manages the chessboard and determines its state.
-
-        This class passes the state to the agent. It is the only thing that 
-        should make changes to the chessboard.
     """
     def __init__(self, chess_data: pd.DataFrame):
         """
@@ -53,7 +48,7 @@ class Environ:
     ### end of constructor
 
     def __del__(self):
-        self.errorsfile.close()
+        self.errors_file.close()
         self.debug_file.close()
     ### end of Bradley destructor ###
 
@@ -67,7 +62,14 @@ class Environ:
             self.debug_file.write(f'========== Hello from Environ.get_curr_state ==========\n\n')
             self.debug_file.write("going to Environ get_curr_turn and Environ get_legal_moves\n")
         
-        state = {'turn_index': self.turn_index, 'curr_turn': self.get_curr_turn(), 'legal_moves': self.get_legal_moves()}
+        try:
+            curr_turn = self.get_curr_turn()
+        except IndexError as e:
+            self.errors_file.write(f'An error at get_curr_state occurred: {e}, unable to get current turn')
+            self.errors_file.write(f'========== End of Environ.get_curr_state ==========\n\n')
+            raise IndexError(f"An error occurred: {e}, unable to get current turn")
+
+        state = {'turn_index': self.turn_index, 'curr_turn': curr_turn, 'legal_moves': self.get_legal_moves()}
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("back from get_curr_turn and get_legal_moves\n")
@@ -80,8 +82,7 @@ class Environ:
     # @log_config.log_execution_time_every_N()
     def update_curr_state(self) -> None:
         """Updates the current state of the chessboard.
-        The current state is the current turn and the legal moves at that turn. The state is updated each time a
-        chess_move str is loaded to the chessboard. Each time a move is made, the current state needs to be updated.
+        The state is updated each time a chess move is loaded to the chessboard. 
         Only the index needs to be updated here. The board is updated by other methods.
 
         Raises:
@@ -128,14 +129,12 @@ class Environ:
         except IndexError as e:
             self.errors_file.write(f'list index out of range, turn index is {self.turn_index}, error desc is: {e}')
             self.errors_file.write(f'========== End of Environ.get_curr_turn ==========\n\n')
+            raise IndexError(f"list index out of range, turn index is {self.turn_index}, error desc is: {e}")
     ### end of get_curr_turn
     
     # @log_config.log_execution_time_every_N()
     def load_chessboard(self, chess_move_str: str) -> bool:
         """Loads a chess move on the chessboard.
-        Call this method when you want to commit a chess move. The agent class chooses the move, but the Environ class
-        must load up the chessboard with that move.
-
         Args:
             chess_move_str (str): A string representing the chess move, such as 'Nf3'.
         Returns:
@@ -160,11 +159,8 @@ class Environ:
             return False
     ### end of load_chessboard    
 
-    # @log_config.log_execution_time_every_N()
     def pop_chessboard(self) -> None:
         """Pops the most recent move applied to the chessboard.
-        This method is used during agent training ONLY
-
         Raises:
             IndexError: If the move stack is empty.
         """
@@ -185,7 +181,6 @@ class Environ:
             raise IndexError(f"An error occurred: {e}, unable to pop chessboard'")
     ### end of pop_chessboard
 
-    # @log_config.log_execution_time_every_N()
     def undo_move(self) -> None:
         """Undoes the most recent move applied to the chessboard.
 
@@ -209,9 +204,9 @@ class Environ:
             self.errors_file.write(f'An error occurred: {e}, unable to undo move')
             self.errors_file.write(f'turn index: {self.turn_index}\n')
             self.errors_file.write(f'========== End of Environ.undo_move ==========\n\n\n')
+            raise IndexError(f"An error occurred: {e}, unable to undo move'")
     ### end of undo_move
 
-    # @log_config.log_execution_time_every_N()
     def load_chessboard_for_Q_est(self, analysis_results: list[dict]) -> None:
         """Loads the chessboard using a Move.uci string during training.
         This method works in tandem with the Stockfish analysis during training.
@@ -227,6 +222,7 @@ class Environ:
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'========== Hello from Environ.load_chessboard_for_Q_est ==========\n\n')
             self.debug_file.write(f'analysis_results: {analysis_results}\n')
+            self.debug_file.write(f'the anticipated_chess_move is: {analysis_results["anticipated_next_move"]}\n')
 
         # this is the anticipated chess move due to opponent's previous chess move. so if White plays Ne4, what is Black like to play?
         anticipated_chess_move = analysis_results['anticipated_next_move']  # this has the form like this, Move.from_uci('e4f6')
@@ -247,7 +243,6 @@ class Environ:
     # @log_config.log_execution_time_every_N()
     def reset_environ(self) -> None:
         """Resets the Environ object.
-        Call this method each time a game ends.
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'========== Hello from Environ.reset_environ ==========\n\n')

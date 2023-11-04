@@ -2,16 +2,6 @@ import game_settings
 import pandas as pd
 import numpy as np
 import helper_methods
-import re
-import copy
-import random
-import chess
-from typing import Union
-
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_colwidth', None)
 
 # import logging
 # import log_config
@@ -73,16 +63,6 @@ class Agent:
     # @log_config.log_execution_time_every_N()
     def choose_action(self, environ_state: dict[str, str, list[str]], curr_game: str = 'Game 1') -> str:
         """Chooses the next chess move for the agent based on the current state.
-        Preconditions:
-            The `environ_state` dictionary must contain the following keys:
-                'turn_index': A string representing the current turn number.
-                'curr_turn': A string representing the current turn, e.g. 'W1'.
-                'legal_moves': A list of strings representing the legal moves for the current turn.
-            curr_game must be a string that is an index key in the chess_data dataframe.
-        Invariants:
-            environ_state and curr_game are not modified in this method.
-        Side Effects:
-            The Q table may be updated.
         Args:
             environ_state (dict): A dictionary containing the current state of the environment.
                 Make sure environ_state is not modified in this method.
@@ -95,7 +75,6 @@ class Agent:
             self.debug_file.write(f'========== Hello from Agent choose_action ========== \n\n')
             self.debug_file.write(f'environ_state: {environ_state}\n')
             self.debug_file.write(f'legal_moves: {environ_state["legal_moves"]}\n')
-            self.debug_file.write(f'curr_turn: {environ_state["curr_turn"]}\n')
 
         # check if any of the legal moves is not already in the Q table
         moves_not_in_Q_table: list[str] = [move for move in environ_state['legal_moves'] if move not in self.Q_table.index]
@@ -206,7 +185,7 @@ class Agent:
             A pandas dataframe representing the Q table.
         """
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Agent init_Q_table ==========\n\n')
+            self.debug_file.write(f'========== Hello from Agent init_Q_table ==========\n')
             self.debug_file.write("going to Agent get_unique_moves\n\n")
 
         unique_moves: pd.Index = self.get_unique_moves(chess_data, self.color)
@@ -279,9 +258,6 @@ class Agent:
     # @log_config.log_execution_time_every_N()
     def change_Q_table_pts(self, chess_move: str, curr_turn: str, pts: int) -> None:
         """Adds points to a cell in the Q table.
-        This method adds the specified number of points to the cell in the Q table corresponding to 
-        the given chess move and turn number.
-
         Args:
             chess_move (str): A string representing the chess move, e.g. 'e4'.
             curr_turn (str): A string representing the turn number, e.g. 'W10'.
@@ -312,7 +288,6 @@ class Agent:
         This method creates a new DataFrame with the new chess moves, and 
         appends it to the Q table. 
 
-        Preconditions: new_chess_moves is not empty.
         Args:
             new_chess_moves (list[str]): A list of chess moves (strings) that are not already in the Q table.
         Returns:
