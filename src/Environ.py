@@ -133,7 +133,7 @@ class Environ:
     ### end of get_curr_turn
     
     # @log_config.log_execution_time_every_N()
-    def load_chessboard(self, chess_move_str: str) -> bool:
+    def load_chessboard(self, chess_move_str: str) -> None:
         """Loads a chess move on the chessboard.
         Args:
             chess_move_str (str): A string representing the chess move, such as 'Nf3'.
@@ -152,11 +152,10 @@ class Environ:
                 self.debug_file.write(f'board: {self.board}\n')
                 self.debug_file.write(f'========== End of Environ.load_chessboard ==========\n\n\n')
 
-            return True
         except ValueError as e:
-            self.errors_file.write(f'An error occurred: {e}, unable to load chessboard with {chess_move_str}')
-            self.errors_file.write(f'========== End of Environ.load_chessboard ==========\n\n\n')          
-            return False
+            self.errors_file.write(f'An error occurred at load_chessboard(): {e}, unable to load chessboard with {chess_move_str}')
+            self.errors_file.write(f'========== End of Environ.load_chessboard ==========\n\n\n')
+            raise ValueError(f"An error occurred: {e}, unable to load chessboard with {chess_move_str}")          
     ### end of load_chessboard    
 
     def pop_chessboard(self) -> None:
@@ -276,7 +275,8 @@ class Environ:
         if len(legal_moves) == 0:
             self.errors_file.write(f'hello from environ get_legal_moves, legal_moves is empty\n')
         
-        self.debug_file.write(f'========== End of Environ.get_legal_moves ==========\n\n\n')
+        if game_settings.PRINT_DEBUG:
+            self.debug_file.write(f'========== End of Environ.get_legal_moves ==========\n\n\n')
         
         return legal_moves
     ### end of get_legal_moves

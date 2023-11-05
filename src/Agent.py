@@ -31,9 +31,6 @@ class Agent:
         self.debug_file = open(game_settings.agent_debug_filepath, 'a')
         self.errors_file = open(game_settings.agent_errors_filepath, 'a')
 
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent __init__ ==========\n')
-
         # too high num here means too focused on recent knowledge, 
         self.learn_rate = learn_rate
         # lower discount_factor number means more opportunistic, but not good long term planning
@@ -43,19 +40,24 @@ class Agent:
         self.is_trained: bool = False
 
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write("going to Agent init_Q_table\n\n")
+            self.debug_file.write(f'\n========== Hello from Agent __init__ ==========\n')
+            self.debug_file.write(f'Agent color is: {self.color}\n')
+            self.debug_file.write("going to Agent.init_Q_table\n\n")
 
         self.Q_table: pd.DataFrame = self.init_Q_table(self.chess_data)
 
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write("and we're back to Agent __init__ just arrived from init_Q_table\n")
-            self.debug_file.write(f'chess_data: {self.chess_data}\n\n')
-            self.debug_file.write(f'Q_table: {self.Q_table}\n\n')
-            self.debug_file.write(f'is_trained: {self.is_trained}\n\n')
+            self.debug_file.write("and we're back to Agent __init__ just arrived from Agent.init_Q_table\n")
+            self.debug_file.write(f'chess_data df is:\n{self.chess_data}\n\n')
+            self.debug_file.write(f'Q_table:\n{self.Q_table}\n\n')
+            self.debug_file.write(f'is_trained: {self.is_trained}\n')
+            self.debug_file.write(f'{self.color} Agent has been initialized\n')
             self.debug_file.write(f'========== Bye from Agent __init__ ==========\n\n\n')
     ### end of __init__ ###
 
     def __del__(self):
+        if game_settings.PRINT_DEBUG:
+            debug_file.write(f'========== Hello & bye from Agent __del__ ==========\n')
         self.errors_file.close()
         self.debug_file.close()
     ### end of __del__ ###
@@ -72,7 +74,8 @@ class Agent:
             str: A string representing the chess move chosen by the agent.
         """
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Agent choose_action ========== \n\n')
+            self.debug_file.write(f'\n========== Hello from Agent choose_action ========== \n')
+            self.debug_file.write(f'{self.color} Agent is choosing an action\n')
             self.debug_file.write(f'environ_state: {environ_state}\n')
             self.debug_file.write(f'legal_moves: {environ_state["legal_moves"]}\n')
 
@@ -84,21 +87,21 @@ class Agent:
 
         if moves_not_in_Q_table:
             if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'========== going to Agent update_Q_table =========== \n')
+                self.debug_file.write(f'========== going to Agent update_Q_table =========== \n\n')
 
             self.update_Q_table(moves_not_in_Q_table)
 
             if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'========== back to Agent choose_action, arrived from Agen update_Q_table =========== \n')
+                self.debug_file.write(f'========== back to Agent choose_action, arrived from Agen update_Q_table ===========\n\n')
                 
         if self.is_trained:
             if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'========== going to Agent policy_game_mode ========== \n')
+                self.debug_file.write(f'========== going to Agent policy_game_mode ========== \n\n')
 
             return self.policy_game_mode(environ_state['legal_moves'])
         else:
             if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'========== going to Agent policy_training_mode ==========\n\n\n')
+                self.debug_file.write(f'========== going to Agent policy_training_mode ==========\n\n')
 
             return self.policy_training_mode(curr_game, environ_state["curr_turn"])
     ### end of choose_action ###
@@ -113,7 +116,8 @@ class Agent:
             str: A string representing the chess move chosen by the agent.
         """
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Agent policy_training_mode ========== \n\n')
+            self.debug_file.write(f'\n========== Hello from Agent policy_training_mode ========== \n')
+            self.debug_file.write(f'{self.color} Agent is choosing an action\n')
             self.debug_file.write(f"the selected chess move from db is: {self.chess_data.at[curr_game, curr_turn]}\n")
             self.debug_file.write(f'========== bye from Agent policy_training_mode ========== \n\n\n')
 
@@ -133,23 +137,21 @@ class Agent:
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'\n========== Hello from Agent policy_game_mode ==========\n')
-            self.debug_file.write("going to helper_methods get_number_with_probability\n")
+            self.debug_file.write(f'{self.color} Agent is choosing an action\n')
+            self.debug_file.write("going to helper_methods get_number_with_probability\n\n")
 
         # dice roll will be 0 or 1
         dice_roll: int = helper_methods.get_number_with_probability(game_settings.chance_for_random_move)
 
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'back to Agent policy_game_mode, arrived from helper_methods get_number_with_probability\n')
+            self.debug_file.write(f'back to Agent.policy_game_mode, arrived from helper_methods get_number_with_probability\n')
             self.debug_file.write(f'dice roll val is: {dice_roll}\n')
-            self.debug_file.write("going to Agent get_Q_values\n")
         
         # get the list of chess moves in the q table, then filter that so that 
         # only the legal moves for this turn remain.
-        q_values: pd.Series = self.get_Q_values()
-        legal_moves_in_q_table = q_values.loc[q_values.index.intersection(legal_moves)]
+        legal_moves_in_q_table = self.Q_table[curr_turn].loc[self.Q_table[curr_turn].index.intersection(legal_moves)]
 
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'back to Agent policy_game_mode, arrived from Agent get_Q_values\n')
             self.debug_file.write(f'legal_moves_in_q_table: {legal_moves_in_q_table}\n')
         
         if dice_roll == 1:
@@ -185,42 +187,9 @@ class Agent:
             A pandas dataframe representing the Q table.
         """
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Agent init_Q_table ==========\n')
-            self.debug_file.write("going to Agent get_unique_moves\n\n")
-
-        unique_moves: pd.Index = self.get_unique_moves(chess_data, self.color)
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write("and we're back to Agent.init_Q_table, arrived from get_unique_moves\n")
-            self.debug_file.write(f'unique_moves: {unique_moves}\n')
-            self.debug_file.write("going to Agent get_turns_list\n\n")
-
-        turns_list: pd.Index =  self.get_turns_list(chess_data, self.color)
-        q_table: pd.DataFrame = pd.DataFrame(0, columns = turns_list, index = unique_moves, dtype = np.int32)
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write("and we're back to Agent.init_Q_table, arrived from get_turns_list\n")
-            self.debug_file.write(f'turns_list: {turns_list}\n')
-            self.debug_file.write(f'chess_data: {chess_data}\n')
-            self.debug_file.write(f'chess_data shape: {chess_data.shape}\n')
-            self.debug_file.write(f'q_table: {q_table}\n')
-            self.debug_file.write(f'q_table shape: {q_table.shape}\n')
-            self.debug_file.write(f'========== bye from Agent init_Q_table ==========\n\n\n')
-
-        return q_table
-    ### end of init_Q_table ###
-
-    # @log_config.log_execution_time_every_N()
-    def get_unique_moves(self, chess_data: pd.DataFrame, color: str) -> pd.Index:
-        """Retrieve unique chess moves for a given color from a DataFrame.
-        Args:
-            chess_data (pd.DataFrame): DataFrame containing chess moves. Columns should be prefixed with color.
-            color (str): The color ('white' or 'black') for which to retrieve unique moves.
-        Returns:
-            pd.Index: Unique moves for the specified color. 
-        """
-        # Get all the columns that start with the color
-        move_columns = [col for col in chess_data.columns if col.startswith(color)]
+            self.debug_file.write(f'\n========== Hello from Agent init_Q_table ==========\n')
+            
+        move_columns = [col for col in chess_data.columns if col.startswith(self.color)]
 
         # Flatten all the values in these columns and find unique values for
         # the specified color
@@ -228,32 +197,21 @@ class Agent:
         unique_moves = pd.Series(unique_moves).unique()
 
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent get_unique_moves ==========\n')
             self.debug_file.write(f'unique_moves: {unique_moves}\n')
-            self.debug_file.write(f'unique_moves len: {len(unique_moves)}\n')
-            self.debug_file.write(f'========== bye from Agent get_unique_moves ==========\n\n')
 
-        return unique_moves
-    ### end of get_unique_moves ###
+        turns_list: pd.Index = chess_data.loc[:, f"{self.color}1": f"{self.color}{game_settings.max_num_turns_per_player}": 2].columns
+        q_table: pd.DataFrame = pd.DataFrame(0, columns = turns_list, index = unique_moves, dtype = np.int32)
 
-    # @log_config.log_execution_time_every_N()
-    def get_turns_list(self, chess_data: pd.DataFrame, color: str) -> pd.Index:
-        """Retrieve the list of turn columns for a specified color from a DataFrame.
-        Args:
-            chess_data (pd.DataFrame): DataFrame containing chess moves. Columns should be named with turn numbers.
-            color (str): The color ('white' or 'black') for which to retrieve the turn columns.
-        Returns:
-            pd.Index: Columns representing turns for the specified color.
-        """ 
-        turns_list = chess_data.loc[:, f"{color}1": f"{color}{game_settings.max_num_turns_per_player}": 2].columns
-        
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Agent get_turns_list ==========\n\n')
             self.debug_file.write(f'turns_list: {turns_list}\n')
-            self.debug_file.write(f'========== bye from Agent get_turns_list==========\n\n\n')
+            self.debug_file.write(f'chess_data: {chess_data}\n')
+            self.debug_file.write(f'chess_data shape: {chess_data.shape}\n')
+            self.debug_file.write(f'q_table:\n{q_table}\n\n')
+            self.debug_file.write(f'q_table shape: {q_table.shape}\n')
+            self.debug_file.write(f'========== bye from Agent init_Q_table ==========\n\n\n')
 
-        return turns_list
-    ### end of get_turns_list ###
+        return q_table
+    ### end of init_Q_table ###
 
     # @log_config.log_execution_time_every_N()
     def change_Q_table_pts(self, chess_move: str, curr_turn: str, pts: int) -> None:
@@ -266,7 +224,7 @@ class Agent:
             None
         """
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Agent change_Q_table_pts ==========\n')
+            self.debug_file.write(f'\n========== Hello from Agent change_Q_table_pts ==========\n')
             self.debug_file.write(f'chess_move: {chess_move}\n')
             self.debug_file.write(f'curr_turn: {curr_turn}\n')
             self.debug_file.write(f'pts: {pts}\n')
@@ -275,6 +233,7 @@ class Agent:
         try:
             self.Q_table.at[chess_move, curr_turn] += pts
         except KeyError as e:
+            self.errors_file.write(f'\n========== something went wrong at Agent change_Q_table_pts ==========\n')
             self.errors_file.write(f'KeyError: {e}\n')
             self.errors_file.write(f'chess_move: {chess_move}\n')
             self.errors_file.write(f'curr_turn: {curr_turn}\n')
@@ -294,7 +253,7 @@ class Agent:
             None
         """
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Agent update_Q_table ==========\n')
+            self.debug_file.write(f'\n========== Hello from Agent update_Q_table ==========\n')
             self.debug_file.write(f'new_chess_moves: {new_chess_moves}\n')
     
         q_table_new_values: pd.DataFrame = pd.DataFrame(0, index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int32)
@@ -302,7 +261,7 @@ class Agent:
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'q_table_new_values: {q_table_new_values.head()}\n')
-            self.debug_file.write(f'Q_table: {self.Q_table.head()}\n')
+            self.debug_file.write(f'Q_table:\n{self.Q_table.head()}\n\n')
             self.debug_file.write(f'========== bye from Agent update_Q_table ==========\n\n\n')
     ### update_Q_table ###
 
@@ -311,33 +270,12 @@ class Agent:
         """Resets the Q table to all zeros.
         """
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Agent reset_Q_table ==========\n')
-            self.debug_file.write(f'Q_table: {self.Q_table.head()}\n')
+            self.debug_file.write(f'\n========== Hello from Agent reset_Q_table ==========\n')
+            self.debug_file.write(f'Q_table:\n{self.Q_table.head()}\n\n')
 
         self.Q_table.iloc[:, :] = 0
         
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'Q_table: {self.Q_table.head()}\n')
+            self.debug_file.write(f'reset Q_table is:\n{self.Q_table.head()}\n\n')
             self.debug_file.write(f'bye from Agent reset_Q_table\n\n\n')
     ### end of reset_Q_table ###
-
-    # @log_config.log_execution_time_every_N()
-    def get_Q_values(self, curr_turn: str) -> pd.Series:
-        """Returns a Pandas series of Q values for the current turn.
-        The series index represents the unique moves that have been found in the chess data for the current turn.
-        
-        Args:
-            curr_turn: A string representing the current turn, e.g. 'W1'.
-        Returns:
-            pd.Series: A Pandas series where the index represents the chess moves, and the column is the current turn 
-            in the game.
-        """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Agent get_Q_values ==========\n\n')
-            self.debug_file.write(f'Q_table: {self.Q_table.head()}\n')
-            self.debug_file.write(f'curr_turn: {curr_turn}\n')
-            self.debug_file.write(f'Q_table[curr_turn]: {self.Q_table[curr_turn].head()}\n')
-            self.debug_file.write(f'========== bye from Agent get_Q_values ==========\n\n\n')
-
-        return self.Q_table[curr_turn]
-    ### end of get_Q_values

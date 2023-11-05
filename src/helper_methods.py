@@ -151,7 +151,7 @@ def agent_vs_agent(bubs: Bradley.Bradley) -> None:
     try:
         agent_vs_agent_file.write(f'Game ended because of: {bubs.get_game_termination_reason()}')
     except Exception as e:
-        agent_vs_agent_file.write(f'An error occurred: {e}')
+        agent_vs_agent_file.write(f'An error occurred while getting game termination reason: {e}')
         # logger.error(f'Error occurred while getting game termination reason: {e}')
 
     bubs.reset_environ()
