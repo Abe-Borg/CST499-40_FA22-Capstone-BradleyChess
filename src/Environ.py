@@ -48,6 +48,7 @@ class Environ:
     ### end of constructor
 
     def __del__(self):
+        self.debug_file.write('hello and bye from Environ destructor\n')
         self.errors_file.close()
         self.debug_file.close()
     ### end of Bradley destructor ###
@@ -264,8 +265,7 @@ class Environ:
             list[str]: A list of strings representing the legal moves at the current turn, given the board state.
         """
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Environ.get_legal_moves ==========\n\n')
-            self.debug_file.write(f'board:\n{self.board}\n\n')
+            self.debug_file.write(f'\n========== Hello from Environ.get_legal_moves ==========\n\n')
 
         legal_moves = [self.board.san(move) for move in self.board.legal_moves]
         

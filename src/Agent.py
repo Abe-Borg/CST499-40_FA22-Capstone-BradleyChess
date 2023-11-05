@@ -48,7 +48,6 @@ class Agent:
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("and we're back to Agent __init__ just arrived from Agent.init_Q_table\n")
-            self.debug_file.write(f'chess_data df is:\n{self.chess_data}\n\n')
             self.debug_file.write(f'Q_table:\n{self.Q_table}\n\n')
             self.debug_file.write(f'is_trained: {self.is_trained}\n')
             self.debug_file.write(f'{self.color} Agent has been initialized\n')
@@ -56,8 +55,7 @@ class Agent:
     ### end of __init__ ###
 
     def __del__(self):
-        if game_settings.PRINT_DEBUG:
-            debug_file.write(f'========== Hello & bye from Agent __del__ ==========\n')
+        self.debug_file.write(f'========== Hello & bye from Agent __del__ ==========\n')
         self.errors_file.close()
         self.debug_file.close()
     ### end of __del__ ###
@@ -260,8 +258,8 @@ class Agent:
         self.Q_table = pd.concat([self.Q_table, q_table_new_values])
 
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'q_table_new_values: {q_table_new_values.head()}\n')
-            self.debug_file.write(f'Q_table:\n{self.Q_table.head()}\n\n')
+            self.debug_file.write(f'q_table_new_values: {q_table_new_values}\n')
+            self.debug_file.write(f'Q_table:\n{self.Q_table}\n\n')
             self.debug_file.write(f'========== bye from Agent update_Q_table ==========\n\n\n')
     ### update_Q_table ###
 

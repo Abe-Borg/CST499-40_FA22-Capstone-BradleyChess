@@ -21,7 +21,7 @@ def init_bradley(chess_data: pd.DataFrame) -> Bradley.Bradley:
 
     if game_settings.PRINT_DEBUG:
         debug_file.write(f'white agent q table\n:{bubs.W_rl_agent.Q_table.head()}\n')
-        debug_file.write(f'white agent q table shape: {bubs.W_rl_agent.Q_table.shape}\n')
+        debug_file.write(f'white agent q table shape: {bubs.W_rl_agent.Q_table.shape}\n\n')
         debug_file.write(f'black agent q table\n:{bubs.B_rl_agent.Q_table.head()}\n')
         debug_file.write(f'black agent q table shape: {bubs.B_rl_agent.Q_table.shape}\n')
         debug_file.write("========== Bye from Helper Methods init_bradley ==========\n\n\n")

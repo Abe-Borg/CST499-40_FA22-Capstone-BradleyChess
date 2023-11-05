@@ -37,10 +37,8 @@ chance_for_random_move = 0.10 # 10% chance that RL agent selects random chess mo
         
 # The following values are for the chess engine analysis of moves.
 # we only want to look ahead one move, that's the anticipated q value at next state, and next action
-# this number has a massive inpact on how long it takes to analyze a position and 
-# it doesn't help to go beyond depth_limit 4.
 num_moves_to_return = 1
-depth_limit = 2
+depth_limit = 1
 time_limit = None
 search_limit = chess.engine.Limit(depth = depth_limit, time = time_limit)
 
