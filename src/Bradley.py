@@ -311,7 +311,7 @@ class Bradley:
             self.debug_file.write(f"\n========== Hello from Bradley.is_game_on ==========\n\n")
             self.debug_file.write("going to self.environ.board.is_game_over()\n")
 
-        if len(self.environ.get_legal_moves()) == 0 or self.environ.board.is_game_over() or self.environ.turn_index >= game_settings.max_num_turns_per_player * 2 - 1:
+        if self.environ.board.is_game_over() or (self.environ.turn_index >= game_settings.max_num_turns_per_player * 2 - 1):
             
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Game over, is_game_on is: False\n')
@@ -533,6 +533,7 @@ class Bradley:
                         self.debug_file.write(f'last chess move was: {W_chess_move}\n')
                         self.debug_file.write(f'board looks like this:\n{self.environ.board}\n\n')
                         self.debug_file.write(f'num_chess_moves_curr_training_game is: {num_chess_moves_curr_training_game}\n')
+                    self.environ.reset_environ()
                     break # and go to next game
                 else: # current game continues
                     if game_settings.PRINT_DEBUG:
@@ -616,10 +617,10 @@ class Bradley:
                         self.debug_file.write(
                             f"game is over, max number of turns has been reached: "
                             f"{self.environ.turn_index} >= {game_settings.max_num_turns_per_player}\n")
-                    
+                    self.environ.reset_environ()
                     break
 
-                # find the estimated Q value
+                # find the estimated Q value, but first check if game ended.
                 if self.is_game_on() == False:
                     
                     if game_settings.PRINT_DEBUG:
@@ -628,7 +629,7 @@ class Bradley:
                         self.debug_file.write(f'the last move was {B_chess_move}\n')
                         self.debug_file.write(f'chessboard look like this:\n{self.environ.board}\n\n')
                         self.debug_file.write(f'num_chess_moves_curr_training_game is: {num_chess_moves_curr_training_game}\n')
-                    
+                    self.environ.reset_environ()
                     break
                 else:
                     if game_settings.PRINT_DEBUG:
@@ -926,14 +927,14 @@ class Bradley:
 
         # load up the chess board with opponent's anticipated chess move 
         # anticipated next action is a str like, 'e6f2'              
-        self.environ.load_chessboard_for_Q_est(analysis_results) 
+        self.environ.load_chessboard_for_Q_est(analysis_results)
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("and we're back from environ.load_chessboard_for_Q_est\n")
             self.debug_file.write("going to analyze_board_state")
     
         # this is the Q estimated value due to what the opposing agent is likely to play in response to our move.
-        est_Qval_analysis = self.analyze_board_state(self.environ.board) 
+        est_Qval_analysis = self.analyze_board_state(self.environ.board)
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("and we're back from analyze_board_state")
