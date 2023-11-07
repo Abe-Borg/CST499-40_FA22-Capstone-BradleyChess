@@ -22,6 +22,7 @@ class Bradley:
         engine (chess.engine.SimpleEngine): A Stockfish engine used to analyze positions during training.
     """
     def __init__(self, chess_data: pd.DataFrame):
+        self.q_est_log = open(game_settings.q_est_log_filepath, 'a')
         self.debug_file = open(game_settings.bradley_debug_filepath, 'a')
         self.errors_file = open(game_settings.bradley_errors_filepath, 'a')
         self.initial_training_results = open(game_settings.initial_training_results_filepath, 'a')
@@ -66,6 +67,7 @@ class Bradley:
         self.errors_file.close()
         self.initial_training_results.close()
         self.additional_training_results.close()
+        self.q_est_log.close()
     ### end of Bradley destructor ###
 
     def set_agent_learn_rate(self, rl_agent_color: str, learn_rate: float) -> None:
@@ -375,10 +377,7 @@ class Bradley:
                 self.debug_file.write("========== Bye from Bradley.get_game_outcome ===========\n\n\n")
 
             return game_outcome
-        except AttributeError as e:
-            self.errors_file.write(f'An error occurred: {e}\n')
-            self.errors_file.write("outcome not available, most likely game ended because turn_index was too high or player resigned\n")
-            self.errors_file.write("========== Bye from Bradley.get_game_outcome ===========\n\n\n")
+        except AttributeError:
             return 'game outcome unavailable, game ended because turn_index was too high or player resigned'
     ### end of get_game_outcome
     
@@ -405,10 +404,7 @@ class Bradley:
                 self.debug_file.write("========== Bye from Bradley.get_game_termination_reason ===========\n\n\n")
 
             return termination_reason
-        except AttributeError as e:
-            self.errors_file.write(f'An error occurred: {e}\n')
-            self.errors_file.write("termination reason not available, most likely game ended because turn_index was too high or player resigned")
-            self.errors_file.write("========== Bye from Bradley.get_game_termination_reason ===========\n\n\n")
+        except AttributeError:
             return 'game termination reason unavailable, game ended because turn_index was too high or player resigned'
     ### end of get_game_termination_reason
     
@@ -543,6 +539,7 @@ class Bradley:
 
                     try:
                         W_est_Qval: int = self.find_estimated_Q_value()
+                        self.q_est_log.write(f'W_est_Qval is: {W_est_Qval}\n')
                     except Exception as e:
                         self.errors_file.write(f'An error occurred: {e}\n')
                         self.errors_file.write("failed to find_estimated_Q_value\n")
@@ -634,6 +631,7 @@ class Bradley:
 
                     try:
                         B_est_Qval: int = self.find_estimated_Q_value()
+                        self.q_est_log.write(f'B_est_Qval is: {B_est_Qval}\n')
                     except Exception as e:
                         self.errors_file.write(f"failed to find_estimated_Qvalue because error: {e}")
                         raise Exception from e

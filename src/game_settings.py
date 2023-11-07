@@ -31,7 +31,7 @@ CHESS_MOVE_VALUES: dict[str, int] = {
 max_num_turns_per_player = 50
 max_turn_index = max_num_turns_per_player * 2 - 1
 initial_q_val = 50 # this is relevant when first training an agent. SARSA algorithm requires an initial value
-training_sample_size = 50 # number of games in database to use for training
+training_sample_size = 100 # number of games in database to use for training
 agent_vs_agent_num_games = 1 # number of games that agents will play against each other
 chance_for_random_move = 0.10 # 10% chance that RL agent selects random chess move
         
@@ -63,3 +63,5 @@ additional_training_results_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\G
 
 environ_debug_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\environ_debug_log.txt'
 environ_errors_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\environ_errors_log.txt'
+
+q_est_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\q_est_log.txt'

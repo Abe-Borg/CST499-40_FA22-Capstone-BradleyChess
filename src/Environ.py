@@ -48,7 +48,6 @@ class Environ:
     ### end of constructor
 
     def __del__(self):
-        self.debug_file.write('hello and bye from Environ destructor\n')
         self.errors_file.close()
         self.debug_file.close()
     ### end of Bradley destructor ###
