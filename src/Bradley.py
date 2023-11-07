@@ -62,7 +62,6 @@ class Bradley:
     ### end of Bradley constructor ###
 
     def __del__(self):
-        self.debug_file.write(f"\n========== Hello and bye from Bradley Destructor ==========\n")
         self.debug_file.close()
         self.errors_file.close()
         self.initial_training_results.close()
@@ -380,7 +379,7 @@ class Bradley:
             self.errors_file.write(f'An error occurred: {e}\n')
             self.errors_file.write("outcome not available, most likely game ended because turn_index was too high or player resigned\n")
             self.errors_file.write("========== Bye from Bradley.get_game_outcome ===========\n\n\n")
-            raise AttributeError from e
+            return 'game outcome unavailable, game ended because turn_index was too high or player resigned'
     ### end of get_game_outcome
     
     # @log_config.log_execution_time_every_N()
@@ -410,7 +409,7 @@ class Bradley:
             self.errors_file.write(f'An error occurred: {e}\n')
             self.errors_file.write("termination reason not available, most likely game ended because turn_index was too high or player resigned")
             self.errors_file.write("========== Bye from Bradley.get_game_termination_reason ===========\n\n\n")
-            raise AttributeError from e
+            return 'game termination reason unavailable, game ended because turn_index was too high or player resigned'
     ### end of get_game_termination_reason
     
     def get_chessboard(self) -> chess.Board:
@@ -460,6 +459,7 @@ class Bradley:
             except Exception as e:
                 self.errors_file.write(f'An error occurred: {e}\n')
                 self.errors_file.write("failed to get_curr_state\n")
+                self.errors_file.write(f'curr board is:\n{self.environ.board}\n\n')
                 self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
                 raise Exception from e
 
@@ -504,6 +504,7 @@ class Bradley:
                 except Exception as e:
                     self.errors_file.write(f'An error occurred: {e}\n')
                     self.errors_file.write("failed to rl_agent_PLAYS_move\n")
+                    self.errors_file.write(f'curr board is:\n{self.environ.board}\n\n')
                     self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
                     raise Exception from e
 
@@ -679,21 +680,9 @@ class Bradley:
                 self.initial_training_results.write(f'Game {game_num_str} is over.\n')
                 self.initial_training_results.write(f'\nThe Chessboard looks like this:\n')
                 self.initial_training_results.write(f'\n {self.environ.board}\n\n')
-                try:
-                    self.initial_training_results.write(f'Game result is: {self.get_game_outcome()}\n')
-                except AttributeError as e:
-                    self.errors_file.write(f'An error occurred: {e}\n')
-                    self.errors_file.write("failed to get_game_outcome\n")
-                    self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
-                    self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
-                
-                try:
-                    self.initial_training_results.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
-                except AttributeError as e:
-                    self.initial_training_results.write(f'An error occurred: {e}\n')
-                    self.errors_file.write(f'An error occurred: {e}\n')
-                    self.errors_file.write("failed to get_game_termination_reason\n")
-                    self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
+                self.initial_training_results.write(f'Game result is: {self.get_game_outcome()}\n')    
+                self.initial_training_results.write(f'The game ended because of: {self.get_game_termination_reason()}\n')
+
             
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Game {game_num_str} is over.\n')
@@ -818,7 +807,7 @@ class Bradley:
                     self.debug_file.write(f'White agent changed Q table points for move: {chess_move}\n')
 
             except KeyError as e: 
-                # chess move is not represented in the Q table, update Q table and try again.
+                # chess move is not represented in the Q table, update Q table and try again. 
                 if game_settings.PRINT_DEBUG:
                     self.debug_file.write(f'caught exception: {e}\n')
                     self.debug_file.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
@@ -1071,7 +1060,7 @@ class Bradley:
         if re.search(r'=', chess_move):
             total_reward += game_settings.CHESS_MOVE_VALUES['promotion']
         if re.search(r'=Q', chess_move):
-            total_reward += sgame_settings.CHESS_MOVE_VALUES['promotion_queen']
+            total_reward += game_settings.CHESS_MOVE_VALUES['promotion_queen']
         
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'Total reward is: {total_reward}\n')

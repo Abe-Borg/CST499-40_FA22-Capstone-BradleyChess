@@ -55,7 +55,6 @@ class Agent:
     ### end of __init__ ###
 
     def __del__(self):
-        self.debug_file.write(f'========== Hello & bye from Agent __del__ ==========\n')
         self.errors_file.close()
         self.debug_file.close()
     ### end of __del__ ###
