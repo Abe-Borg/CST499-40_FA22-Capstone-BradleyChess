@@ -4,8 +4,20 @@ import game_settings
 # import logging
 # import log_config
 # logger = logging.getLogger(__name__)
-    
-def init_bradley(chess_data: pd.DataFrame) -> Bradley.Bradley:
+
+def clean_chess_data(chess_data: pd.DataFrame) -> pd.DataFrame:
+    # Create a boolean mask where true indicates a non-empty and non-null move
+    non_empty_non_null_moves = (chess_data.loc[:, 'W1':] != '').fillna(True)
+
+    # Use all() to ensure all values must be True across columns for a given row to keep it
+    valid_games = non_empty_non_null_moves.all(axis = 1)
+
+    # Apply this mask to the DataFrame to filter out games with any empty or NA moves
+    chess_data_cleaned = chess_data[valid_games]
+    chess_data_cleaned = chess_data_cleaned.dropna(subset = chess_data.columns[1:], how = 'any')
+    return chess_data_cleaned
+
+def init_bradley(chess_data_raw: pd.DataFrame) -> Bradley.Bradley:
     """Initializes a Bradley object with the given chess data.
     Args:
         chess_data (pd.DataFrame): A Pandas DataFrame containing the chess data.
@@ -13,21 +25,15 @@ def init_bradley(chess_data: pd.DataFrame) -> Bradley.Bradley:
         imman.Bradley: An object of the Bradley class.
     """
     debug_file = open(game_settings.helper_methods_debug_filepath, 'a')
+    if game_settings.PRINT_DEBUG:
+        debug_file.write(f'chess_data_raw shape is: {chess_data_raw.shape}\n')
+
+    chess_data = clean_chess_data(chess_data_raw)
 
     if game_settings.PRINT_DEBUG:
-        debug_file.write('\n========== Hello from Helper Methods init_bradley ==========\n')
-        
-    bubs = Bradley.Bradley(chess_data)
-
-    if game_settings.PRINT_DEBUG:
-        debug_file.write(f'white agent q table\n:{bubs.W_rl_agent.Q_table.head()}\n')
-        debug_file.write(f'white agent q table shape: {bubs.W_rl_agent.Q_table.shape}\n\n')
-        debug_file.write(f'black agent q table\n:{bubs.B_rl_agent.Q_table.head()}\n')
-        debug_file.write(f'black agent q table shape: {bubs.B_rl_agent.Q_table.shape}\n')
-        debug_file.write("========== Bye from Helper Methods init_bradley ==========\n\n\n")
+        debug_file.write(f'cleaned chess_data shape is: {chess_data.shape}\n')
     
-    debug_file.close()
-    
+    bubs = Bradley.Bradley(chess_data)    
     return bubs
 ### end of init_bradley
 

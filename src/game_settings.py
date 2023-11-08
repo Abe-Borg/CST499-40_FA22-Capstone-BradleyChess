@@ -28,10 +28,11 @@ CHESS_MOVE_VALUES: dict[str, int] = {
 # pd.set_option('display.width', None)
 # pd.set_option('display.max_colwidth', None)
 
+training_sample_size = 100 # number of games in database to use for training
+
 max_num_turns_per_player = 50
 max_turn_index = max_num_turns_per_player * 2 - 1
 initial_q_val = 50 # this is relevant when first training an agent. SARSA algorithm requires an initial value
-training_sample_size = 100 # number of games in database to use for training
 agent_vs_agent_num_games = 1 # number of games that agents will play against each other
 chance_for_random_move = 0.10 # 10% chance that RL agent selects random chess move
         

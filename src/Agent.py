@@ -38,20 +38,7 @@ class Agent:
         self.color = color
         self.chess_data = chess_data
         self.is_trained: bool = False
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent __init__ ==========\n')
-            self.debug_file.write(f'Agent color is: {self.color}\n')
-            self.debug_file.write("going to Agent.init_Q_table\n\n")
-
         self.Q_table: pd.DataFrame = self.init_Q_table(self.chess_data)
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write("and we're back to Agent __init__ just arrived from Agent.init_Q_table\n")
-            self.debug_file.write(f'Q_table:\n{self.Q_table}\n\n')
-            self.debug_file.write(f'is_trained: {self.is_trained}\n')
-            self.debug_file.write(f'{self.color} Agent has been initialized\n')
-            self.debug_file.write(f'========== Bye from Agent __init__ ==========\n\n\n')
     ### end of __init__ ###
 
     def __del__(self):
@@ -112,12 +99,6 @@ class Agent:
         Returns:
             str: A string representing the chess move chosen by the agent.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent policy_training_mode ========== \n')
-            self.debug_file.write(f'{self.color} Agent is choosing an action\n')
-            self.debug_file.write(f"the selected chess move from db is: {self.chess_data.at[curr_game, curr_turn]}\n")
-            self.debug_file.write(f'========== bye from Agent policy_training_mode ========== \n\n\n')
-
         return self.chess_data.at[curr_game, curr_turn]
     ### end of policy_training_mode ###
 
@@ -201,8 +182,6 @@ class Agent:
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'turns_list: {turns_list}\n')
-            self.debug_file.write(f'chess_data: {chess_data}\n')
-            self.debug_file.write(f'chess_data shape: {chess_data.shape}\n')
             self.debug_file.write(f'q_table:\n{q_table}\n\n')
             self.debug_file.write(f'q_table shape: {q_table.shape}\n')
             self.debug_file.write(f'========== bye from Agent init_Q_table ==========\n\n\n')
@@ -259,6 +238,7 @@ class Agent:
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'q_table_new_values: {q_table_new_values}\n')
             self.debug_file.write(f'Q_table:\n{self.Q_table}\n\n')
+            self.debug_file.write(f'Q_table shape: {self.Q_table.shape}\n')
             self.debug_file.write(f'========== bye from Agent update_Q_table ==========\n\n\n')
     ### update_Q_table ###
 
