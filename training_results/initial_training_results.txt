@@ -1,4 +1,0 @@
-
-Start of Game 17592 training
-
-Number of chess moves in this game is: 43

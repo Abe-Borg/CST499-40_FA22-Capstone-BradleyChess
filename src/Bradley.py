@@ -471,7 +471,9 @@ class Bradley:
                 else: # current game continues
                     try:
                         W_est_Qval: int = self.find_estimated_Q_value()
-                        self.q_est_log.write(f'W_est_Qval: {W_est_Qval}\n')
+                        if game_settings.PRINT_Q_EST:
+                            self.q_est_log.write(f'W_est_Qval: {W_est_Qval}\n')
+
                     except Exception as e:
                         self.errors_file.write(f'An error occurred while retrieving W_est_Qval: {e}\n')
                         self.errors_file.write(f"at White turn {curr_state['curr_turn']}, failed to find_estimated_Q_value\n")
@@ -556,7 +558,10 @@ class Bradley:
 
                     try:
                         B_est_Qval: int = self.find_estimated_Q_value()
-                        self.q_est_log.write(f'B_est_Qval: {B_est_Qval}\n')
+
+                        if game_settings.PRINT_Q_EST:
+                            self.q_est_log.write(f'B_est_Qval: {B_est_Qval}\n')
+                            
                     except Exception as e:
                         self.errors_file.write(f"at Black turn, failed to find_estimated_Qvalue because error: {e}\n")
                         self.errors_file.write(f'curr turn is:{curr_state["curr_turn"]}\n')
