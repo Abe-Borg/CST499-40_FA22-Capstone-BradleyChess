@@ -396,7 +396,7 @@ class Bradley:
                 raise Exception from e
 
             ### LOOP PLAYS THROUGH ONE GAME ###
-            while (curr_state['turn_index'] < num_chess_moves_curr_training_game) and (curr_state['turn_index'] < game_settings.max_turn_index):
+            while curr_state['turn_index'] < (num_chess_moves_curr_training_game - 1):
                 ##################### WHITE'S TURN ####################
                 # choose action a from state s, using policy
                 if game_settings.PRINT_DEBUG:
@@ -441,9 +441,8 @@ class Bradley:
                     self.debug_file.write("and we're back from rl_agent_PLAYS_move\n")
                     self.debug_file.write(f'White agent played move: {W_chess_move}\n')
                     self.debug_file.write(f'White agent got reward: {W_reward}\n')
-                    self.debug_file.write("going to self.environ.get_curr_state\n")
                 
-                # update curr_state since self.rl_agent_PLAYS_move updated the chessboard
+                # get latest curr_state since self.rl_agent_PLAYS_move updated the chessboard
                 try:
                     curr_state = self.environ.get_curr_state()
                 except Exception as e:
@@ -470,12 +469,9 @@ class Bradley:
                     
                     break # and go to next game
                 else: # current game continues
-                    if game_settings.PRINT_DEBUG:
-                        self.debug_file.write("going to self.find_estimated_Q_value\n")
-
                     try:
                         W_est_Qval: int = self.find_estimated_Q_value()
-                        self.q_est_log.write(f'{curr_state["curr_turn"]} | W_est_Qval is: {W_est_Qval}\n')
+                        self.q_est_log.write(f'W_est_Qval: {W_est_Qval}\n')
                     except Exception as e:
                         self.errors_file.write(f'An error occurred while retrieving W_est_Qval: {e}\n')
                         self.errors_file.write(f"at White turn {curr_state['curr_turn']}, failed to find_estimated_Q_value\n")
@@ -526,7 +522,7 @@ class Bradley:
                     self.debug_file.write("and we're back from rl_agent_PLAYS_move\n")
                     self.debug_file.write(f'B reward is: {B_reward} for playing move: {B_chess_move}\n')
 
-                # update curr_state since self.rl_agent_PLAYS_move updated the chessboard
+                # get latest curr_state since self.rl_agent_PLAYS_move updated the chessboard
                 try:
                     curr_state = self.environ.get_curr_state()
                 except Exception as e:
@@ -560,11 +556,10 @@ class Bradley:
 
                     try:
                         B_est_Qval: int = self.find_estimated_Q_value()
-                        self.q_est_log.write(f'{curr_state["curr_turn"]} | B_est_Qval is: {B_est_Qval}\n')
+                        self.q_est_log.write(f'B_est_Qval: {B_est_Qval}\n')
                     except Exception as e:
-                        self.errors_file.write(f"at Black turn {curr_state['curr_turn']}: failed to find_estimated_Qvalue because error: {e}")
+                        self.errors_file.write(f"at Black turn, failed to find_estimated_Qvalue because error: {e}")
                         self.errors_file.write(f'curr turn is:{curr_state["curr_turn"]}\n')
-                        self.errors_file.write(f'curr board is:\n{self.environ.board}\n\n')
                         self.errors_file.write(f'turn index is: {curr_state["turn_index"]}\n')
                         self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
                         raise Exception from e
@@ -791,10 +786,9 @@ class Bradley:
         try:
             self.environ.update_curr_state()
         except Exception as e:
-            self.errors_file.write(f'failed to update_curr_state, Caught exception: {e}\n')
-            self.errors_file.write(f'Chess move is: {chess_move}\n')
-            self.errors_file.write(f'Chessboard is: {self.environ.board}\n')
-            raise Exception from e
+            self.errors_file.write(f'failed to increment turn_index, Caught exception: {e}\n')
+            self.errors_file.write(f'current state is: {curr_state}\n')
+            self.errors_file.write(f'game continues, this is the last turn\n')
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("and we're back to Bradley.rl_agent_PLAYS_move arrived from self.environ.update_curr_state\n")
@@ -955,8 +949,18 @@ class Bradley:
         # normalize by looking at it from White's perspective
         # score datatype is Cp (centipawn) or Mate
         score = analysis_result[0]['score']
-        mate_score = score.mate()
-        centipawn_score = score.score()
+        mate_score = score.mate() if score.is_mate() else None
+
+        # centipawn_score = score.score(mate_score = False) if not score.is_mate() else None
+        
+        ## TEMP FIX
+        centipawn_score = None
+        if not score.is_mate():
+            if board.turn == chess.WHITE:
+                centipawn_score = score.white().score()
+            else:
+                centipawn_score = score.black().score()
+        ## TEMP FIX
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'Normalized mate score is: {mate_score}\n')

@@ -26,8 +26,9 @@ CHESS_MOVE_VALUES: dict[str, int] = {
 
 training_sample_size = 100 # number of games in database to use for training
 
-max_num_turns_per_player = 50
+max_num_turns_per_player = 150
 max_turn_index = max_num_turns_per_player * 2 - 1
+
 initial_q_val = 50 # this is relevant when first training an agent. SARSA algorithm requires an initial value
 agent_vs_agent_num_games = 1 # number of games that agents will play against each other
 chance_for_random_move = 0.10 # 10% chance that RL agent selects random chess move
@@ -35,7 +36,7 @@ chance_for_random_move = 0.10 # 10% chance that RL agent selects random chess mo
 # The following values are for the chess engine analysis of moves.
 # we only want to look ahead one move, that's the anticipated q value at next state, and next action
 num_moves_to_return = 1
-depth_limit = 1
+depth_limit = 2
 time_limit = None
 search_limit = chess.engine.Limit(depth = depth_limit, time = time_limit)
 
