@@ -2,7 +2,7 @@ import chess.engine
 import pandas as pd
 
 PRINT_DEBUG: bool = True
-PRINT_TRAINING_RESULTS = False
+PRINT_TRAINING_RESULTS = True
 
 PIECE_VALUES: dict[str, int] = {
         'pawn': 1,
@@ -24,9 +24,9 @@ CHESS_MOVE_VALUES: dict[str, int] = {
     }
 
 
-training_sample_size = 100 # number of games in database to use for training
+training_sample_size = 2 # number of games in database to use for training
 
-max_num_turns_per_player = 150
+max_num_turns_per_player = 50
 max_turn_index = max_num_turns_per_player * 2 - 1
 
 initial_q_val = 50 # this is relevant when first training an agent. SARSA algorithm requires an initial value

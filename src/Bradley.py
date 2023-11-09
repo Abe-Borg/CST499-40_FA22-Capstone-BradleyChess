@@ -558,9 +558,10 @@ class Bradley:
                         B_est_Qval: int = self.find_estimated_Q_value()
                         self.q_est_log.write(f'B_est_Qval: {B_est_Qval}\n')
                     except Exception as e:
-                        self.errors_file.write(f"at Black turn, failed to find_estimated_Qvalue because error: {e}")
+                        self.errors_file.write(f"at Black turn, failed to find_estimated_Qvalue because error: {e}\n")
                         self.errors_file.write(f'curr turn is:{curr_state["curr_turn"]}\n')
                         self.errors_file.write(f'turn index is: {curr_state["turn_index"]}\n')
+                        self.errors_file.write(f'curr game is: {game_num_str}\n')
                         self.errors_file.write("========== Bye from Bradley.train_rl_agents ===========\n\n\n")
                         raise Exception from e
 
@@ -831,7 +832,12 @@ class Bradley:
 
         # the analysis returns an array of dicts. in our analysis, we only consider the first dict returned by 
         # the stockfish analysis. We also care about the opponents likely chess move in response to our own.                    
-        analysis_results = self.analyze_board_state(self.environ.board)
+        try:
+            analysis_results = self.analyze_board_state(self.environ.board)
+        except Exception as e:
+            self.errors_file.write(f'An error occurred: {e}\n')
+            self.errors_file.write(f'failed to analyze_board_state\n')
+            raise Exception from e
         
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("and we're back from self.analyze_board_state\n")
@@ -844,6 +850,7 @@ class Bradley:
             self.environ.load_chessboard_for_Q_est(analysis_results)
         except Exception as e:
             self.errors_file.write(f'An error occurred: {e}\n')
+            self.errors_file.write(f'failed to load_chessboard_for_Q_est\n')
             raise Exception from e
 
         if game_settings.PRINT_DEBUG:
@@ -851,7 +858,12 @@ class Bradley:
             self.debug_file.write("going to analyze_board_state")
     
         # this is the Q estimated value due to what the opposing agent is likely to play in response to our move.
-        est_Qval_analysis = self.analyze_board_state(self.environ.board)
+        try:
+            est_Qval_analysis = self.analyze_board_state(self.environ.board)
+        except Exception as e:
+            self.errors_file.write(f'An error occurred: {e}\n')
+            self.errors_file.write(f'failed at self.analyze_board_state\n')
+            raise Exception from e
 
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("and we're back from analyze_board_state")
@@ -938,7 +950,7 @@ class Bradley:
             analysis_result = self.engine.analyse(board, game_settings.search_limit, multipv = game_settings.num_moves_to_return)
         except Exception as e:
             self.errors_file.write(f'An error occurred: {e}\n')
-            self.errors_file.write("failed to analyze_board_state\n")
+            self.errors_file.write("failed at self.engine.analyse\n")
             self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
             self.errors_file.write("========== Bye from Bradley.analyze_board_state ===========\n\n\n")
             raise Exception from e
@@ -946,20 +958,34 @@ class Bradley:
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'Analysis result is: {analysis_result}\n')
 
+
         # normalize by looking at it from White's perspective
         # score datatype is Cp (centipawn) or Mate
-        score = analysis_result[0]['score']
-        mate_score = score.mate() if score.is_mate() else None
+        try:
+            score = analysis_result[0]['score']
+        except Exception as e:
+            self.errors_file.write(f'An error occurred: {e}\n')
+            self.errors_file.write("failed to get score from analysis_result\n")
+
+        try:
+            mate_score = score.mate() if score.is_mate() else None
+        except Exception as e:
+            self.errors_file.write(f'An error occurred: {e}\n')
+            self.errors_file.write("failed to get mate_score from score\n")
 
         # centipawn_score = score.score(mate_score = False) if not score.is_mate() else None
         
         ## TEMP FIX
-        centipawn_score = None
-        if not score.is_mate():
-            if board.turn == chess.WHITE:
-                centipawn_score = score.white().score()
-            else:
-                centipawn_score = score.black().score()
+        try:
+            centipawn_score = None
+            if not score.is_mate():
+                if board.turn == chess.WHITE:
+                    centipawn_score = score.white().score()
+                else:
+                    centipawn_score = score.black().score()
+        except Exception as e:
+            self.errors_file.write(f'An error occurred: {e}\n')
+            self.errors_file.write("failed to get centipawn_score from score\n")
         ## TEMP FIX
 
         if game_settings.PRINT_DEBUG:
@@ -967,7 +993,7 @@ class Bradley:
             self.debug_file.write(f'Normalized centipawn score is: {centipawn_score}\n')
 
         anticipated_next_move = analysis_result[0]['pv'][0] # this would be the anticipated response from opposing agent
-            
+
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'Anticipated next move is: {anticipated_next_move}\n')
             self.debug_file.write("========== Bye from Bradley.analyze_board_state ===========\n\n\n")

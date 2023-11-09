@@ -38,7 +38,18 @@ class Agent:
         self.color = color
         self.chess_data = chess_data
         self.is_trained: bool = False
+
+        if game_settings.PRINT_DEBUG:
+            self.debug_file.write(f'\n========== Hello from Agent __init__ ==========\n')
+            self.debug_file.write(f'color: {color}\n')
+            self.debug_file.write(f'learn_rate: {learn_rate}\n')
+            self.debug_file.write(f'discount_factor: {discount_factor}\n')
+            self.debug_file.write(f'chess_data:\n{chess_data.head()}\n\n')
+
         self.Q_table: pd.DataFrame = self.init_Q_table(self.chess_data)
+
+        if game_settings.PRINT_DEBUG:
+            self.debug_file.write("bye from Agent __init__\n\n\n")
     ### end of __init__ ###
 
     def __del__(self):
@@ -175,13 +186,13 @@ class Agent:
         unique_moves = pd.Series(unique_moves).unique()
 
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'unique_moves: {unique_moves}\n')
+            self.debug_file.write(f'unique_moves: {unique_moves}\n\n')
 
         turns_list: pd.Index = chess_data.loc[:, f"{self.color}1": f"{self.color}{game_settings.max_num_turns_per_player}": 2].columns
         q_table: pd.DataFrame = pd.DataFrame(0, columns = turns_list, index = unique_moves, dtype = np.int32)
 
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'turns_list: {turns_list}\n')
+            self.debug_file.write(f'turns_list: {turns_list}\n\n')
             self.debug_file.write(f'q_table:\n{q_table}\n\n')
             self.debug_file.write(f'q_table shape: {q_table.shape}\n')
             self.debug_file.write(f'========== bye from Agent init_Q_table ==========\n\n\n')

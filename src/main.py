@@ -19,18 +19,14 @@ if __name__ == '__main__':
     bradley = Bradley.Bradley(training_chess_data)
     start_time = time.time()
 
-    try:
-        bradley.train_rl_agents()
-    except Exception as e:
-        print(f'training interrupted because of:  {e}')
-        quit()
+    bradley.train_rl_agents()
         
     end_time = time.time()
     helper_methods.pikl_q_table(bradley, 'W',game_settings.bradley_agent_q_table_path)
     helper_methods.pikl_q_table(bradley, 'B', game_settings.imman_agent_q_table_path)
     total_time = end_time - start_time
     print('training is complete')
-    print(f'it took: {total_time} for {game_settings.num_games} games')
+    print(f'it took: {total_time} for {game_settings.training_sample_size} games')
     quit()
 
     # # # # # ========================= bootstrap and continue training agents ========================= #
