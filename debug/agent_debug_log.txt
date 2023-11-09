@@ -1,0 +1,177 @@
+
+========== Hello from Agent __init__ ==========
+color: W
+learn_rate: 0.6
+discount_factor: 0.35
+chess_data:
+            Num Moves   W1   B1   W2   B2   W3   B3   W4   B4    W5    B5    W6  ... W45 B45 W46 B46 W47 B47 W48 B48 W49 B49 W50 B50
+Game 17592         43   d4  Nf6   c4   g6  Nf3  Bg7   g3   c6   Bg2    d5  cxd5  ...                                                
+Game 81282         43  Nf3  Nf6   g3   b6  Bg2  Bb7  O-O   e6    d4   Be7    c4  ...                                                
+Game 81095         45   e4   g6   d4  Bg7  Nc3   d6   f4   c6   Nf3   Qc7    a4  ...                                                
+Game 28382         39   e4   c5  Nf3   e6   b3   b6  Bb2  Bb7   Qe2    d6    d4  ...                                                
+Game 66365         45   d4   d5   c4   e6  Nc3  Nf6  Bg5   c6  cxd5  exd5    e3  ...                                                
+
+[5 rows x 101 columns]
+
+
+========== Hello from Agent init_Q_table ==========
+unique_moves: ['d4' 'c4' 'Nf3' 'g3' 'Bg2' 'cxd5' 'O-O' 'Nc3' 'Ne5' 'bxc3' 'Ng4' 'Ne3'
+ 'a4' 'Qb3' 'a5' 'Nxc4' 'Bd2' 'Rfb1' 'Qa4' 'Qxa5' 'Rb6' 'Qb4' '' 'Nxe4'
+ 'Ne1' 'Nxg2' 'Bf4' 'Be3' 'Rc1' 'Rxc7' 'Rxc8+' 'Nf4' 'Bxd4' 'Nd3' 'Qd2'
+ 'b3' 'Qc2' 'e4' 'f4' 'Bc4' 'exd5' 'Nb5' 'Ba2' 'Na3' 'Naxc4' 'Na5' 'axb5'
+ 'b4' 'Ba3' 'Qd3' 'Bxd5' 'Rac1' 'Bb2' 'Qe2' 'Nxd4' 'O-O-O' 'g4' 'h4' 'Rh3'
+ 'Nd5' 'Kb1' 'Nxe7' 'Nd2' 'Nc4' 'Rxd6' 'Bg5' 'e3' 'Bd3' 'Nge2' 'f3' 'Bh4'
+ 'Rad1' 'Kh1' 'Bg3' 'fxe4' 'Qxf7+' 'e5' 'Qf4' 'Nxe2' 'Qe4' 'd3' 'Nf1'
+ 'Ned5' 'Rxc1' 'Rxf4' 'Qh5' 'Rcf1' 'R4f2' 'Qxh4' 'Be2' 'h3' 'Bxe5' 'Bf3'
+ 'Re1' 'Be4' 'd5' 'Bxf3' 'c3' 'Bb5' 'cxd4' 'exd6' 'a3' 'Qa2' 'Qxd5' 'Ra1'
+ 'Bxc4' 'Bxc6+' 'Nb1' 'Ne4' 'Kg2' 'Nd6+' 'Qb1' 'Qxd3' 'Nxf6+' 'Bxf6'
+ 'Bb5+' 'fxe5' 'Qxd4' 'Bxc6' 'Qxd2' 'Qe1' 'Nd6' 'Nxc8' 'h5' 'Rxd4' 'hxg6'
+ 'Nf6+' 'Qxg6' 'Bxa6' 'Rd7' 'Nxe5' 'Bxe2' 'Rhe1' 'dxe4' 'Nxg5' 'dxe5'
+ 'Qxd8+' 'O-O-O+' 'Rd3' 'Rhd1' 'Ndb6+' 'Rxd8+' 'Rxa8' 'Rf8' 'b5' 'bxc6'
+ 'Bxa8' 'Bxe7' 'Bd5+' 'Bb3' 'Bxe6' 'Qg4' 'Rd1' 'Nxd5' 'Rxc6' 'Qb2' 'Qa3'
+ 'Bxb7' 'Rfd1' 'Rae1' 'Nxf3' 'Nh4' 'Qf2' 'c5' 'Qh4' 'exd4' 'Rxa2' 'Rxe4'
+ 'Qh6' 'Qxf3' 'Qxe4' 'Nc2' 'Qf3' 'Be5' 'Rg1' 'Na4' 'Bxf7+' 'Rd8+' 'Qxf7'
+ 'Bxg6' 'Ng5' 'Nh3' 'Ng2' 'Ne2' 'Kh2' 'f5' 'Qxc1' 'gxf5' 'f6' 'exf6'
+ 'Qxg5' 'Bb6' 'Bg4' 'Nb3' 'Nge4' 'd6' 'Ne7+' 'Qd5' 'Bd7' 'Ra3' 'Bb1' 'Nh2'
+ 'bxc4' 'Qg3' 'dxc5' 'Nbd2' 'Nfe5' 'Nxb7' 'Bc2' 'Bxc5' 'Bxe4' 'Bxg7'
+ 'Bxh6' 'Rxe8+' 'Bxf5+' 'Nde2' 'Bh6' 'Bf8' 'Nxc3' 'Qxd6' 'Kxb2' 'Rfe1'
+ 'Qxb2' 'Red1' 'Rxd1' 'Ng3' 'Qxd1' 'h6' 'Ndb5' 'Nxb5' 'Qxe5+' 'Bf1' 'Qc1'
+ 'hxg4' 'Kxh2' 'Kg1' 'exf5' 'fxg6' 'Kf1' 'Ke2' 'Qa4+' 'Qxc4' 'Qa1' 'bxa4'
+ 'Nxf5' 'fxg3' 'Qb5' 'Qa6+' 'Nc7' 'N3d5' 'Nxe7+' 'Qxe7' 'Qc5' 'Rxc5'
+ 'Kxg2' 'dxc4' 'Rb1' 'axb4' 'Nxa4' 'Nd4' 'Nxa8' 'Qxa7' 'Qxb7' 'Rc7' 'Qb5+'
+ 'Qxb7+' 'Qxc6' 'Rxa1' 'Bxa4' 'Rxd7' 'Rxb2' 'Bxd7' 'Rxe5' 'Re3' 'Rf3'
+ 'Rxf5' 'gxf3' 'Qg2' 'Nf2' 'd7' 'Ndf3' 'Bf2' 'Bxf5' 'Nbc3' 'dxc6' 'cxb5'
+ 'c7' 'Ba4' 'e6' 'Qe5' 'Qxe6+' 'Kh3' 'Qc6' 'Re4' 'Rxd5' 'g5' 'Ne5+' 'Nxg4'
+ 'Qxg4' 'Qe6+' 'Rxe1' 'Bf6+' 'Nxd2' 'Rab1' 'Nxf7' 'Nh6+' 'Qg4+' 'Qh5+'
+ 'Nfxd4' 'Qe3' 'Rxf8+' 'Bb4' 'Kxd2' 'Kc3' 'Re5' 'fxe3' 'Nce4' 'Ng5+' 'Ne6'
+ 'Rf7' 'Rxd2' 'Rb4' 'Rg3' 'hxg3' 'Kf2' 'Rh1' 'Nhf5' 'N5xh6' 'Nxd7' 'Nxc6'
+ 'Qd1' 'Rc2' 'Rfc1' 'Bc3' 'Ba5' 'Nf5' 'Rd2' 'Bxd6' 'Nbd4' 'Ncd2' 'Nxc5'
+ 'Qb4+' 'Ra3#' 'Nd1' 'Bh5' 'Nce2' 'Nxe6' 'Qxg7' 'fxe6' 'Nxd6+' 'Nf5+'
+ 'exf7+' 'Qxc3' 'Qd4' 'Qc4+' 'Bxd7+' 'Rac1+' 'Nxd3' 'Bh3' 'Nxf4' 'Nxb4'
+ 'Nxc7' 'Re2' 'Bc1' 'Bf5' 'Bxc8' 'Qf5' 'Bxd2' 'Rb3' 'Nxg6' 'Bd5' 'Qg6+'
+ 'Qxe3' 'Qc3' 'Qxf6']
+
+turns_list: Index(['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10', 'W11',
+       'W12', 'W13', 'W14', 'W15', 'W16', 'W17', 'W18', 'W19', 'W20', 'W21',
+       'W22', 'W23', 'W24', 'W25', 'W26', 'W27', 'W28', 'W29', 'W30', 'W31',
+       'W32', 'W33', 'W34', 'W35', 'W36', 'W37', 'W38', 'W39', 'W40', 'W41',
+       'W42', 'W43', 'W44', 'W45', 'W46', 'W47', 'W48', 'W49', 'W50'],
+      dtype='object')
+
+q_table:
+      W1  W2  W3  W4  W5  W6  W7  W8  W9  W10  W11  W12  W13  ...  W38  W39  W40  W41  W42  W43  W44  W45  W46  W47  W48  W49  W50
+d4     0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+c4     0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+Nf3    0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+g3     0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+Bg2    0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+...   ..  ..  ..  ..  ..  ..  ..  ..  ..  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...
+Bd5    0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+Qg6+   0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+Qxe3   0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+Qc3    0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+Qxf6   0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+
+[375 rows x 50 columns]
+
+q_table shape: (375, 50)
+========== bye from Agent init_Q_table ==========
+
+
+bye from Agent __init__
+
+
+
+========== Hello from Agent choose_action ========== 
+W Agent is choosing an action
+environ_state: {'turn_index': 0, 'curr_turn': 'W1', 'legal_moves': ['Nh3', 'Nf3', 'Nc3', 'Na3', 'h3', 'g3', 'f3', 'e3', 'd3', 'c3', 'b3', 'a3', 'h4', 'g4', 'f4', 'e4', 'd4', 'c4', 'b4', 'a4']}
+legal_moves: ['Nh3', 'Nf3', 'Nc3', 'Na3', 'h3', 'g3', 'f3', 'e3', 'd3', 'c3', 'b3', 'a3', 'h4', 'g4', 'f4', 'e4', 'd4', 'c4', 'b4', 'a4']
+moves_not_in_Q_table: []
+========== going to Agent policy_training_mode ==========
+
+
+========== Hello from Agent change_Q_table_pts ==========
+chess_move: d4
+curr_turn: W1
+pts: 50
+========== bye from Agent change_Q_table_pts ==========
+
+
+
+========== Hello from Agent __init__ ==========
+color: B
+learn_rate: 0.6
+discount_factor: 0.35
+chess_data:
+            Num Moves   W1   B1   W2   B2   W3   B3   W4   B4    W5    B5    W6  ... W45 B45 W46 B46 W47 B47 W48 B48 W49 B49 W50 B50
+Game 17592         43   d4  Nf6   c4   g6  Nf3  Bg7   g3   c6   Bg2    d5  cxd5  ...                                                
+Game 81282         43  Nf3  Nf6   g3   b6  Bg2  Bb7  O-O   e6    d4   Be7    c4  ...                                                
+Game 81095         45   e4   g6   d4  Bg7  Nc3   d6   f4   c6   Nf3   Qc7    a4  ...                                                
+Game 28382         39   e4   c5  Nf3   e6   b3   b6  Bb2  Bb7   Qe2    d6    d4  ...                                                
+Game 66365         45   d4   d5   c4   e6  Nc3  Nf6  Bg5   c6  cxd5  exd5    e3  ...                                                
+
+[5 rows x 101 columns]
+
+
+========== Hello from Agent init_Q_table ==========
+unique_moves: ['Nf6' 'g6' 'Bg7' 'c6' 'd5' 'cxd5' 'O-O' 'Ne4' 'Nxc3' 'Nd7' 'Nb6' 'Be6'
+ 'Rc8' 'Qd7' 'Nc4' 'Rxc4' 'Rc6' 'b6' 'bxa5' 'a6' 'Ra8' '' 'Bb7' 'e6' 'Be7'
+ 'Bxe4' 'Bxg2' 'Qxd5' 'Bf6' 'Nc6' 'Nxd4' 'Rfc8' 'Rxc8' 'Qe4' 'Bxd4' 'h6'
+ 'Qd5' 'Rd8' 'd6' 'Qc7' 'Qb8' 'Ne7' 'dxc4' 'b5' 'axb5' 'Qd6' 'Ned5' 'f5'
+ 'c5' 'cxd4' 'Nbd7' 'e5' 'Qd8' 'Nxg4' 'Qxe7' 'Ngf6' 'O-O-O' 'exd5' 'Re8'
+ 'Nf8' 'N6d7' 'dxe4' 'Bg4' 'Kh8' 'Bxe2' 'Nd5' 'Bg5' 'Bxc1' 'exf4' 'Ne5'
+ 'Ng6' 'Qh4' 'Bh5' 'Bg6' 'Nxe5' 'f6' 'Bf7' 'Rfe8' 'Bxf3' 'Nfd7' 'exd4'
+ 'Qxd6' 'Rad8' 'Na5' 'Rxd5' 'd4' 'bxc6' 'd3' 'Bd6' 'Bc7' 'Nf5' 'Nd4' 'Ne2'
+ 'h5' 'h4' 'Bb6' 'Ke7' 'Kf8' 'Nxf6' 'Qxf6' 'Bd7' 'Rb8' 'Bxe5' 'Qg5' 'Bc6'
+ 'Bb4' 'Bxd2+' 'Nbc6' 'Nc8' 'Bxf6' 'b4' 'Qa5' 'fxg6' 'Ba6' 'Qxa6' 'Nh7'
+ 'Nxe4' 'Qe7' 'Qxe2+' 'Na6' 'Nc7' 'Bxg5+' 'Bxc6' 'dxe5' 'Kxd8' 'Be8' 'Kc8'
+ 'g5' 'Bd8' 'axb6' 'Kb7' 'Bxd1' 'Kc6' 'Qe8' 'cxb5' 'Bxc4' 'Qxe6' 'Nxd5'
+ 'Bf5' 'Rfd8' 'Qb6' 'Qa7' 'Rxb7' 'e4' 'Ng8' 'Ncxe7' 'exf3' 'Neg8' 'Kg7'
+ 'Nh6' 'Bxc3' 'Bxa2' 'Qxa2' 'Re6' 'Rxe4' 'Bc5' 'Ndxb4' 'Qf6' 'bxa6' 'Qxf7'
+ 'bxa4' 'Bxc3+' 'c4' 'Qf7' 'gxh5' 'Ng4' 'Nh5' 'Bh6' 'Ng7' 'Ne6' 'gxf5'
+ 'Qe6' 'Bxg5' 'Qc8' 'Qc6' 'Rac8' 'Ne8' 'Ra7' 'Rb7' 'a5' 'Nb4' 'Qc5+' 'c3'
+ 'bxc4' 'Bxc5' 'Qxe5' 'Bc5+' 'Rae8' 'Qxc5' 'Qxe4' 'Rg8' 'Rxg2' 'Bxe8'
+ 'hxg6' 'Bh8' 'Rxc3' 'Bxb2+' 'Ba3' 'Bxb2' 'Rxd1' 'Rxd1+' 'Bxb5' 'Qc5'
+ 'Nc5' 'Qxd4' 'Be5' 'Bxf4' 'dxc6' 'hxg4' 'Rxh2' 'Qh4+' 'Qh5' 'Rh8' 'Qxh2+'
+ 'gxf6' 'Qe4+' 'Qc2' 'Qxf5' 'Bb8' 'hxg3' 'Qh7' 'Bxa1' 'Qxc4' 'Qb4' 'Rab8'
+ 'Nxe7' 'Rbe8' 'Rxe2' 'Bf8' 'Qxd1' 'axb4' 'Na4' 'Rxa4' 'fxe4' 'Nxa8'
+ 'Rxe5' 'Nxc4' 'Nec6' 'Kxe7' 'Nb3' 'Kf6' 'Nxa1' 'Qxa4' 'Nxg3' 'Nxd7'
+ 'Rhf8' 'Nge7' 'fxe5' 'gxh6' 'Rf5' 'Nxf5' 'Qb2' 'Nf7' 'Re7' 'Bxd3' 'Qxd7'
+ 'Nb8' 'Qxc7' 'Rxd8' 'fxg2' 'Rxd4' 'fxe6' 'Bxe6' 'Kd8' 'Rd2' 'Rxf2+' 'Bf2'
+ 'Bxd5' 'Rc7' 'Qa4' 'Kxf7' 'Ke8' 'Kd7' 'exd6' 'Rxe1+' 'Nxd2' 'Nd2' 'Nxb1'
+ 'Kf7' 'a4' 'cxd3' 'Bxf8' 'Ra6' 'Qxd2+' 'Re8+' 'Bxe3' 'Rxe3' 'Qe5' 'Qd4+'
+ 'Kg8' 'Qxb2' 'Qxd2' 'Rc5' 'Ndc5' 'Nd6' 'Nfe8' 'Nfe4' 'Ne4+' 'Ndxf6' 'Rh7'
+ 'Qa8' 'Bc8' 'Rd7' 'Nfxd5' 'Qf4' 'dxc5' 'g4' 'Ka6' 'Nxd3' 'Bb5' 'Qb7'
+ 'bxc3' 'Rf8' 'Qa3' 'Nxf7' 'Bxd7' 'Rxd7' 'Kb8' 'Rxd6' 'Kc7' 'Nd3' 'cxd6'
+ 'Rb6' 'Qxb4' 'Rxe1' 'Bh7' 'Rhe8' 'Raxc8' 'Ndf6' 'Ba7' 'cxb2']
+
+turns_list: Index(['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10', 'B11',
+       'B12', 'B13', 'B14', 'B15', 'B16', 'B17', 'B18', 'B19', 'B20', 'B21',
+       'B22', 'B23', 'B24', 'B25', 'B26', 'B27', 'B28', 'B29', 'B30', 'B31',
+       'B32', 'B33', 'B34', 'B35', 'B36', 'B37', 'B38', 'B39', 'B40', 'B41',
+       'B42', 'B43', 'B44', 'B45', 'B46', 'B47', 'B48', 'B49', 'B50'],
+      dtype='object')
+
+q_table:
+       B1  B2  B3  B4  B5  B6  B7  B8  B9  B10  B11  B12  B13  ...  B38  B39  B40  B41  B42  B43  B44  B45  B46  B47  B48  B49  B50
+Nf6     0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+g6      0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+Bg7     0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+c6      0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+d5      0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+...    ..  ..  ..  ..  ..  ..  ..  ..  ..  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  ...
+Rhe8    0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+Raxc8   0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+Ndf6    0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+Ba7     0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+cxb2    0   0   0   0   0   0   0   0   0    0    0    0    0  ...    0    0    0    0    0    0    0    0    0    0    0    0    0
+
+[331 rows x 50 columns]
+
+q_table shape: (331, 50)
+========== bye from Agent init_Q_table ==========
+
+
+bye from Agent __init__
+
+

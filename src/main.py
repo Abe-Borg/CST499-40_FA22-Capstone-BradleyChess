@@ -19,7 +19,11 @@ if __name__ == '__main__':
     bradley = Bradley.Bradley(training_chess_data)
     start_time = time.time()
 
-    bradley.train_rl_agents()
+    try:
+        bradley.train_rl_agents()
+    except Exception as e:
+        print(f'training interrupted because of:  {e}')
+        quit()
         
     end_time = time.time()
     helper_methods.pikl_q_table(bradley, 'W',game_settings.bradley_agent_q_table_path)

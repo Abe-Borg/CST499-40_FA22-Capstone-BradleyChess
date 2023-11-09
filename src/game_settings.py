@@ -24,7 +24,7 @@ CHESS_MOVE_VALUES: dict[str, int] = {
     }
 
 
-training_sample_size = 2 # number of games in database to use for training
+training_sample_size = 100 # number of games in database to use for training
 
 max_num_turns_per_player = 50
 max_turn_index = max_num_turns_per_player * 2 - 1

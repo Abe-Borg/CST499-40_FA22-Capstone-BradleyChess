@@ -931,74 +931,131 @@ class Bradley:
 
 
     # @log_config.log_execution_time_every_N()
+    # def analyze_board_state(self, board: chess.Board) -> dict:
+    #     """Analyzes the current state of the chessboard using the Stockfish engine.
+    #     This method returns a dictionary with the analysis results. The analysis results include the mate 
+    #     score and centipawn score, which are normalized by looking at the board from White's perspective. 
+
+    #     Args:
+    #         board (chess.Board): The current state of the chessboard to analyze.
+    #     Returns:
+    #         dict: analysis results, including the mate score and centipawn score. 
+    #     """
+    #     if game_settings.PRINT_DEBUG:
+    #         self.debug_file.write(f"\n========== Hello from Bradley.analyze_board_state ==========\n")
+    #         self.debug_file.write(f'Board is: {board}\n')
+    #         self.debug_file.write(f'fen str is: {self.environ.board.fen()}\n\n')
+
+    #     # analysis_result is an InfoDict (see python-chess documentation)
+    #     try: 
+    #         analysis_result = self.engine.analyse(board, game_settings.search_limit, multipv = game_settings.num_moves_to_return)
+    #     except Exception as e:
+    #         self.errors_file.write(f'An error occurred: {e}\n')
+    #         self.errors_file.write("failed at self.engine.analyse\n")
+    #         self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
+    #         self.errors_file.write(f'fen str is: {self.environ.board.fen()}\n\n')
+    #         self.errors_file.write("========== Bye from Bradley.analyze_board_state ===========\n\n\n")
+    #         raise Exception from e
+
+    #     score = analysis_result[0]['score']
+    #     if game_settings.PRINT_DEBUG:
+    #         self.debug_file.write(f'Analysis result is: {analysis_result}\n')
+    #         self.debug_file.write(f'Score is: {score}\n')
+
+    #     try:
+    #         if score.is_mate():
+    #             if board.turn == chess.WHITE:
+    #                 is_mate = score.white().is_mate()
+    #             else:
+    #                 is_mate = score.black().is_mate()
+    #         else: 
+    #             mate_score = None 
+    #     except Exception as e:
+    #         self.errors_file.write(f'An error occurred: {e}\n')
+    #         self.errors_file.write("failed to get mate_score from score\n")
+
+    #     if is_mate:
+    #         if board.turn == chess.WHITE:
+    #             mate_score = score.white().mate()
+    #         else:
+    #             mate_score = score.black().mate()
+
+    #     try: 
+    #         if not score.is_mate():
+    #             if board.turn == chess.WHITE:
+    #                 centipawn_score = score.white().score()
+    #             else:
+    #                 centipawn_score = score.black().score()
+    #     except Exception as e:
+    #         self.errors_file.write(f'An error occurred: {e}\n')
+    #         self.errors_file.write("failed to get centipawn_score from score\n")
+
+    #     if game_settings.PRINT_DEBUG:
+    #         self.debug_file.write(f'Normalized mate score is: {mate_score}\n')
+    #         self.debug_file.write(f'Normalized centipawn score is: {centipawn_score}\n')
+
+    #     try:
+    #         anticipated_next_move = analysis_result[0]['pv'][0] # this would be the anticipated response from opposing agent
+    #     except Exception as e:
+    #         self.errors_file.write(f'An error occurred: {e}\n')
+    #         self.errors_file.write("failed to get anticipated_next_move from analysis_result\n")
+
+    #     if game_settings.PRINT_DEBUG:
+    #         self.debug_file.write(f'Anticipated next move is: {anticipated_next_move}\n')
+    #         self.debug_file.write("========== Bye from Bradley.analyze_board_state ===========\n\n\n")
+            
+    #     return {'mate_score': mate_score, 'centipawn_score': centipawn_score, 'anticipated_next_move': anticipated_next_move}
+    # ### end of analyze_board_state
+
+
     def analyze_board_state(self, board: chess.Board) -> dict:
-        """Analyzes the current state of the chessboard using the Stockfish engine.
+        """
+        Analyzes the current state of the chessboard using the Stockfish engine.
         This method returns a dictionary with the analysis results. The analysis results include the mate 
         score and centipawn score, which are normalized by looking at the board from White's perspective. 
 
         Args:
             board (chess.Board): The current state of the chessboard to analyze.
+
         Returns:
-            dict: analysis results, including the mate score and centipawn score. 
+            dict: Analysis results, including the mate score, centipawn score, and the anticipated next move. 
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.analyze_board_state ==========\n")
-            self.debug_file.write(f'Board is: {board}\n')
-
-        # analysis_result is an InfoDict (see python-chess documentation)
         try: 
-            analysis_result = self.engine.analyse(board, game_settings.search_limit, multipv = game_settings.num_moves_to_return)
+            analysis_result = self.engine.analyse(board, game_settings.search_limit, multipv=game_settings.num_moves_to_return)
         except Exception as e:
-            self.errors_file.write(f'An error occurred: {e}\n')
-            self.errors_file.write("failed at self.engine.analyse\n")
-            self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
-            self.errors_file.write("========== Bye from Bradley.analyze_board_state ===========\n\n\n")
-            raise Exception from e
+            self.errors_file.write(f'An error occurred during analysis: {e}\n')
+            self.errors_file.write("Failed at self.engine.analyse\n")
+            self.errors_file.write(f"Chessboard FEN: {board.fen()}\n")
+            self.errors_file.write("========== End of analyze_board_state ===========\n\n")
+            raise
 
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'Analysis result is: {analysis_result}\n')
-
-
-        # normalize by looking at it from White's perspective
-        # score datatype is Cp (centipawn) or Mate
-        try:
-            score = analysis_result[0]['score']
-        except Exception as e:
-            self.errors_file.write(f'An error occurred: {e}\n')
-            self.errors_file.write("failed to get score from analysis_result\n")
+        mate_score = None
+        centipawn_score = None
+        anticipated_next_move = None
 
         try:
-            mate_score = score.mate() if score.is_mate() else None
-        except Exception as e:
-            self.errors_file.write(f'An error occurred: {e}\n')
-            self.errors_file.write("failed to get mate_score from score\n")
+            # Get score from analysis_result and normalize for player perspective
+            pov_score = analysis_result[0]['score'].white() if board.turn == chess.WHITE else analysis_result[0]['score'].black()
 
-        # centipawn_score = score.score(mate_score = False) if not score.is_mate() else None
-        
-        ## TEMP FIX
+            # Check if the score is a mate score and get the mate score, otherwise get the centipawn score
+            if pov_score.is_mate():
+                mate_score = pov_score.mate()
+            else:
+                centipawn_score = pov_score.score()
+        except Exception as e:
+            self.errors_file.write(f'An error occurred while extracting scores: {e}\n')
+
         try:
-            centipawn_score = None
-            if not score.is_mate():
-                if board.turn == chess.WHITE:
-                    centipawn_score = score.white().score()
-                else:
-                    centipawn_score = score.black().score()
+            # Extract the anticipated next move from the analysis
+            anticipated_next_move = analysis_result[0]['pv'][0]
         except Exception as e:
-            self.errors_file.write(f'An error occurred: {e}\n')
-            self.errors_file.write("failed to get centipawn_score from score\n")
-        ## TEMP FIX
+            self.errors_file.write(f'An error occurred while extracting the anticipated next move: {e}\n')
 
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'Normalized mate score is: {mate_score}\n')
-            self.debug_file.write(f'Normalized centipawn score is: {centipawn_score}\n')
-
-        anticipated_next_move = analysis_result[0]['pv'][0] # this would be the anticipated response from opposing agent
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'Anticipated next move is: {anticipated_next_move}\n')
-            self.debug_file.write("========== Bye from Bradley.analyze_board_state ===========\n\n\n")
-            
-        return {'mate_score': mate_score, 'centipawn_score': centipawn_score, 'anticipated_next_move': anticipated_next_move}
+        return {
+            'mate_score': mate_score,
+            'centipawn_score': centipawn_score,
+            'anticipated_next_move': anticipated_next_move
+        }
     ### end of analyze_board_state
  
     # @log_config.log_execution_time_every_N()
