@@ -224,6 +224,7 @@ class Environ:
         except ValueError as e:
             self.errors_file.write(f'An error occurred: {e}, unable to load chessboard with {anticipated_chess_move}')
             self.errors_file.write(f'========== End of Environ.load_chessboard_for_Q_est ==========\n\n\n')
+            raise ValueError from e
     ### end of load_chessboard_for_Q_est
 
     # @log_config.log_execution_time_every_N()

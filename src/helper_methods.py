@@ -5,37 +5,36 @@ import game_settings
 # import log_config
 # logger = logging.getLogger(__name__)
 
-def clean_chess_data(chess_data: pd.DataFrame) -> pd.DataFrame:
-    # Create a boolean mask where true indicates a non-empty and non-null move
-    non_empty_non_null_moves = (chess_data.loc[:, 'W1':] != '').fillna(True)
+import pandas as pd
 
-    # Use all() to ensure all values must be True across columns for a given row to keep it
-    valid_games = non_empty_non_null_moves.all(axis = 1)
-
-    # Apply this mask to the DataFrame to filter out games with any empty or NA moves
-    chess_data_cleaned = chess_data[valid_games]
-    chess_data_cleaned = chess_data_cleaned.dropna(subset = chess_data.columns[1:], how = 'any')
-    return chess_data_cleaned
-
-def init_bradley(chess_data_raw: pd.DataFrame) -> Bradley.Bradley:
-    """Initializes a Bradley object with the given chess data.
-    Args:
-        chess_data (pd.DataFrame): A Pandas DataFrame containing the chess data.
-    Returns:
-        imman.Bradley: An object of the Bradley class.
-    """
-    debug_file = open(game_settings.helper_methods_debug_filepath, 'a')
-    if game_settings.PRINT_DEBUG:
-        debug_file.write(f'chess_data_raw shape is: {chess_data_raw.shape}\n')
-
-    chess_data = clean_chess_data(chess_data_raw)
-
-    if game_settings.PRINT_DEBUG:
-        debug_file.write(f'cleaned chess_data shape is: {chess_data.shape}\n')
+def clean_chess_data(chess_data: pd.DataFrame, chess_data_cleaned_filepath: str) -> pd.DataFrame:
+    # Calculate the number of moves for White and Black based on 'Num Moves'
+    # + 1 accounts for an odd number of Num Moves
+    chess_data['WhiteMoves'] = (chess_data['Num Moves'] + 1) // 2
+    chess_data['BlackMoves'] = chess_data['Num Moves'] // 2
     
-    bubs = Bradley.Bradley(chess_data)    
-    return bubs
-### end of init_bradley
+    # Generate column names for all possible moves
+    max_moves = (chess_data['Num Moves'].max() + 1) // 2
+    white_move_cols = ['W' + str(i) for i in range(1, max_moves + 1)]
+    black_move_cols = ['B' + str(i) for i in range(1, max_moves)]
+    
+    # Create a mask for non-empty moves for White and Black
+    white_moves_mask = chess_data[white_move_cols].apply(lambda x: x.str.strip().astype(bool), axis=0)
+    black_moves_mask = chess_data[black_move_cols].apply(lambda x: x.str.strip().astype(bool), axis=0)
+    
+    # Filter out rows where the number of non-empty moves is less than the required moves
+    white_valid_moves = (white_moves_mask.sum(axis=1) >= chess_data['WhiteMoves'])
+    black_valid_moves = (black_moves_mask.sum(axis=1) >= chess_data['BlackMoves'])
+    
+    valid_games_mask = white_valid_moves & black_valid_moves
+
+    # Drop the auxiliary columns
+    chess_data.drop(['WhiteMoves', 'BlackMoves'], axis=1, inplace=True)
+    
+    # Apply the mask to the DataFrame to filter out games with any empty moves
+    chess_data_cleaned = chess_data[valid_games_mask]
+
+    chess_data_cleaned.to_pickle(chess_data_cleaned_filepath, compression = 'zip')
 
 def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
     """Plays a game of chess against a human player using the terminal.
