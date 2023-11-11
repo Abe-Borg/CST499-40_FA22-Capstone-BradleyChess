@@ -60,20 +60,12 @@ class Bradley:
         """Sets the discount factor for the RL agent.
             pre: 0 < discount_factor < 1 & rl_agent_color == 'W' or rl_agent_color == 'B'
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.set_agent_discount_factor ==========\n")
-            self.debug_file.write(f'Agent color is: {rl_agent_color}\n')
-            self.debug_file.write(f'Discount factor is: {discount_factor}\n')
-        
         if rl_agent_color == 'W':
             self.W_rl_agent.discount_factor = discount_factor
         else:
             self.B_rl_agent.discount_factor = discount_factor
-        
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"========== End of Bradley.set_agent_discount_factor ==========\n\n\n")
+    # end of set_agent_discount_factor        
 
-    # @log_config.log_execution_time_every_N()
     def recv_opp_move(self, chess_move: str) -> bool:                                                                                 
         """Receives the opponent's chess move and loads it onto the chessboard.
         Args:
@@ -118,11 +110,10 @@ class Bradley:
         return False # load move failed, most likely the input was not a valid chess move
     ### end of recv_opp_move ###
 
-    # @log_config.log_execution_time_every_N()
     def rl_agent_selects_chess_move(self, rl_agent_color: str) -> str:
         """The Agent selects a chess move and loads it onto the chessboard.
         This method assumes that the agents have already been trained.
-        
+    
         Args:
             rl_agent_color (str): A string indicating the color of the RL agent, either 'W' or 'B'.
         Returns:
@@ -200,31 +191,11 @@ class Bradley:
     
     def get_fen_str(self) -> str:
         """Returns the FEN string representing the current board state.
-        Args:
-            None
         Returns:
             str: A string representing the current board state in FEN format, 
             such as 'rnbqkbnr/pppp1ppp/8/8/4p1P1/5P2/PPPPP2P/RNBQKBNR w KQkq - 0 3'.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.get_fen_str ==========\n")
-            self.debug_file.write("going to environ.board.fen()\n")
-
-        try:
-            fen: str = self.environ.board.fen()
-
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write("and we're back to Bradley get_fen_str, arrived from environ.board.fen()\n")
-                self.debug_file.write(f'FEN string is: {fen}\n')
-                self.debug_file.write("Bye from Bradley.get_fen_str\n\n\n")
-            
-            return fen
-        except Exception as e:
-            self.errors_file.write(f'An error occurred: {e}\n')
-            self.errors_file.write("invalid board state or fen str was invalid\n")
-            self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
-            self.errors_file.write("========== Bye from Bradley.get_fen_str ==========\n\n\n")
-            raise Exception(f'An error occurred: {e}\n')
+        return self.environ.board.fen()
     ### end of get_gen_str ###
 
     def get_opp_agent_color(self, rl_agent_color: str) -> str:
