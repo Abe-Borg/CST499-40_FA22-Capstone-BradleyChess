@@ -160,20 +160,13 @@ class Agent:
 
     def update_Q_table(self, new_chess_moves: list[str]) -> None:
         """Updates the Q table with new chess moves.
-        This method creates a new DataFrame with the new chess moves, and 
-        appends it to the Q table. 
+        This method creates a new DataFrame with the new chess moves, and appends it to the Q table. 
 
         Args:
             new_chess_moves (list[str]): A list of chess moves (strings) that are not already in the Q table.
         """
         q_table_new_values: pd.DataFrame = pd.DataFrame(0, index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int32)
         self.Q_table = pd.concat([self.Q_table, q_table_new_values])
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'q_table_new_values: {q_table_new_values}\n')
-            self.debug_file.write(f'Q_table:\n{self.Q_table}\n\n')
-            self.debug_file.write(f'Q_table shape: {self.Q_table.shape}\n')
-            self.debug_file.write(f'========== bye from Agent update_Q_table ==========\n\n\n')
     ### update_Q_table ###
 
     # @log_config.log_execution_time_every_N()        
