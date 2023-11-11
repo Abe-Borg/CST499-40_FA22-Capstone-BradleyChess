@@ -46,47 +46,23 @@ class Agent:
         self.debug_file.close()
     ### end of __del__ ###
 
-    # @log_config.log_execution_time_every_N()
     def choose_action(self, environ_state: dict[str, str, list[str]], curr_game: str = 'Game 1') -> str:
         """Chooses the next chess move for the agent based on the current state.
         Args:
-            environ_state (dict): A dictionary containing the current state of the environment.
-                Make sure environ_state is not modified in this method.
+            environ_state (dict): A dictionary containing the current state.
             curr_game (str): A string indicating the current game being played. 
-                Relevant when initially training the agents. Defaults to 'Game 1'.
         Returns:
             str: A string representing the chess move chosen by the agent.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent choose_action ========== \n')
-            self.debug_file.write(f'{self.color} Agent is choosing an action\n')
-            self.debug_file.write(f'environ_state: {environ_state}\n')
-            self.debug_file.write(f'legal_moves: {environ_state["legal_moves"]}\n')
-
         # check if any of the legal moves is not already in the Q table
         moves_not_in_Q_table: list[str] = [move for move in environ_state['legal_moves'] if move not in self.Q_table.index]
 
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'moves_not_in_Q_table: {moves_not_in_Q_table}\n')
-
         if moves_not_in_Q_table:
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'========== going to Agent update_Q_table =========== \n\n')
-
             self.update_Q_table(moves_not_in_Q_table)
 
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'========== back to Agent choose_action, arrived from Agen update_Q_table ===========\n\n')
-                
         if self.is_trained:
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'========== going to Agent policy_game_mode ========== \n\n')
-
             return self.policy_game_mode(environ_state['legal_moves'])
         else:
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'========== going to Agent policy_training_mode ==========\n\n')
-
             return self.policy_training_mode(curr_game, environ_state["curr_turn"])
     ### end of choose_action ###
     
