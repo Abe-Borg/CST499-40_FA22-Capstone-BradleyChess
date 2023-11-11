@@ -173,13 +173,5 @@ class Agent:
     def reset_Q_table(self) -> None:
         """Resets the Q table to all zeros.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent reset_Q_table ==========\n')
-            self.debug_file.write(f'Q_table:\n{self.Q_table.head()}\n\n')
-
-        self.Q_table.iloc[:, :] = 0
-        
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'reset Q_table is:\n{self.Q_table.head()}\n\n')
-            self.debug_file.write(f'bye from Agent reset_Q_table\n\n\n')
+        self.Q_table.iloc[:, :] = 0        
     ### end of reset_Q_table ###
