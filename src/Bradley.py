@@ -322,12 +322,10 @@ class Bradley:
                 # choose action a from state s, using policy
                 if game_settings.PRINT_DEBUG:
                     self.debug_file.write(f'White agent will pick a move given the current state: {curr_state}\n')
-                    self.debug_file.write("going to self.rl_agent_PICKS_move\n")
 
-                W_chess_move: str = self.rl_agent_PICKS_move(curr_state, self.W_rl_agent.color, game_num_str)
+                W_chess_move: self.W_rl_agent.choose_action(curr_state, game_num_str)
 
                 if game_settings.PRINT_DEBUG:
-                    self.debug_file.write("and we're back from self.rl_agent_PICKS_move\n")
                     self.debug_file.write(f'White agent picked move: {W_chess_move}\n')
                     self.debug_file.write(f'on turn: {curr_state["turn_index"]}\n')
 
@@ -399,7 +397,7 @@ class Bradley:
                     self.debug_file.write(f'curr state is: {curr_state}')
                     self.debug_file.write("going to rl.agent_PICKS_MOVE_training_mode\n")
 
-                B_chess_move: str = self.rl_agent_PICKS_move(curr_state, self.B_rl_agent.color, game_num_str)
+                B_chess_move: self.B_rl_agent.choose_action(curr_state, game_num_str)
 
                 if game_settings.PRINT_DEBUG:
                     self.debug_file.write("and we're back to Bradley.train_agents, arrived from rl.agent_PICKS_move_training_mode\n")
@@ -535,43 +533,7 @@ class Bradley:
         """ continues to train the agent, this time the agents make their own decisions instead 
             of playing through the database.
         """ 
-        
     ### end of continue_training_rl_agents
-    
-    def rl_agent_PICKS_move(self, curr_state: dict[str, str, list[str]], rl_agent_color: str, game_num_str: str = 'Game 1') -> str:
-        """ The RL agent picks a move to play during training mode
-        Parameters:
-            curr_state (dict[str, str, list[str]]): A dictionary containing the current state of the chessboard.
-            rl_agent_color (str): A string representing the color of the RL agent ('W' for white, 'B' for black).
-            game_num_str (str): A string representing the game number (default is 'Game 1').
-        Returns:
-            str: A string representing the chess move that the RL agent has chosen to play.
-        """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.rl_agent_PICKS_move ==========\n\n")
-            self.debug_file.write(f'Current state is: {curr_state}\n')
-            self.debug_file.write(f'RL agent color is: {rl_agent_color}\n')
-            self.debug_file.write(f'Game number is: {game_num_str}\n')
-            self.debug_file.write("going to Agent.choose_action\n")
-
-        if rl_agent_color == 'W':
-            curr_action: str = self.W_rl_agent.choose_action(curr_state, game_num_str)
-            
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write("and we're back to Bradley.rl_agent_PICKS_move, arrived from Agent.choose_action\n")
-                self.debug_file.write(f'White agent picked move: {curr_action}\n')
-        else:
-            curr_action: str = self.B_rl_agent.choose_action(curr_state, game_num_str)
-
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write("and we're back to Bradley.rl_agent_PICKS_move, arrived from Agent.choose_action\n")
-                self.debug_file.write(f'Black agent picked move: {curr_action}\n')
-        
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write("========== Bye from Bradley.rl_agent_PICKS_move ===========\n\n\n")
-
-        return curr_action
-    # end of rl_agent_PICKS_move
     
     # @log_config.log_execution_time_every_N()
     def assign_points_to_Q_table(self, chess_move: str, curr_turn: str, curr_Qval: int, rl_agent_color: str) -> None:
