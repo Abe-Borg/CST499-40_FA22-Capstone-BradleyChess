@@ -140,7 +140,7 @@ class Environ:
                 self.debug_file.write(f'========== End of Environ.load_chessboard ==========\n\n\n')
 
         except ValueError as e:
-            self.errors_file.write(f'An error occurred at load_chessboard() for {curr_game}: {e}, unable to load chessboard with {chess_move_str}')
+            self.errors_file.write(f'An error occurred at environ.load_chessboard() for {curr_game}: {e}, unable to load chessboard with {chess_move_str}')
             self.errors_file.write(f'========== End of Environ.load_chessboard ==========\n\n\n')
             raise ValueError(f"An error occurred: {e}, unable to load chessboard with {chess_move_str}")          
     ### end of load_chessboard    

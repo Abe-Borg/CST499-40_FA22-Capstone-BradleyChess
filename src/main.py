@@ -28,6 +28,7 @@ if __name__ == '__main__':
     end_time = time.time()
     helper_methods.pikl_q_table(bradley, 'W',game_settings.bradley_agent_q_table_path)
     helper_methods.pikl_q_table(bradley, 'B', game_settings.imman_agent_q_table_path)
+    
     total_time = end_time - start_time
     print('training is complete')
     print(f'it took: {total_time} for {game_settings.training_sample_size} games')
