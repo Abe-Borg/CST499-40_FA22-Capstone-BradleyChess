@@ -200,10 +200,6 @@ class Bradley:
 
     def get_opp_agent_color(self, rl_agent_color: str) -> str:
         """Determines the color of the opposing RL agent.
-        Args:
-            rl_agent_color (str): A string indicating the color of the current RL agent, either 'W' or 'B'.
-        Returns:
-            str: A string indicating the color of the opposing RL agent, either 'W' or 'B'.
         """
         if rl_agent_color == 'W':
             return 'B'
@@ -211,19 +207,16 @@ class Bradley:
             return 'W'
     ### end of get_opp_agent_color
             
-    # @log_config.log_execution_time_every_N()        
     def get_curr_turn(self) -> str:
         """Returns the current turn as a string.
-        Args:
-            None
         Returns:
             str: A string representing the current turn. eg "W1"
         """
         try: 
             return self.environ.get_curr_turn()
         except Exception as e:
-            self.errors_file.write(f'An error occurred: {e}, unable to get curr_turn\n')
-            raise Exception(f'An error occurred: {e}, unable to get curr_turn\n')
+            self.errors_file.write(f'An error occurred at get_curr_turn(): {e}\n')
+            raise Exception from e
     ### end of get_curr_turn
 
     # @log_config.log_execution_time_every_N()
@@ -234,12 +227,10 @@ class Bradley:
             self.debug_file.write(f"\n========== Hello from Bradley.is_game_over ==========\n\n")
 
         if self.environ.board.is_game_over() or (self.environ.turn_index > game_settings.max_turn_index):
-            
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Game over\n')
                 self.debug_file.write(f'curr turn index is: {self.environ.turn_index}\n')
                 self.debug_file.write("Bye from Bradley.is_game_over\n\n\n")
-            
             return True
         else:
             if game_settings.PRINT_DEBUG:
@@ -251,18 +242,9 @@ class Bradley:
 
     # @log_config.log_execution_time_every_N()
     def get_legal_moves(self) -> list[str]:
-        """Returns a list of legal moves for the current turn and state of the chessboard.
-        Args:
-            None
-        Returns:
-            list[str]: A list of strings representing the legal moves for the current turn and state of the chessboard.
+        """Returns a list of legal moves for the current turn and state
         """
-        legal_moves = self.environ.get_legal_moves()
-
-        if len(legal_moves) == 0:
-            return ['no legal moves']
-        else:
-            return legal_moves
+        return self.environ.get_legal_moves()
     ### end of get_legal_moves
         
     # @log_config.log_execution_time_every_N()
