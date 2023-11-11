@@ -584,21 +584,16 @@ class Bradley:
             self.debug_file.write("========== Bye from Bradley.assign_points_to_Q_table ===========\n\n\n")
     # enf of assign_points_to_Q_table
 
-    # @log_config.log_execution_time_every_N()
     def rl_agent_PLAYS_move(self, chess_move: str, curr_game) -> None:
-        """
-            This method is responsible for:
+        """ This method is responsible for:
                 1. Loading the chessboard with the given move.
                 2. Updating the current state of the environment.
         Args:
             chess_move (str): A string representing the chess move in standard algebraic notation.
-        Returns:
-            None
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f"\n========== Hello from Bradley.rl_agent_PLAYS_move ==========\n\n")
             self.debug_file.write(f'Chess move is: {chess_move}\n')
-            self.debug_file.write("going to self.environ.load_chessboard\n")
 
         try:
             self.environ.load_chessboard(chess_move, curr_game)
@@ -606,23 +601,16 @@ class Bradley:
             self.errors_file.write(f'An error occurred at {curr_game}: {e}\n')
             self.errors_file.write(f"failed to load_chessboard with move {chess_move}\n")
             self.errors_file.write(f"chessboard looks like this:\n{self.environ.board}\n\n")
-            self.errors_file.write(f'game outcome is: {self.get_game_outcome()}\n')
             self.errors_file.write("========== Bye from Bradley.rl_agent_PLAYS_move ===========\n\n\n")
             raise Exception from e
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write("and we're back to Bradley.rl_agent_PLAYS_move, arrived from self.environ.load_chessboard\n")
-            self.debug_file.write("going to self.environ.update_curr_state\n")
 
         try:
             self.environ.update_curr_state()
         except Exception as e:
-            self.errors_file.write(f'failed to increment turn_index, Caught exception: {e}\n')
+            self.errors_file.write(f'update_curr_state() failed to increment turn_index, Caught exception: {e}\n')
             self.errors_file.write(f'current state is: {curr_state}\n')
-            self.errors_file.write(f'game continues, this is the last turn\n')
 
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write("and we're back to Bradley.rl_agent_PLAYS_move arrived from self.environ.update_curr_state\n")
             self.debug_file.write("========== Bye from Bradley.rl_agent_PLAYS_move ===========\n\n\n")    
     # end of rl_agent_PLAYS_move
 
