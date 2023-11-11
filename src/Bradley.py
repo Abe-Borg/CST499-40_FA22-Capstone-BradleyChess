@@ -535,7 +535,6 @@ class Bradley:
         """ 
     ### end of continue_training_rl_agents
     
-    # @log_config.log_execution_time_every_N()
     def assign_points_to_Q_table(self, chess_move: str, curr_turn: str, curr_Qval: int, rl_agent_color: str) -> None:
         """ Assigns points to the Q table for the given chess move, current turn, current Q value, and RL agent color.
         Args:
@@ -543,8 +542,6 @@ class Bradley:
             curr_turn (str): The current turn of the game.
             curr_Qval (int): The current Q value for the given chess move.
             rl_agent_color (str): The color of the RL agent making the move.
-        Returns:
-            None
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f"\n========== Hello from Bradley.assign_points_to_Q_table ==========\n\n")
@@ -557,56 +554,32 @@ class Bradley:
         if rl_agent_color == 'W':
             try:
                 self.W_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
-                
                 if game_settings.PRINT_DEBUG:
-                    self.debug_file.write("and we're back to Bradley.assign_points_to_Q_table, arrived from rl_agent.change_Q_table_pts\n")
                     self.debug_file.write(f'White agent changed Q table points for move: {chess_move}\n')
-
             except KeyError as e: 
                 # chess move is not represented in the Q table, update Q table and try again.
                 if game_settings.PRINT_DEBUG:
+                    self.errors_file.write(f'caught exception: {e} at assign_points_to_Q_table\n')
                     self.debug_file.write(f'caught exception: {e}\n')
                     self.debug_file.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
-                    self.debug_file.write("going to Agent.update_Q_table\n")
 
                 self.W_rl_agent.update_Q_table([chess_move])
-
-                if game_settings.PRINT_DEBUG:
-                    self.debug_file.write("and we're back to Bradley.assign_points_to_Q_table from self.W_rl_agent.update_Q_table\n")
-                    self.debug_file.write("going to Agent.change_Q_table_pts\n")
-
                 self.W_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
-
-                if game_settings.PRINT_DEBUG:
-                    self.debug_file.write("and we're back to Bradley.assign_points_to_Q_table, arrived from Agent.change_Q_table_pts\n")
-                    self.debug_file.write(f'White agent changed Q table points for move: {chess_move}\n')
         else:
             try:
                 self.B_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
-
                 if game_settings.PRINT_DEBUG:
-                    self.debug_file.write("and we're back from rl_agent.change_Q_table_pts\n")
-                    self.debug_file.write(f'White agent changed Q table points for move: {chess_move}\n')
-
+                    self.debug_file.write(f'Black agent changed Q table points for move: {chess_move}\n')
             except KeyError as e: 
                 # chess move is not represented in the Q table, update Q table and try again. 
                 if game_settings.PRINT_DEBUG:
+                    self.errors_file.write(f'caught exception: {e} at assign_points_to_Q_table\n')
                     self.debug_file.write(f'caught exception: {e}\n')
                     self.debug_file.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
-                    self.debug_file.write("going to self.W_rl_agent.update_Q_table\n")
 
                 self.B_rl_agent.update_Q_table([chess_move])
-
-                if game_settings.PRINT_DEBUG:
-                    self.debug_file.write("and we're back from self.W_rl_agent.update_Q_table\n")
-                    self.debug_file.write("going to self.W_rl_agent.change_Q_table_pts\n")
-
                 self.B_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
 
-                if game_settings.PRINT_DEBUG:
-                    self.debug_file.write("and we're back from self.W_rl_agent.change_Q_table_pts\n")
-                    self.debug_file.write(f'White agent changed Q table points for move: {chess_move}\n')
-    
         if game_settings.PRINT_DEBUG:
             self.debug_file.write("========== Bye from Bradley.assign_points_to_Q_table ===========\n\n\n")
     # enf of assign_points_to_Q_table
