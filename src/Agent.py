@@ -68,7 +68,6 @@ class Agent:
     
     def policy_training_mode(self, curr_game: str, curr_turn: str) -> str:
         """Determines how the agents choose a move at each turn during training.
-        In this implementation, the agents will play out the games in the database exactly as shown.
         Args:
             curr_game: A string representing the current game being played.
             curr_turn: A string representing the current turn, e.g. 'W1'.
@@ -82,7 +81,7 @@ class Agent:
     def policy_game_mode(self, legal_moves: list[str]) -> str:
         """Determines how the agent chooses a move during a game between a human player and the agent.
         The agent searches its Q table to find the moves with the highest Q values at each turn. 
-        However, sometimes the agent will pick a random move. 
+        sometimes the agent will pick a random move. 
 
         Args:
             legal_moves: A list of strings representing the legal moves for the current turn.
@@ -140,28 +139,14 @@ class Agent:
         Returns:
             A pandas dataframe representing the Q table.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent init_Q_table ==========\n')
-            
         move_columns = [col for col in chess_data.columns if col.startswith(self.color)]
 
-        # Flatten all the values in these columns and find unique values for
-        # the specified color
+        # Flatten all the values in these columns and find unique values for the specified color
         unique_moves = chess_data[move_columns].values.flatten()
         unique_moves = pd.Series(unique_moves).unique()
 
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'unique_moves: {unique_moves}\n\n')
-
         turns_list: pd.Index = chess_data.loc[:, f"{self.color}1": f"{self.color}{game_settings.max_num_turns_per_player}": 2].columns
         q_table: pd.DataFrame = pd.DataFrame(0, columns = turns_list, index = unique_moves, dtype = np.int32)
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'turns_list: {turns_list}\n\n')
-            self.debug_file.write(f'q_table:\n{q_table}\n\n')
-            self.debug_file.write(f'q_table shape: {q_table.shape}\n')
-            self.debug_file.write(f'========== bye from Agent init_Q_table ==========\n\n\n')
-
         return q_table
     ### end of init_Q_table ###
 
