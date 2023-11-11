@@ -33,9 +33,8 @@ class Bradley:
         self.W_rl_agent = Agent.Agent('W', self.chess_data)
         self.B_rl_agent = Agent.Agent('B', self.chess_data)
 
-        # stockfish is used to analyze positions during training
-        # this is how we estimate the q value at each position, 
-        # and also for anticipated next position
+        # stockfish is used to analyze positions during training this is how we estimate the q value 
+        # at each position, and also for anticipated next position
         self.engine = chess.engine.SimpleEngine.popen_uci(game_settings.stockfish_filepath)
     ### end of Bradley constructor ###
 
@@ -51,18 +50,10 @@ class Bradley:
         """Sets the learn rate for the RL agent.
             pre: 0 < learn_rate < 1 & rl_agent_color == 'W' or rl_agent_color == 'B'
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.set_agent_learn_rate ==========\n")
-            self.debug_file.write(f'Agent color is: {rl_agent_color}\n')
-            self.debug_file.write(f'Learn rate is: {learn_rate}\n')
-        
         if rl_agent_color == 'W':
             self.W_rl_agent.learn_rate = learn_rate
         else:
             self.B_rl_agent.learn_rate = learn_rate
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"========== End of Bradley.set_agent_learn_rate ==========\n\n\n")
     # end of set_agent_learn_rate
 
     def set_agent_discount_factor(self, rl_agent_color: str, discount_factor: float) -> None:
