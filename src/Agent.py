@@ -155,18 +155,9 @@ class Agent:
             curr_turn (str): A string representing the turn number, e.g. 'W10'.
             pts (int): An integer representing the number of points to add to the Q table cell.
         """
-        try:
-            self.Q_table.at[chess_move, curr_turn] += pts
-        except KeyError as e:
-            self.errors_file.write(f'\n========== something went wrong at Agent change_Q_table_pts ==========\n')
-            self.errors_file.write(f'KeyError: {e}\n')
-            self.errors_file.write(f'chess_move: {chess_move}\n')
-            self.errors_file.write(f'curr_turn: {curr_turn}\n')
-            self.errors_file.write(f'pts: {pts}\n')
-            raise KeyError from e
+        self.Q_table.at[chess_move, curr_turn] += pts
     ### end of change_Q_table_pts ###
 
-    # @log_config.log_execution_time_every_N()
     def update_Q_table(self, new_chess_moves: list[str]) -> None:
         """Updates the Q table with new chess moves.
         This method creates a new DataFrame with the new chess moves, and 
@@ -174,13 +165,7 @@ class Agent:
 
         Args:
             new_chess_moves (list[str]): A list of chess moves (strings) that are not already in the Q table.
-        Returns:
-            None
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent update_Q_table ==========\n')
-            self.debug_file.write(f'new_chess_moves: {new_chess_moves}\n')
-    
         q_table_new_values: pd.DataFrame = pd.DataFrame(0, index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int32)
         self.Q_table = pd.concat([self.Q_table, q_table_new_values])
 
