@@ -77,7 +77,6 @@ class Agent:
         return self.chess_data.at[curr_game, curr_turn]
     ### end of policy_training_mode ###
 
-    # @log_config.log_execution_time_every_N()        
     def policy_game_mode(self, legal_moves: list[str]) -> str:
         """Determines how the agent chooses a move during a game between a human player and the agent.
         The agent searches its Q table to find the moves with the highest Q values at each turn. 
@@ -128,7 +127,6 @@ class Agent:
         return chess_move
     ### end of policy_game_mode ###
 
-    # @log_config.log_execution_time_every_N()
     def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
         """Creates the Q table so the agent can be trained.
         The Q table index represents unique moves across all games in the database for all turns.
@@ -150,23 +148,13 @@ class Agent:
         return q_table
     ### end of init_Q_table ###
 
-    # @log_config.log_execution_time_every_N()
     def change_Q_table_pts(self, chess_move: str, curr_turn: str, pts: int) -> None:
         """Adds points to a cell in the Q table.
         Args:
             chess_move (str): A string representing the chess move, e.g. 'e4'.
             curr_turn (str): A string representing the turn number, e.g. 'W10'.
             pts (int): An integer representing the number of points to add to the Q table cell.
-        Returns:
-            None
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent change_Q_table_pts ==========\n')
-            self.debug_file.write(f'chess_move: {chess_move}\n')
-            self.debug_file.write(f'curr_turn: {curr_turn}\n')
-            self.debug_file.write(f'pts: {pts}\n')
-            self.debug_file.write(f'========== bye from Agent change_Q_table_pts ==========\n\n\n')
-
         try:
             self.Q_table.at[chess_move, curr_turn] += pts
         except KeyError as e:
