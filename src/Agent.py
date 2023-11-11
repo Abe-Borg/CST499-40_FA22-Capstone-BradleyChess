@@ -10,7 +10,7 @@ import helper_methods
 class Agent:
     """The `Agent` class is responsible for deciding what chess move to play 
     based on the current state. The state is passed to the agent by 
-    the `Environ` class. The `Agent` class does not make any changes to the chessboard.
+    the `Environ` class.
 
     Args:
         - color (str): A string indicating the color of the agent, either 'W' or 'B'.
@@ -38,18 +38,7 @@ class Agent:
         self.color = color
         self.chess_data = chess_data
         self.is_trained: bool = False
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent __init__ ==========\n')
-            self.debug_file.write(f'color: {color}\n')
-            self.debug_file.write(f'learn_rate: {learn_rate}\n')
-            self.debug_file.write(f'discount_factor: {discount_factor}\n')
-            self.debug_file.write(f'chess_data:\n{chess_data.head()}\n\n')
-
         self.Q_table: pd.DataFrame = self.init_Q_table(self.chess_data)
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write("bye from Agent __init__\n\n\n")
     ### end of __init__ ###
 
     def __del__(self):
