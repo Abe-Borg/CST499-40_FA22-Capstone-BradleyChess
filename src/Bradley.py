@@ -240,60 +240,46 @@ class Bradley:
             return False
     ### end of is_game_over
 
-    # @log_config.log_execution_time_every_N()
     def get_legal_moves(self) -> list[str]:
         """Returns a list of legal moves for the current turn and state
         """
         return self.environ.get_legal_moves()
     ### end of get_legal_moves
         
-    # @log_config.log_execution_time_every_N()
     def get_game_outcome(self) -> str:
         """ Returns the outcome of the chess game.
-        Args:
-            None
         Returns:
             chess.Outcome or str: An instance of the `chess.Outcome` class with a `result()` 
-            method that returns the outcome of the game, or a string indicating that the outcome is not available.
+            method that returns the outcome of the game
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f"\n========== Hello from Bradley.get_game_outcome ==========\n\n")
 
         try:
             game_outcome = self.environ.board.outcome().result()
-
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Game outcome is: {game_outcome}\n')
                 self.debug_file.write("========== Bye from Bradley.get_game_outcome ===========\n\n\n")
-
             return game_outcome
-        except AttributeError:
-            return 'game outcome unavailable, game ended because turn_index was too high or player resigned'
+        except AttributeError as e:
+            return f'error at get_game_outcome: {e}'
     ### end of get_game_outcome
     
     # @log_config.log_execution_time_every_N()
     def get_game_termination_reason(self) -> str:
-        """Determines why the game ended.
-        Args:
-            None
-        Returns:
-            str: A single string that describes the reason for the game ending.
+        """returns a string that describes the reason for the game ending.
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f"\n========== Hello from Bradley.get_game_termination_reason ==========\n\n")
-            self.debug_file.write("going to self.environ.board.outcome().termination\n")
 
         try:
             termination_reason = str(self.environ.board.outcome().termination)
-
             if game_settings.PRINT_DEBUG:
-                self.debug_file.write("and we're back to Bradley get_game_termination_reason, arrived from self.environ.board.outcome().termination\n")
                 self.debug_file.write(f'Termination reason is: {termination_reason}\n')
                 self.debug_file.write("========== Bye from Bradley.get_game_termination_reason ===========\n\n\n")
-
             return termination_reason
-        except AttributeError:
-            return 'game termination reason unavailable, game ended because turn_index was too high or player resigned'
+        except AttributeError as e:
+            return 'error at get_game_termination_reason: {e}'
     ### end of get_game_termination_reason
     
     def get_chessboard(self) -> chess.Board:
