@@ -40,7 +40,32 @@ def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
         bubs.reset_environ()
 ### end of play_game
 
+def agent_vs_agent(bubs: Bradley.Bradley) -> None:
+    def play_turn(agent_color: str):
+        try:
+            chess_move = bubs.rl_agent_selects_chess_move(agent_color)
+            agent_vs_agent_file.write(f'{agent_color} agent played {chess_move}\n')
+        except Exception as e:
+            agent_vs_agent_file.write(f'An error occurred: {e}\n')
+            raise Exception from e
 
+    with open(game_settings.agent_vs_agent_filepath, 'a') as agent_vs_agent_file:
+        try:
+            while bubs.is_game_on():
+                agent_vs_agent_file.write(f'\nCurrent turn: {bubs.get_curr_turn()}')
+                play_turn('W')
+                
+                if bubs.is_game_on():
+                    play_turn('B')
+
+            agent_vs_agent_file.write('Game is over, chessboard looks like this:\n')
+            agent_vs_agent_file.write(bubs.get_chessboard() + '\n\n')
+            agent_vs_agent_file.write(f'Game result is: {bubs.get_game_outcome()}\n')
+            agent_vs_agent_file.write(f'Game ended because of: {bubs.get_game_termination_reason()}\n')
+        except Exception as e:
+            agent_vs_agent_file.write(f'An unhandled error occurred: {e}\n')
+
+        bubs.reset_environ()
 ### end of agent_vs_agent
 
 def pikl_q_table(bubs: Bradley.Bradley, rl_agent_color: str, q_table_path: str) -> None:
