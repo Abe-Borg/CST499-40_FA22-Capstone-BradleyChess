@@ -474,7 +474,6 @@ class Bradley:
             
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Game {game_num_str} is over.\n')
-                self.debug_file.write("going to self.reset_environ\n")
             
             self.environ.reset_environ()
             
@@ -571,6 +570,7 @@ class Bradley:
             self.errors_file.write(f'current state is: {curr_state}\n')
     # end of rl_agent_plays_move
 
+    # @log_config.log_execution_time_every_N()
     def find_estimated_Q_value(self) -> int:
         """ Estimates the Q-value for the RL agent's next action without actually playing the move.
         This method simulates the agent's next action and the anticipated response from the opposing agent 
@@ -657,23 +657,18 @@ class Bradley:
     def analyze_board_state(self, board: chess.Board) -> dict:
         """
         Analyzes the current state of the chessboard using the Stockfish engine.
-        This method returns a dictionary with the analysis results. The analysis results include the mate 
-        score and centipawn score, which are normalized by looking at the board from White's perspective. 
-
+        The analysis results include the mate score and centipawn score.
         Args:
             board (chess.Board): The current state of the chessboard to analyze.
-
         Returns:
             dict: Analysis results, including the mate score, centipawn score, and the anticipated next move. 
         """
         try: 
             analysis_result = self.engine.analyse(board, game_settings.search_limit, multipv=game_settings.num_moves_to_return)
         except Exception as e:
-            self.errors_file.write(f'An error occurred during analysis: {e}\n')
-            self.errors_file.write("Failed at self.engine.analyse\n")
-            self.errors_file.write(f"Chessboard FEN: {board.fen()}\n")
-            self.errors_file.write("========== End of analyze_board_state ===========\n\n")
-            raise
+            self.errors_file.write(f'@ Bradley_analyze_board_state. An error occurred during analysis: {e}\n')
+            self.errors_file.write(f"Chessboard is:\n{board}\n")
+            raise Exception from e
 
         mate_score = None
         centipawn_score = None
@@ -690,12 +685,14 @@ class Bradley:
                 centipawn_score = pov_score.score()
         except Exception as e:
             self.errors_file.write(f'An error occurred while extracting scores: {e}\n')
+            raise Exception from e
 
         try:
             # Extract the anticipated next move from the analysis
             anticipated_next_move = analysis_result[0]['pv'][0]
         except Exception as e:
             self.errors_file.write(f'An error occurred while extracting the anticipated next move: {e}\n')
+            raise Exception from e
 
         return {
             'mate_score': mate_score,
@@ -704,7 +701,6 @@ class Bradley:
         }
     ### end of analyze_board_state
  
-    # @log_config.log_execution_time_every_N()
     def get_reward(self, chess_move: str) -> int:                                     
         """Calculates the reward for a given chess move.
         Args:
@@ -712,10 +708,6 @@ class Bradley:
         Returns:
             int: The reward based on the type of move as an integer.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.get_reward ==========\n")
-            self.debug_file.write(f'Chess move is: {chess_move}\n')
-
         total_reward = 0
         if re.search(r'N.', chess_move):
             total_reward += game_settings.CHESS_MOVE_VALUES['piece_development']
@@ -732,10 +724,6 @@ class Bradley:
         if re.search(r'=Q', chess_move):
             total_reward += game_settings.CHESS_MOVE_VALUES['promotion_queen']
         
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'Total reward is: {total_reward}\n')
-            self.debug_file.write("========== Bye from Bradley.get_reward ===========\n\n\n")
-
         return total_reward
     ## end of get_reward
 
@@ -743,14 +731,5 @@ class Bradley:
     def reset_environ(self) -> None:
         """Resets the environment for a new game.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.reset_environ ==========\n")
-            self.debug_file.write("going to self.environ.reset_environ\n")
-        
         self.environ.reset_environ()
-        
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write("and we're back to Bradley reset_environ from self.environ.reset_environ\n")
-            self.debug_file.write("Environment has been reset\n")
-            self.debug_file.write("========== Bye from Bradley.reset_environ ===========\n\n\n")
     ### end of reset_environ
