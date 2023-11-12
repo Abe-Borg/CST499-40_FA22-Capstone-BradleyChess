@@ -727,9 +727,3 @@ class Bradley:
         return total_reward
     ## end of get_reward
 
-    # @log_config.log_execution_time_every_N()
-    def reset_environ(self) -> None:
-        """Resets the environment for a new game.
-        """
-        self.environ.reset_environ()
-    ### end of reset_environ
