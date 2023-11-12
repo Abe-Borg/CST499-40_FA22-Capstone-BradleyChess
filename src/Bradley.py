@@ -128,12 +128,6 @@ class Bradley:
                 self.debug_file.write("========== Bye from Bradley.is_game_over ==========\n\n\n")
             return False
     ### end of is_game_over
-
-    def get_legal_moves(self) -> list[str]:
-        """Returns a list of legal moves for the current turn and state
-        """
-        return self.environ.get_legal_moves()
-    ### end of get_legal_moves
         
     def get_game_outcome(self) -> str:
         """ Returns the outcome of the chess game.
