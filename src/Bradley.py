@@ -107,18 +107,6 @@ class Bradley:
             self.errors_file.write(f'Error: {e}, failed to update_curr_state\n')
             raise Exception from e
     ### end of rl_agent_selects_chess_move
-            
-    def get_curr_turn(self) -> str:
-        """Returns the current turn as a string.
-        Returns:
-            str: A string representing the current turn. eg "W1"
-        """
-        try: 
-            return self.environ.get_curr_turn()
-        except Exception as e:
-            self.errors_file.write(f'An error occurred at get_curr_turn(): {e}\n')
-            raise Exception from e
-    ### end of get_curr_turn
 
     # @log_config.log_execution_time_every_N()
     def is_game_over(self) -> bool:

@@ -27,7 +27,7 @@ def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
     with open(game_settings.helper_methods_errors_filepath, 'a') as errors_file:
         while bubs.is_game_on():
             try:
-                print(f'\nCurrent turn is :  {bubs.get_curr_turn()}\n')
+                print(f'\nCurrent turn is :  {bubs.environ.get_curr_turn()}\n')
                 chess_move = handle_move(player_turn)
                 print(f'{player_turn} played {chess_move}\n')
             except Exception as e:
@@ -52,7 +52,7 @@ def agent_vs_agent(bubs: Bradley.Bradley) -> None:
     with open(game_settings.agent_vs_agent_filepath, 'a') as agent_vs_agent_file:
         try:
             while bubs.is_game_on():
-                agent_vs_agent_file.write(f'\nCurrent turn: {bubs.get_curr_turn()}')
+                agent_vs_agent_file.write(f'\nCurrent turn: {bubs.environ.get_curr_turn()}')
                 play_turn('W')
                 
                 if bubs.is_game_on():
