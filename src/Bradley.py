@@ -69,7 +69,6 @@ class Bradley:
             self.errors_file.write(f'Error: {e}, failed to update_curr_state\n') 
             self.errors_file.write("========== Bye from Bradley.receive_opp_move ==========\n\n\n")
             return False
-
     ### end of receive_opp_move ###
 
     def rl_agent_selects_chess_move(self, rl_agent_color: str) -> str:
@@ -83,16 +82,12 @@ class Bradley:
         Returns:
             dict[str]: A dictionary containing the selected chess move string.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.rl_agent_selects_chess_move ==========\n\n")
-
         try:
             curr_state = self.environ.get_curr_state()
         except Exception as e:
             self.errors_file.write("hello from Bradley.rl_agent_selects_chess_move, an error occurred\n")
             self.errors_file.write(f'Error: {e}, failed to get_curr_state\n')
-            self.errors_file.write("========== Bye from Bradley.rl_agent_selects_chess_move ==========\n\n\n")
-            raise Exception(f'Error: {e}, failed to choose_action\n')
+            raise Exception(f'Error: {e}, failed to get_curr_state\n')
         
         if rl_agent_color == 'W':    
             # W agent selects action
@@ -104,16 +99,14 @@ class Bradley:
         try:
             self.environ.load_chessboard(chess_move) 
         except Exception as e:
-            self.errors_file.write(f'Error: failed to load chessboard with move: {chess_move}\n')
-            self.errors_file.write("========== Bye from Bradley.rl_agent_selects_chess_move ==========\n\n\n")
-            raise Exception(f'Error: failed to load chessboard with move: {chess_move}')
+            self.errors_file.write(f'Error {e}: failed to load chessboard with move: {chess_move}\n')
+            raise Exception from e
 
         try:
             self.environ.update_curr_state()            
             return chess_move
         except Exception as e:
             self.errors_file.write(f'Error: {e}, failed to update_curr_state\n')
-            self.errors_file.write("========== Bye from Bradley.rl_agent_selects_chess_move ==========\n\n\n")
             raise Exception from e
     ### end of rl_agent_selects_chess_move
     
