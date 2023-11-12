@@ -23,27 +23,22 @@ def load_pgn_file(input_file_path):
             games.append(game)
     return games
 
-
 # Clean up the PGN file and save the results to a JSON file.
 def clean_up_pgn_file(input_file_path, output_file_path):
-    """Cleans up a PGN file with multiple games and saves only the PlyCount, the Result, and the chess moves for each game, in the form of an array.
-
+    """Cleans up a PGN file with multiple games and saves only the PlyCount, 
+    the Result, and the chess moves for each game, in the form of an array.
     Args:
         input_file_path: The path to the input PGN file.
         output_file_path: The path to the output file.
     """
     games = load_pgn_file(input_file_path)
-
     cleaned_games = []
     for game in games:
         cleaned_game = {}
-
         # Save the PlyCount.
         cleaned_game["PlyCount"] = game.end().board().ply()
-
         # Save the Result.
         cleaned_game["Result"] = game.headers["Result"]
-
         # save the chess moves in SAN
         board = game.board()
         san_moves = []
@@ -51,11 +46,8 @@ def clean_up_pgn_file(input_file_path, output_file_path):
         for move in game.mainline_moves():
             san_moves.append(board.san(move))
             board.push(move)
-
         cleaned_game["ChessMoves"] = san_moves
-
         cleaned_games.append(cleaned_game)
-
     with open(output_file_path, 'w', encoding='utf-8') as file:
         json.dump(cleaned_games, file, indent=4)
 

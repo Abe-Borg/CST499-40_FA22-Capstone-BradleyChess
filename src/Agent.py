@@ -113,6 +113,7 @@ class Agent:
         debug_log(f'========== bye from Agent policy_game_mode ==========\n\n\n')
 
         return chess_move
+    ### end of policy_game_mode ###
 
     def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
         """Creates the Q table so the agent can be trained.
