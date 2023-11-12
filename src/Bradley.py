@@ -46,49 +46,31 @@ class Bradley:
         self.q_est_log.close()
     ### end of Bradley destructor ###
 
-    def recv_opp_move(self, chess_move: str) -> bool:                                                                                 
+    def receive_opp_move(self, chess_move: str) -> bool:                                                                                 
         """Receives the opponent's chess move and loads it onto the chessboard.
         Args:
             chess_move (str): A string representing the opponent's chess move, such as 'Nf3'.
         Returns:
             bool: A boolean value indicating whether the move was successfully loaded.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.recv_opp_move ==========\n\n")
-            self.debug_file.write("going to environ.load_chessboard\n")
-
         try:
             self.environ.load_chessboard(chess_move)
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write("and we're back to Bradley recv_opp_move, arrived from environ.load_chessboard\n")
-                self.debug_file.write("going to environ.update_curr_state\n")
-
-            # loading the chessboard was a success, now just update the curr state
-            try:
-                self.environ.update_curr_state()
-
-                if game_settings.PRINT_DEBUG:
-                    self.debug_file.write("and we're back to Bradley recv_opp_move, arrived from environ.update_curr_state\n")
-                    self.debug_file.write(f'Chessboard was successfully loaded with move: {chess_move}\n')
-                    self.debug_file.write(f'Chessboard looks like this:\n')
-                    self.debug_file.write(f'\n{self.environ.board}\n\n')
-                    self.debug_file.write(f'Current turn index is: {self.environ.turn_index}\n')
-                    self.debug_file.write("Bye from Bradley.recv_opp_move\n\n\n")
-
-                return True
-            except Exception as e:
-                self.errors.file.write(f'hello from Bradley.recv_opp_move, an error occurrd\n')
-                self.errors_file.write(f'Error: {e}, failed to update_curr_state\n') 
-                self.errors_file.write("========== Bye from Bradley.recv_opp_move ==========\n\n\n")
-                raise Exception from e
-
         except Exception as e:
-            self.errors_file.write("hello from Bradley.recv_opp_move, an error occurred\n")
+            self.errors_file.write("hello from Bradley.receive_opp_move, an error occurred\n")
             self.errors_file.write(f'Error: {e}, failed to load chessboard with move: {chess_move}\n')
-            self.errors_file.write("========== Bye from Bradley.recv_opp_move ==========\n\n\n")
-        
-        return False # load move failed, most likely the input was not a valid chess move
-    ### end of recv_opp_move ###
+            self.errors_file.write("========== Bye from Bradley.receive_opp_move ==========\n\n\n")
+            return False
+
+        try:
+            self.environ.update_curr_state()
+            return True
+        except Exception as e:
+            self.errors.file.write(f'hello from Bradley.receive_opp_move, an error occurrd\n')
+            self.errors_file.write(f'Error: {e}, failed to update_curr_state\n') 
+            self.errors_file.write("========== Bye from Bradley.receive_opp_move ==========\n\n\n")
+            return False
+
+    ### end of receive_opp_move ###
 
     def rl_agent_selects_chess_move(self, rl_agent_color: str) -> str:
         """The Agent selects a chess move and loads it onto the chessboard.

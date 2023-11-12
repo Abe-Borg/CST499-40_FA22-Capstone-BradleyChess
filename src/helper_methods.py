@@ -46,7 +46,7 @@ def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
             print('=== OPPONENT\' TURN ===')
             try:
                 chess_move = str(input('Enter chess move: '))
-                while not bubs.recv_opp_move(chess_move):
+                while not bubs.receive_opp_move(chess_move):
                     print('Invalid move, try again.')
                     chess_move = str(input('Enter chess move: '))
             except Exception as e:
