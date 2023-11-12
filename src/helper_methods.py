@@ -10,8 +10,6 @@ def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
     Args:
         bubs: An object of the Bradley class.
         rl_agent_color : A string representing the color of the RL agent, either 'W' or 'B'.
-    Returns:
-        None
     """    
     errors_file = open(game_settings.helper_methods_errors_filepath, 'a')
 
