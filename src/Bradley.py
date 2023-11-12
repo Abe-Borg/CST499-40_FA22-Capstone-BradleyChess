@@ -109,15 +109,6 @@ class Bradley:
             self.errors_file.write(f'Error: {e}, failed to update_curr_state\n')
             raise Exception from e
     ### end of rl_agent_selects_chess_move
-    
-    def get_fen_str(self) -> str:
-        """Returns the FEN string representing the current board state.
-        Returns:
-            str: A string representing the current board state in FEN format, 
-            such as 'rnbqkbnr/pppp1ppp/8/8/4p1P1/5P2/PPPPP2P/RNBQKBNR w KQkq - 0 3'.
-        """
-        return self.environ.board.fen()
-    ### end of get_gen_str ###
 
     def get_opp_agent_color(self, rl_agent_color: str) -> str:
         """Determines the color of the opposing RL agent.
