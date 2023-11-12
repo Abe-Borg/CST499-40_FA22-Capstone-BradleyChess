@@ -656,5 +656,29 @@ class Bradley:
         }
     ### end of analyze_board_state
  
-    
+
+    def get_reward(self, chess_move: str) -> int:
+        """Calculates the reward for a given chess move.
+        Args:
+            chess_move (str): A string representing the selected chess move.
+        Returns:
+            int: The reward based on the type of move as an integer.
+        """
+        total_reward = 0
+
+        # Check for piece development (N, R, B, Q)
+        if re.search(r'[NRBQ]', chess_move):
+            total_reward += game_settings.CHESS_MOVE_VALUES['piece_development']
+
+        # Check for capture
+        if 'x' in chess_move:
+            total_reward += game_settings.CHESS_MOVE_VALUES['capture']
+
+        # Check for promotion (with additional reward for queen promotion)
+        if '=' in chess_move:
+            total_reward += game_settings.CHESS_MOVE_VALUES['promotion']
+            if '=Q' in chess_move:
+                total_reward += game_settings.CHESS_MOVE_VALUES['promotion_queen']
+
+        return total_reward
     ## end of get_reward
