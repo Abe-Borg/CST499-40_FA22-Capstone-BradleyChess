@@ -656,7 +656,6 @@ class Bradley:
         }
     ### end of analyze_board_state
  
-
     def get_reward(self, chess_move: str) -> int:
         """Calculates the reward for a given chess move.
         Args:

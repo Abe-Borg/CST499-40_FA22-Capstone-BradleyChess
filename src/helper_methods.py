@@ -5,75 +5,7 @@ import game_settings
 # import log_config
 # logger = logging.getLogger(__name__)
 
-def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
-    """Plays a game of chess against a human player using the terminal.
-    Args:
-        bubs: An object of the Bradley class.
-        rl_agent_color : A string representing the color of the RL agent, either 'W' or 'B'.
-    """    
-    errors_file = open(game_settings.helper_methods_errors_filepath, 'a')
 
-    is_W_turn: bool = True
-
-    if rl_agent_color == 'W':
-        rl_agent = bubs.W_rl_agent
-    else:
-        rl_agent = bubs.B_rl_agent
-    
-    while bubs.is_game_on():
-        if is_W_turn:
-            player_turn = 'W'
-        else:
-            player_turn = 'B'
-        
-        try:
-            print(f'\nCurrent turn is :  {bubs.get_curr_turn()}\n')
-        except Exception as e:
-            errors_file.write(f'An error occurred: {e}')
-            # logger.error(f'Error occurred while getting current turn: {e}')
-        
-        if rl_agent.color == player_turn:
-            print('=== RL AGENT\'S TURN ===\n')
-            try:
-                chess_move: str = bubs.rl_agent_selects_chess_move(rl_agent.color) 
-                print(f'RL agent played {chess_move}\n')
-            except Exception as e:
-                errors_file.write(f'An error occurred: {e}')
-                # logger.error(f'Error occurred during RL agent turn: {e}')
-        else:
-            print('=== OPPONENT\' TURN ===')
-            try:
-                chess_move = str(input('Enter chess move: '))
-                while not bubs.receive_opp_move(chess_move):
-                    print('Invalid move, try again.')
-                    chess_move = str(input('Enter chess move: '))
-            except Exception as e:
-                error_file.write(f'An error occurred: {e}')
-                # logger.error(f'Error occured durring humans turn: {e}')
-            print('\n')
-
-        is_W_turn = not is_W_turn    
-        # end single turn where a turn is W and B moving once each
-    
-    try:
-        print(f'Game is over, result is: {bubs.get_game_outcome()}')
-    except Exception as e:
-        error_file.write(f'An error occurred while getting game outcome: {e}')
-        # logger.error(f'Error occurred while getting game outcome: {e}')
-
-    try:
-        print(f'The game ended because of: {bubs.get_game_termination_reason()}')
-    except Exception as e:
-        error_file.write(f'An error occurred while getting game termination reason: {e}')
-        # logger.error(f'Error occurred while getting game termination reason: {e}')
-        #     
-    try:
-        bubs.reset_environ()
-    except Exception as e:
-        error_file.write(f'An error occurred while resetting environ: {e}')
-        # logger.error(f'Error occurred while resetting game environment: {e}')
-
-    errors_file.close()
 ### end of play_game
 
 def agent_vs_agent(bubs: Bradley.Bradley) -> None:
