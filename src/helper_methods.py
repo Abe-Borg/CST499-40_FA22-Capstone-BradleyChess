@@ -5,7 +5,39 @@ import game_settings
 # import log_config
 # logger = logging.getLogger(__name__)
 
+def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
+    def handle_move(player_color):
+        if player_color == rl_agent.color:
+            print('=== RL AGENT\'S TURN ===\n')
+            return bubs.rl_agent_selects_chess_move(player_color)
+        else:
+            print('=== OPPONENT\'S TURN ===')
+            move = input('Enter chess move: ')
+            while not bubs.receive_opp_move(move):
+                print('Invalid move, try again.')
+                move = input('Enter chess move: ')
+            return move
 
+    def log_error(e):
+        errors_file.write(f'An error occurred: {e}\n')
+
+    rl_agent = bubs.W_rl_agent if rl_agent_color == 'W' else bubs.B_rl_agent
+    player_turn = 'W'
+
+    with open(game_settings.helper_methods_errors_filepath, 'a') as errors_file:
+        while bubs.is_game_on():
+            try:
+                print(f'\nCurrent turn is :  {bubs.get_curr_turn()}\n')
+                chess_move = handle_move(player_turn)
+                print(f'{player_turn} played {chess_move}\n')
+            except Exception as e:
+                log_error(e)
+
+            player_turn = 'B' if player_turn == 'W' else 'W'
+
+        print(f'Game is over, result is: {bubs.get_game_outcome()}')
+        print(f'The game ended because of: {bubs.get_game_termination_reason()}')
+        bubs.reset_environ()
 ### end of play_game
 
 def agent_vs_agent(bubs: Bradley.Bradley) -> None:
