@@ -46,26 +46,6 @@ class Bradley:
         self.q_est_log.close()
     ### end of Bradley destructor ###
 
-    def set_agent_learn_rate(self, rl_agent_color: str, learn_rate: float) -> None:
-        """Sets the learn rate for the RL agent.
-            pre: 0 < learn_rate < 1 & rl_agent_color == 'W' or rl_agent_color == 'B'
-        """
-        if rl_agent_color == 'W':
-            self.W_rl_agent.learn_rate = learn_rate
-        else:
-            self.B_rl_agent.learn_rate = learn_rate
-    # end of set_agent_learn_rate
-
-    def set_agent_discount_factor(self, rl_agent_color: str, discount_factor: float) -> None:
-        """Sets the discount factor for the RL agent.
-            pre: 0 < discount_factor < 1 & rl_agent_color == 'W' or rl_agent_color == 'B'
-        """
-        if rl_agent_color == 'W':
-            self.W_rl_agent.discount_factor = discount_factor
-        else:
-            self.B_rl_agent.discount_factor = discount_factor
-    # end of set_agent_discount_factor        
-
     def recv_opp_move(self, chess_move: str) -> bool:                                                                                 
         """Receives the opponent's chess move and loads it onto the chessboard.
         Args:
@@ -726,4 +706,3 @@ class Bradley:
         
         return total_reward
     ## end of get_reward
-
