@@ -203,14 +203,6 @@ class Bradley:
             return 'error at get_game_termination_reason: {e}'
     ### end of get_game_termination_reason
     
-    def get_chessboard(self) -> chess.Board:
-        """Returns the current state of the chessboard.
-        Returns:
-            chess.Board: A `chess.Board` object representing the current state of the chessboard.
-        """
-        return self.environ.board
-    ### end of get_chess_board
-
     # @log_config.log_execution_time_every_N()
     def train_rl_agents(self) -> None:
         """Trains the RL agents using the SARSA algorithm and sets their `is_trained` flag to True.

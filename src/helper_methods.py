@@ -59,7 +59,7 @@ def agent_vs_agent(bubs: Bradley.Bradley) -> None:
                     play_turn('B')
 
             agent_vs_agent_file.write('Game is over, chessboard looks like this:\n')
-            agent_vs_agent_file.write(bubs.get_chessboard() + '\n\n')
+            agent_vs_agent_file.write(bubs.environ.board + '\n\n')
             agent_vs_agent_file.write(f'Game result is: {bubs.get_game_outcome()}\n')
             agent_vs_agent_file.write(f'Game ended because of: {bubs.get_game_termination_reason()}\n')
         except Exception as e:
