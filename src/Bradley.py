@@ -108,7 +108,6 @@ class Bradley:
             raise Exception from e
     ### end of rl_agent_selects_chess_move
 
-    # @log_config.log_execution_time_every_N()
     def is_game_over(self) -> bool:
         """Determines whether the game is still ongoing.
         """
@@ -135,9 +134,6 @@ class Bradley:
             chess.Outcome or str: An instance of the `chess.Outcome` class with a `result()` 
             method that returns the outcome of the game
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.get_game_outcome ==========\n\n")
-
         try:
             game_outcome = self.environ.board.outcome().result()
             if game_settings.PRINT_DEBUG:
@@ -148,18 +144,13 @@ class Bradley:
             return f'error at get_game_outcome: {e}'
     ### end of get_game_outcome
     
-    # @log_config.log_execution_time_every_N()
     def get_game_termination_reason(self) -> str:
         """returns a string that describes the reason for the game ending.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.get_game_termination_reason ==========\n\n")
-
         try:
             termination_reason = str(self.environ.board.outcome().termination)
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Termination reason is: {termination_reason}\n')
-                self.debug_file.write("========== Bye from Bradley.get_game_termination_reason ===========\n\n\n")
             return termination_reason
         except AttributeError as e:
             return 'error at get_game_termination_reason: {e}'
@@ -417,24 +408,13 @@ class Bradley:
             curr_Qval (int): The current Q value for the given chess move.
             rl_agent_color (str): The color of the RL agent making the move.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.assign_points_to_Q_table ==========\n\n")
-            self.debug_file.write(f'Chess move is: {chess_move}\n')
-            self.debug_file.write(f'Current turn is: {curr_turn}\n')
-            self.debug_file.write(f'Current Q value is: {curr_Qval}\n')
-            self.debug_file.write(f'RL agent color is: {rl_agent_color}\n')
-            self.debug_file.write("and we're going to Agent.change_Q_table_pts\n")
-
         if rl_agent_color == 'W':
             try:
                 self.W_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
-                if game_settings.PRINT_DEBUG:
-                    self.debug_file.write(f'White agent changed Q table points for move: {chess_move}\n')
             except KeyError as e: 
                 # chess move is not represented in the Q table, update Q table and try again.
                 if game_settings.PRINT_DEBUG:
                     self.errors_file.write(f'caught exception: {e} at assign_points_to_Q_table\n')
-                    self.debug_file.write(f'caught exception: {e}\n')
                     self.debug_file.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
 
                 self.W_rl_agent.update_Q_table([chess_move])
@@ -448,14 +428,10 @@ class Bradley:
                 # chess move is not represented in the Q table, update Q table and try again. 
                 if game_settings.PRINT_DEBUG:
                     self.errors_file.write(f'caught exception: {e} at assign_points_to_Q_table\n')
-                    self.debug_file.write(f'caught exception: {e}\n')
                     self.debug_file.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
 
                 self.B_rl_agent.update_Q_table([chess_move])
                 self.B_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write("========== Bye from Bradley.assign_points_to_Q_table ===========\n\n\n")
     # enf of assign_points_to_Q_table
 
     def rl_agent_plays_move(self, chess_move: str, curr_game) -> None:
@@ -479,7 +455,6 @@ class Bradley:
             self.errors_file.write(f'current state is: {curr_state}\n')
     # end of rl_agent_plays_move
 
-    # @log_config.log_execution_time_every_N()
     def find_estimated_Q_value(self) -> int:
         """ Estimates the Q-value for the RL agent's next action without actually playing the move.
         This method simulates the agent's next action and the anticipated response from the opposing agent 
@@ -602,6 +577,12 @@ class Bradley:
         except Exception as e:
             self.errors_file.write(f'An error occurred while extracting the anticipated next move: {e}\n')
             raise Exception from e
+        
+        if PRINT_DEBUG:
+            self.debug_file.write(f'analysis results are: {analysis_result}\n')
+            self.debug_file.write(f'mate score is: {mate_score}\n')
+            self.debug_file.write(f'centipawn score is: {centipawn_score}\n')
+            self.debug_file.write(f'anticipated next move is: {anticipated_next_move}\n')
 
         return {
             'mate_score': mate_score,
@@ -618,20 +599,16 @@ class Bradley:
             int: The reward based on the type of move as an integer.
         """
         total_reward = 0
-
         # Check for piece development (N, R, B, Q)
         if re.search(r'[NRBQ]', chess_move):
             total_reward += game_settings.CHESS_MOVE_VALUES['piece_development']
-
         # Check for capture
         if 'x' in chess_move:
             total_reward += game_settings.CHESS_MOVE_VALUES['capture']
-
         # Check for promotion (with additional reward for queen promotion)
         if '=' in chess_move:
             total_reward += game_settings.CHESS_MOVE_VALUES['promotion']
             if '=Q' in chess_move:
                 total_reward += game_settings.CHESS_MOVE_VALUES['promotion_queen']
-
         return total_reward
     ## end of get_reward
