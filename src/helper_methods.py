@@ -187,33 +187,4 @@ def get_number_with_probability(probability: float) -> int:
             debug_file.write("========== Bye from Helper Methods get_number_with_probability ==========\n\n\n")
         debug_file.close()
         return 0
-        
-        
-def clean_chess_data(chess_data: pd.DataFrame, chess_data_cleaned_filepath: str) -> pd.DataFrame:
-    # Calculate the number of moves for White and Black based on 'Num Moves'
-    # + 1 accounts for an odd number of Num Moves
-    chess_data['WhiteMoves'] = (chess_data['Num Moves'] + 1) // 2
-    chess_data['BlackMoves'] = chess_data['Num Moves'] // 2
-    
-    # Generate column names for all possible moves
-    max_moves = (chess_data['Num Moves'].max() + 1) // 2
-    white_move_cols = ['W' + str(i) for i in range(1, max_moves + 1)]
-    black_move_cols = ['B' + str(i) for i in range(1, max_moves)]
-    
-    # Create a mask for non-empty moves for White and Black
-    white_moves_mask = chess_data[white_move_cols].apply(lambda x: x.str.strip().astype(bool), axis=0)
-    black_moves_mask = chess_data[black_move_cols].apply(lambda x: x.str.strip().astype(bool), axis=0)
-    
-    # Filter out rows where the number of non-empty moves is less than the required moves
-    white_valid_moves = (white_moves_mask.sum(axis=1) >= chess_data['WhiteMoves'])
-    black_valid_moves = (black_moves_mask.sum(axis=1) >= chess_data['BlackMoves'])
-    
-    valid_games_mask = white_valid_moves & black_valid_moves
-
-    # Drop the auxiliary columns
-    chess_data.drop(['WhiteMoves', 'BlackMoves'], axis=1, inplace=True)
-    
-    # Apply the mask to the DataFrame to filter out games with any empty moves
-    chess_data_cleaned = chess_data[valid_games_mask]
-
-    chess_data_cleaned.to_pickle(chess_data_cleaned_filepath, compression = 'zip')
+### end of get_number_with_probability
