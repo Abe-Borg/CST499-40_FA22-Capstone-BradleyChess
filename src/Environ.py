@@ -39,7 +39,6 @@ class Environ:
         self.debug_file.close()
     ### end of Bradley destructor ###
 
-    # @log_config.log_execution_time_every_N()
     def get_curr_state(self) -> dict[str, str, list[str]]:
         """Returns a dictionary that describes the current state of the chessboard and the current turn.
         Returns:
@@ -47,26 +46,21 @@ class Environ:
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'========== Hello from Environ.get_curr_state ==========\n\n')
-            self.debug_file.write("going to Environ get_curr_turn and Environ get_legal_moves\n")
-        
         try:
             curr_turn = self.get_curr_turn()
         except IndexError as e:
             self.errors_file.write(f'An error at get_curr_state occurred: {e}, unable to get current turn')
-            self.errors_file.write(f'========== End of Environ.get_curr_state ==========\n\n')
-            raise IndexError(f"An error occurred: {e}, unable to get current turn")
+            raise IndexError from e
 
         state = {'turn_index': self.turn_index, 'curr_turn': curr_turn, 'legal_moves': self.get_legal_moves()}
 
         if game_settings.PRINT_DEBUG:
-            self.debug_file.write("back from get_curr_turn and get_legal_moves\n")
             self.debug_file.write(f'state: {state}\n')
             self.debug_file.write(f'========== End of Environ.get_curr_state ==========\n\n')
 
         return state
     ### end of get_curr_state
     
-    # @log_config.log_execution_time_every_N()
     def update_curr_state(self) -> None:
         """Updates the current state of the chessboard.
         The state is updated each time a chess move is loaded to the chessboard. 
@@ -82,10 +76,8 @@ class Environ:
 
         if self.turn_index < game_settings.max_turn_index:
             self.turn_index += 1
-
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'updated turn index is: {self.turn_index}\n')
-
         else:
             self.errors_file.write(f'ERROR: max_turn_index reached: {self.turn_index} >= {game_settings.max_turn_index}\n')
             raise IndexError(f"Maximum turn index ({game_settings.max_turn_index}) reached!")
@@ -94,7 +86,6 @@ class Environ:
             self.debug_file.write(f'========== End of Environ.update_curr_state ==========\n\n')
     ### end of update_curr_state
     
-    # @log_config.log_execution_time_every_N()
     def get_curr_turn(self) -> str:                        
         """Returns the string of the current turn.
         Returns:
@@ -102,24 +93,17 @@ class Environ:
         Raises:
             IndexError: If the turn index is out of range.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Environ.get_curr_turn ==========\n\n')
-            self.debug_file.write(f'turn_index: {self.turn_index}\n')
         try: 
             curr_turn = self.turn_list[self.turn_index]
-
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'curr_turn: {curr_turn}\n')
                 self.debug_file.write(f'========== End of Environ.get_curr_turn ==========\n\n')
-
             return curr_turn
         except IndexError as e:
-            self.errors_file.write(f'list index out of range, turn index is {self.turn_index}, error desc is: {e}')
-            self.errors_file.write(f'========== End of Environ.get_curr_turn ==========\n\n')
-            raise IndexError(f"list index out of range, turn index is {self.turn_index}, error desc is: {e}")
+            self.errors_file.write(f'at get_curr_turn, list index out of range, turn index is {self.turn_index}, error desc is: {e}')
+            raise IndexError from e
     ### end of get_curr_turn
     
-    # @log_config.log_execution_time_every_N()
     def load_chessboard(self, chess_move_str: str, curr_game = 'Game 1') -> None:
         """Loads a chess move on the chessboard.
         Args:
@@ -127,22 +111,12 @@ class Environ:
         Returns:
             bool: A boolean value indicating whether the move was successfully loaded.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Environ.load_chessboard ==========\n\n')
-            self.debug_file.write(f'chess_move_str: {chess_move_str}\n')
-
         try:
             self.board.push_san(chess_move_str)
-
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'chess move loaded successfully\n')
-                self.debug_file.write(f'board: {self.board}\n')
-                self.debug_file.write(f'========== End of Environ.load_chessboard ==========\n\n\n')
-
         except ValueError as e:
             self.errors_file.write(f'An error occurred at environ.load_chessboard() for {curr_game}: {e}, unable to load chessboard with {chess_move_str}')
             self.errors_file.write(f'========== End of Environ.load_chessboard ==========\n\n\n')
-            raise ValueError(f"An error occurred: {e}, unable to load chessboard with {chess_move_str}")          
+            raise ValueError from e        
     ### end of load_chessboard    
 
     def pop_chessboard(self) -> None:
@@ -150,60 +124,36 @@ class Environ:
         Raises:
             IndexError: If the move stack is empty.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Environ.pop_chessboard ==========\n\n')
-
         try:
             self.board.pop()
-            
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'chess move popped successfully\n')
-                self.debug_file.write(f'board: {self.board}\n')
-                self.debug_file.write(f'========== End of Environ.pop_chessboard ==========\n\n\n')
-        
         except IndexError as e:
             self.errors_file.write(f'An error occurred: {e}, unable to pop chessboard')
-            self.errors_file.write(f'========== End of Environ.pop_chessboard ==========\n\n\n')
             raise IndexError(f"An error occurred: {e}, unable to pop chessboard'")
     ### end of pop_chessboard
 
     def undo_move(self) -> None:
         """Undoes the most recent move applied to the chessboard.
-
         Raises:
             IndexError: If the move stack is empty.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Environ.undo_move ==========\n\n')
-
         try:
             self.board.pop()
             self.turn_index -= 1
-
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'chess move popped successfully\n')
-                self.debug_file.write(f'board: {self.board}\n')
-                self.debug_file.write(f'turn_index: {self.turn_index}\n')
-                self.debug_file.write(f'========== End of Environ.undo_move ==========\n\n\n')
-
         except IndexError as e:
-            self.errors_file.write(f'An error occurred: {e}, unable to undo move')
+            self.errors_file.write(f'at, undo_move, An error occurred: {e}, unable to undo move')
             self.errors_file.write(f'turn index: {self.turn_index}\n')
-            self.errors_file.write(f'========== End of Environ.undo_move ==========\n\n\n')
-            raise IndexError(f"An error occurred: {e}, unable to undo move'")
+            raise IndexError from e
     ### end of undo_move
 
     def load_chessboard_for_Q_est(self, analysis_results: list[dict]) -> None:
         """Loads the chessboard using a Move.uci string during training.
         This method works in tandem with the Stockfish analysis during training.
         the method loads the anticipated next move from the analysis results.
-
+        
         Args:
             analysis_results (list[dict]): A list of dictionaries containing the analysis results.
                 Each dictionary has the form {'mate_score': <some score>, 'centipawn_score': <some score>,
                 'anticipated_next_move': <move>}.
-        Returns:
-            None
         """
         if game_settings.PRINT_DEBUG:
             self.debug_file.write(f'========== Hello from Environ.load_chessboard_for_Q_est ==========\n\n')
@@ -215,55 +165,26 @@ class Environ:
         
         try:
             self.board.push(anticipated_chess_move)
-
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'chess move loaded successfully\n')
-                self.debug_file.write(f'board: {self.board}\n')
-                self.debug_file.write(f'========== End of Environ.load_chessboard_for_Q_est ==========\n\n\n')
-        
         except ValueError as e:
-            self.errors_file.write(f'An error occurred: {e}, unable to load chessboard with {anticipated_chess_move}')
-            self.errors_file.write(f'========== End of Environ.load_chessboard_for_Q_est ==========\n\n\n')
+            self.errors_file.write(f'at, load_chessboard_for_Q_est, An error occurred: {e}, unable to load chessboard with {anticipated_chess_move}')
             raise ValueError from e
     ### end of load_chessboard_for_Q_est
 
-    # @log_config.log_execution_time_every_N()
     def reset_environ(self) -> None:
-        """Resets the Environ object.
-        """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Environ.reset_environ ==========\n\n')
-        
         self.board.reset()
         self.turn_index = 0
-        
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'board: {self.board}\n')
-            self.debug_file.write(f'turn_index: {self.turn_index}\n')
-            self.debug_file.write(f'========== End of Environ.reset_environ ==========\n\n\n')
     ### end of reset_environ
     
     # @log_config.log_execution_time_every_N()
     def get_legal_moves(self) -> list[str]:   
         """Returns a list of legal moves at the current turn.
-        Args:
-            None
         Returns:
             list[str]: A list of strings representing the legal moves at the current turn, given the board state.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Environ.get_legal_moves ==========\n\n')
-
         legal_moves = [self.board.san(move) for move in self.board.legal_moves]
         
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'legal_moves: {legal_moves}\n')
-    
         if len(legal_moves) == 0:
             self.errors_file.write(f'hello from environ get_legal_moves, legal_moves is empty\n')
-        
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== End of Environ.get_legal_moves ==========\n\n\n')
         
         return legal_moves
     ### end of get_legal_moves
