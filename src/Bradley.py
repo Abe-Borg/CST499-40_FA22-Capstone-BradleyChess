@@ -58,7 +58,6 @@ class Bradley:
         except Exception as e:
             self.errors_file.write("hello from Bradley.receive_opp_move, an error occurred\n")
             self.errors_file.write(f'Error: {e}, failed to load chessboard with move: {chess_move}\n')
-            self.errors_file.write("========== Bye from Bradley.receive_opp_move ==========\n\n\n")
             return False
 
         try:
@@ -67,7 +66,6 @@ class Bradley:
         except Exception as e:
             self.errors.file.write(f'hello from Bradley.receive_opp_move, an error occurrd\n')
             self.errors_file.write(f'Error: {e}, failed to update_curr_state\n') 
-            self.errors_file.write("========== Bye from Bradley.receive_opp_move ==========\n\n\n")
             return False
     ### end of receive_opp_move ###
 
@@ -87,7 +85,7 @@ class Bradley:
         except Exception as e:
             self.errors_file.write("hello from Bradley.rl_agent_selects_chess_move, an error occurred\n")
             self.errors_file.write(f'Error: {e}, failed to get_curr_state\n')
-            raise Exception(f'Error: {e}, failed to get_curr_state\n')
+            raise Exception from e
         
         if rl_agent_color == 'W':    
             # W agent selects action
@@ -109,15 +107,6 @@ class Bradley:
             self.errors_file.write(f'Error: {e}, failed to update_curr_state\n')
             raise Exception from e
     ### end of rl_agent_selects_chess_move
-
-    def get_opp_agent_color(self, rl_agent_color: str) -> str:
-        """Determines the color of the opposing RL agent.
-        """
-        if rl_agent_color == 'W':
-            return 'B'
-        else:
-            return 'W'
-    ### end of get_opp_agent_color
             
     def get_curr_turn(self) -> str:
         """Returns the current turn as a string.
