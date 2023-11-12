@@ -87,45 +87,32 @@ class Agent:
         Returns:
             str: A string representing the chess move chosen by the agent.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'\n========== Hello from Agent policy_game_mode ==========\n')
-            self.debug_file.write(f'{self.color} Agent is choosing an action\n')
-            self.debug_file.write("going to helper_methods get_number_with_probability\n\n")
+        def debug_log(message: str):
+            if game_settings.PRINT_DEBUG:
+                self.debug_file.write(message)
 
-        # dice roll will be 0 or 1
-        dice_roll: int = helper_methods.get_number_with_probability(game_settings.chance_for_random_move)
+        debug_log('\n========== Hello from Agent policy_game_mode ==========\n')
+        debug_log(f'{self.color} Agent is choosing an action\n')
+        debug_log("going to helper_methods get_number_with_probability\n\n")
 
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'back to Agent.policy_game_mode, arrived from helper_methods get_number_with_probability\n')
-            self.debug_file.write(f'dice roll val is: {dice_roll}\n')
-        
-        # get the list of chess moves in the q table, then filter that so that 
-        # only the legal moves for this turn remain.
+        dice_roll = helper_methods.get_number_with_probability(game_settings.chance_for_random_move)
+        debug_log(f'back to Agent.policy_game_mode, arrived from helper_methods get_number_with_probability\n')
+        debug_log(f'dice roll val is: {dice_roll}\n')
+
         legal_moves_in_q_table = self.Q_table[curr_turn].loc[self.Q_table[curr_turn].index.intersection(legal_moves)]
+        debug_log(f'legal_moves_in_q_table: {legal_moves_in_q_table}\n')
 
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'legal_moves_in_q_table: {legal_moves_in_q_table}\n')
-        
         if dice_roll == 1:
-            # pick random move, that would be an index value of the pandas series (legal_moves_in_q_table)
-            chess_move: str = legal_moves_in_q_table.sample().index[0]
-
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'Dice Roll was a 1, random move will be selected.\n')
-                self.debug_file.write(f'chess_move_str: {chess_move}\n')
+            chess_move = legal_moves_in_q_table.sample().index[0]
+            debug_log('Dice Roll was a 1, random move will be selected.\n')
         else:
-            # pick existing move in the q table that has the highest q value
             chess_move = legal_moves_in_q_table.idxmax()
+            debug_log('Dice roll was not a 1\n')
 
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'Dice roll was not a 1\n')
-                self.debug_file.write(f'chess_move_str: {chess_move}\n')
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== bye from Agent policy_game_mode ==========\n\n\n')
+        debug_log(f'chess_move_str: {chess_move}\n')
+        debug_log(f'========== bye from Agent policy_game_mode ==========\n\n\n')
 
         return chess_move
-    ### end of policy_game_mode ###
 
     def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
         """Creates the Q table so the agent can be trained.
