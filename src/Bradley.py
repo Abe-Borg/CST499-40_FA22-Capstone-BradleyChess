@@ -29,7 +29,7 @@ class Bradley:
         self.additional_training_results = open(game_settings.additional_training_results_filepath, 'a')
         
         self.chess_data = chess_data
-        self.environ = Environ.Environ(self.chess_data)
+        self.environ = Environ.Environ()
         self.W_rl_agent = Agent.Agent('W', self.chess_data)
         self.B_rl_agent = Agent.Agent('B', self.chess_data)
 

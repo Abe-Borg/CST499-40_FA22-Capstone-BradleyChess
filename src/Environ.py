@@ -9,28 +9,20 @@ import chess
 class Environ:
     """Manages the chessboard and determines its state.
     """
-    def __init__(self, chess_data: pd.DataFrame):
+    def __init__(self):
         """
-        Args:
-            chess_data (pd.DataFrame): A pandas DataFrame representing the chess games database.
-            The format of the chess_data is extremely important. See this link for an explanation:
-            https://github.com/abecsumb/DataScienceProject/blob/main/Chess_Data_Preparation.ipynb
-
         Attributes:
-            chess_data (pd.DataFrame): A pandas DataFrame representing the chess games database.
             board (chess.Board): An object representing the chessboard.
-            turn_list (list[str]): A list that is utilized to keep track of the current turn (W1, B1 ... W50, B50).
+            turn_list (list[str]): A list that is utilized to keep track of the current turn (W1, B1 ... Wn, Bn).
             turn_index (int): An integer that is incremented as each player makes a move.
         """
         self.debug_file = open(game_settings.environ_debug_filepath, 'a')
         self.errors_file = open(game_settings.environ_errors_filepath, 'a')
-        self.chess_data: pd.DataFrame = chess_data 
         self.board: chess.Board = chess.Board()
 
         # turn_list and turn_index work together to track the current turn (a string like this, 'W1')
-        # max_num_turns_per_player, so multiply by 2, then to make sure we get all moves, add 1.
-        # column 1 in the chess data pd dataframe corresponds to 'W1'
-        self.turn_list: list[str] = self.chess_data.columns[1 : game_settings.max_num_turns_per_player * 2 + 1].tolist()
+        max_turns = game_settings.max_num_turns_per_player * 2
+        self.turn_list: list[str] = [f'{"W" if i % 2 == 0 else "B"}{i // 2 + 1}' for i in range(max_turns)]
         self.turn_index: int = 0
     ### end of constructor
 

@@ -27,9 +27,9 @@ CHESS_MOVE_VALUES: dict[str, int] = {
     }
 
 
-training_sample_size = 10000 # number of games in database to use for training
+training_sample_size = 10 # number of games in database to use for training
 
-max_num_turns_per_player = 250 # this is used during agent v agent training only
+max_num_turns_per_player = 200 # this is used during agent v agent training only
 max_turn_index = max_num_turns_per_player * 2 - 1
 
 initial_q_val = 50 # this is relevant when first training an agent. SARSA algorithm requires an initial value

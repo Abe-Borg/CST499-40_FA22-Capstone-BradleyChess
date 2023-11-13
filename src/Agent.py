@@ -115,27 +115,30 @@ class Agent:
         return chess_move
     ### end of policy_game_mode ###
 
+
     def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
         """Creates the Q table so the agent can be trained.
         The Q table index represents unique moves across all games in the database for all turns.
         Columns are the turns, 'W1' to 'BN' where N is determined by max number of turns per player.
-
         Args:
             chess_data: A pandas dataframe containing chess data.
         Returns:
             A pandas dataframe representing the Q table.
-        """
+    """
+        # Generate the list of turns (columns) W1, W2, ..., W100 or B1, B2, ..., n
+        turns_list = [f'{self.color}{i + 1}' for i in range(game_settings.max_num_turns_per_player)]
+
+        # Extract columns for the specified color/player
         move_columns = [col for col in chess_data.columns if col.startswith(self.color)]
 
-        # Flatten all the values in these columns and find unique values for the specified color
-        unique_moves = chess_data[move_columns].values.flatten()
-        unique_moves = pd.Series(unique_moves).unique()
+        # Extract unique moves for the specified color/player
+        # Flatten the array and then create a Pandas Series to find unique values
+        unique_moves = pd.Series(chess_data[move_columns].values.flatten()).unique()
 
-        turns_list: pd.Index = chess_data.loc[:, f"{self.color}1": f"{self.color}{game_settings.max_num_turns_per_player}": 2].columns
-        q_table: pd.DataFrame = pd.DataFrame(0, columns = turns_list, index = unique_moves, dtype = np.int32)
+        q_table: pd.DataFrame = pd.DataFrame(0, index = unique_moves, columns = turns_list, dtype = np.int64)
         return q_table
     ### end of init_Q_table ###
-
+    
     def change_Q_table_pts(self, chess_move: str, curr_turn: str, pts: int) -> None:
         """Adds points to a cell in the Q table.
         Args:
