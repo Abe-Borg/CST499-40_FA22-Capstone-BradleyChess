@@ -25,7 +25,7 @@ def play_game(bubs: Bradley.Bradley, rl_agent_color: str) -> None:
     player_turn = 'W'
 
     with open(game_settings.helper_methods_errors_filepath, 'a') as errors_file:
-        while bubs.is_game_on():
+        while bubs.is_game_over() == False:
             try:
                 print(f'\nCurrent turn is :  {bubs.environ.get_curr_turn()}\n')
                 chess_move = handle_move(player_turn)
@@ -51,11 +51,11 @@ def agent_vs_agent(bubs: Bradley.Bradley) -> None:
 
     with open(game_settings.agent_vs_agent_filepath, 'a') as agent_vs_agent_file:
         try:
-            while bubs.is_game_on():
+            while bubs.is_game_over() == False:
                 agent_vs_agent_file.write(f'\nCurrent turn: {bubs.environ.get_curr_turn()}')
                 play_turn('W')
                 
-                if bubs.is_game_on():
+                if bubs.is_game_over() == False:
                     play_turn('B')
 
             agent_vs_agent_file.write('Game is over, chessboard looks like this:\n')

@@ -81,9 +81,6 @@ class Environ:
         else:
             self.errors_file.write(f'ERROR: max_turn_index reached: {self.turn_index} >= {game_settings.max_turn_index}\n')
             raise IndexError(f"Maximum turn index ({game_settings.max_turn_index}) reached!")
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== End of Environ.update_curr_state ==========\n\n')
     ### end of update_curr_state
     
     def get_curr_turn(self) -> str:                        
