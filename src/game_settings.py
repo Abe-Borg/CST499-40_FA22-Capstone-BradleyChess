@@ -3,9 +3,9 @@ import pandas as pd
 
 pd.set_option('display.max_columns', None)
 
-PRINT_DEBUG: bool = True
+PRINT_DEBUG: bool = False
 PRINT_TRAINING_RESULTS = True
-PRINT_Q_EST = True
+PRINT_Q_EST = False
 
 # the following numbers are based on centipawn scores
 CHESS_MOVE_VALUES: dict[str, int] = {
@@ -19,9 +19,9 @@ CHESS_MOVE_VALUES: dict[str, int] = {
     }
 
 
-training_sample_size = 10 # number of games in database to use for training
+training_sample_size = 1000 # number of games in database to use for training
 
-max_num_turns_per_player = 200 # this is used during agent v agent training only
+max_num_turns_per_player = 200
 max_turn_index = max_num_turns_per_player * 2 - 1
 
 initial_q_val = 50 # this is relevant when first training an agent. SARSA algorithm requires an initial value

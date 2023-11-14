@@ -10,7 +10,7 @@ import Bradley
 
 # kaggle_chess_data = pd.read_pickle(game_settings.kaggle_chess_data_path, compression = 'zip') 
 
-chess_data = pd.read_pickle(game_settings.CB_chess_data_filepath, compression = 'zip')
+chess_data = pd.read_pickle(game_settings.chess_pd_dataframe_file_path_part_1, compression = 'zip')
 training_chess_data = chess_data.sample(game_settings.training_sample_size) 
 
 if __name__ == '__main__':

@@ -57,10 +57,8 @@ if __name__ == '__main__':
 
     # clean_up_pgn_file(game_settings.chess_pgn_file_path_1, game_settings.chess_json_file_path_part_1)
     # clean_up_pgn_file(game_settings.chess_pgn_file_path_2, game_settings.chess_json_file_path_part_2)
-
     # clean_up_pgn_file(game_settings.chess_pgn_file_path_3, game_settings.chess_json_file_path_part_3)
     # clean_up_pgn_file(game_settings.chess_pgn_file_path_4, game_settings.chess_json_file_path_part_4)
-
     # clean_up_pgn_file(game_settings.chess_pgn_file_path_5, game_settings.chess_json_file_path_part_5)
     # clean_up_pgn_file(game_settings.chess_pgn_file_path_6, game_settings.chess_json_file_path_part_6)
     # clean_up_pgn_file(game_settings.chess_pgn_file_path_7, game_settings.chess_json_file_path_part_7)

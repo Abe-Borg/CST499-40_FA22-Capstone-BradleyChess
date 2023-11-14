@@ -39,6 +39,7 @@ def convert_json_to_df(input_file_path, output_file_path):
 
     # fix the column order
     chess_df = chess_df[[c for c in chess_df if c not in ['Result']] + ['Result']]
+    chess_df = chess_df[(chess_df['Num Moves'] > 0) & (chess_df['Num Moves'] <= game_settings.max_num_turns_per_player * 2)]
 
     # Export the DataFrame to a pickle file
     chess_df.to_pickle(output_file_path, compression = 'zip')
