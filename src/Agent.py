@@ -61,7 +61,7 @@ class Agent:
             self.update_Q_table(moves_not_in_Q_table)
 
         if self.is_trained:
-            return self.policy_game_mode(environ_state['legal_moves'])
+            return self.policy_game_mode(environ_state['legal_moves'], environ_state['curr_turn'])
         else:
             return self.policy_training_mode(curr_game, environ_state["curr_turn"])
     ### end of choose_action ###
@@ -77,7 +77,7 @@ class Agent:
         return self.chess_data.at[curr_game, curr_turn]
     ### end of policy_training_mode ###
 
-    def policy_game_mode(self, legal_moves: list[str]) -> str:
+    def policy_game_mode(self, legal_moves: list[str], curr_turn: str) -> str:
         """Determines how the agent chooses a move during a game between a human player and the agent.
         The agent searches its Q table to find the moves with the highest Q values at each turn. 
         sometimes the agent will pick a random move. 
@@ -156,7 +156,7 @@ class Agent:
         Args:
             new_chess_moves (list[str]): A list of chess moves (strings) that are not already in the Q table.
         """
-        q_table_new_values: pd.DataFrame = pd.DataFrame(0, index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int32)
+        q_table_new_values: pd.DataFrame = pd.DataFrame(0, index = new_chess_moves, columns = self.Q_table.columns, dtype = np.int64)
         self.Q_table = pd.concat([self.Q_table, q_table_new_values])
     ### update_Q_table ###
 

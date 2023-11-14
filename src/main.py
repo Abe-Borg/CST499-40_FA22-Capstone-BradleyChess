@@ -4,14 +4,13 @@ import pandas as pd
 import time
 import Bradley
 
-
 # import logging
 # import log_config
 # logger = logging.getLogger(__name__)
 
 # kaggle_chess_data = pd.read_pickle(game_settings.kaggle_chess_data_path, compression = 'zip') 
 
-chess_data = pd.read_pickle(game_settings.chess_data_cleaned_filepath, compression = 'zip')
+chess_data = pd.read_pickle(game_settings.CB_chess_data_filepath, compression = 'zip')
 training_chess_data = chess_data.sample(game_settings.training_sample_size) 
 
 if __name__ == '__main__':

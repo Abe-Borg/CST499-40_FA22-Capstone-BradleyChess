@@ -3,9 +3,9 @@ import pandas as pd
 
 pd.set_option('display.max_columns', None)
 
-PRINT_DEBUG: bool = False
-PRINT_TRAINING_RESULTS = False
-PRINT_Q_EST = False
+PRINT_DEBUG: bool = True
+PRINT_TRAINING_RESULTS = True
+PRINT_Q_EST = True
 
 PIECE_VALUES: dict[str, int] = {
         'pawn': 1,
@@ -67,6 +67,9 @@ environ_errors_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\C
 
 q_est_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\q_est_log.txt'
 chess_data_cleaned_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\chess_data\chess_data_cleaned.pkl'
+
+CB_chess_data_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\chess_data\Chess_Games_DB_pd_df_Part_1.pkl'
+
 
 chess_pgn_file_path_1 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_Part_1.pgn"
 chess_pgn_file_path_2 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_Part_2.pgn"

@@ -183,14 +183,11 @@ class Bradley:
             while curr_state['turn_index'] < (num_chess_moves_curr_training_game):
                 ##################### WHITE'S TURN ####################
                 # choose action a from state s, using policy
-                if game_settings.PRINT_DEBUG:
-                    self.debug_file.write(f'White agent will pick a move given the current state: {curr_state}\n')
-
-                W_chess_move: self.W_rl_agent.choose_action(curr_state, game_num_str)
+                W_chess_move = self.W_rl_agent.choose_action(curr_state, game_num_str)
 
                 if game_settings.PRINT_DEBUG:
                     self.debug_file.write(f'White agent picked move: {W_chess_move}\n')
-                    self.debug_file.write(f'on turn: {curr_state["turn_index"]}\n')
+                    self.debug_file.write(f'at state: {curr_state}\n')
 
                 ### ASSIGN POINTS TO Q TABLE FOR WHITE AGENT ###
                 # on the first turn for white, this would assign to W1 col at chess_move row.
