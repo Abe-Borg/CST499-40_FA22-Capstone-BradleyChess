@@ -7,14 +7,6 @@ PRINT_DEBUG: bool = True
 PRINT_TRAINING_RESULTS = True
 PRINT_Q_EST = True
 
-PIECE_VALUES: dict[str, int] = {
-        'pawn': 1,
-        'knight': 3,
-        'bishop': 3,
-        'rook': 5,
-        'queen': 9
-    }
-
 # the following numbers are based on centipawn scores
 CHESS_MOVE_VALUES: dict[str, int] = {
         'new_move': 100, # a move that has never been made before

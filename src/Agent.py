@@ -88,8 +88,7 @@ class Agent:
             str: A string representing the chess move chosen by the agent.
         """
         def debug_log(message: str):
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(message)
+            self.debug_file.write(message)
 
         debug_log('\n========== Hello from Agent policy_game_mode ==========\n')
         debug_log(f'{self.color} Agent is choosing an action\n')

@@ -16,7 +16,6 @@ class Environ:
             turn_list (list[str]): A list that is utilized to keep track of the current turn (W1, B1 ... Wn, Bn).
             turn_index (int): An integer that is incremented as each player makes a move.
         """
-        self.debug_file = open(game_settings.environ_debug_filepath, 'a')
         self.errors_file = open(game_settings.environ_errors_filepath, 'a')
         self.board: chess.Board = chess.Board()
 
@@ -28,7 +27,6 @@ class Environ:
 
     def __del__(self):
         self.errors_file.close()
-        self.debug_file.close()
     ### end of Bradley destructor ###
 
     def get_curr_state(self) -> dict[str, str, list[str]]:
@@ -36,21 +34,13 @@ class Environ:
         Returns:
             dict[str, str, list[str]]: A dictionary that defines the current state that an agent will act on.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Environ.get_curr_state ==========\n\n')
         try:
             curr_turn = self.get_curr_turn()
         except IndexError as e:
             self.errors_file.write(f'An error at get_curr_state occurred: {e}, unable to get current turn')
             raise IndexError from e
 
-        state = {'turn_index': self.turn_index, 'curr_turn': curr_turn, 'legal_moves': self.get_legal_moves()}
-
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'state: {state}\n')
-            self.debug_file.write(f'========== End of Environ.get_curr_state ==========\n\n')
-
-        return state
+        return {'turn_index': self.turn_index, 'curr_turn': curr_turn, 'legal_moves': self.get_legal_moves()}
     ### end of get_curr_state
     
     def update_curr_state(self) -> None:
@@ -61,15 +51,8 @@ class Environ:
         Raises:
             IndexError: If the maximum turn index is reached.
         """
-        if game_settings.PRINT_DEBUG: 
-            self.debug_file.write(f'========== Hello from Environ.update_curr_state ==========\n\n')
-            self.debug_file.write(f'max_turn_index: {game_settings.max_turn_index}\n')
-            self.debug_file.write(f'current turn_index: {self.turn_index}\n')
-
         if self.turn_index < game_settings.max_turn_index:
             self.turn_index += 1
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'updated turn index is: {self.turn_index}\n')
         else:
             self.errors_file.write(f'ERROR: max_turn_index reached: {self.turn_index} >= {game_settings.max_turn_index}\n')
             raise IndexError(f"Maximum turn index ({game_settings.max_turn_index}) reached!")
@@ -84,9 +67,6 @@ class Environ:
         """
         try: 
             curr_turn = self.turn_list[self.turn_index]
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'curr_turn: {curr_turn}\n')
-                self.debug_file.write(f'========== End of Environ.get_curr_turn ==========\n\n')
             return curr_turn
         except IndexError as e:
             self.errors_file.write(f'at get_curr_turn, list index out of range, turn index is {self.turn_index}, error desc is: {e}')
@@ -144,14 +124,8 @@ class Environ:
                 Each dictionary has the form {'mate_score': <some score>, 'centipawn_score': <some score>,
                 'anticipated_next_move': <move>}.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f'========== Hello from Environ.load_chessboard_for_Q_est ==========\n\n')
-            self.debug_file.write(f'analysis_results: {analysis_results}\n')
-            self.debug_file.write(f'the anticipated_chess_move is: {analysis_results["anticipated_next_move"]}\n')
-
         # this is the anticipated chess move due to opponent's previous chess move. so if White plays Ne4, what is Black like to play?
         anticipated_chess_move = analysis_results['anticipated_next_move']  # this has the form like this, Move.from_uci('e4f6')
-        
         try:
             self.board.push(anticipated_chess_move)
         except ValueError as e:
