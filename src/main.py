@@ -22,6 +22,7 @@ if __name__ == '__main__':
         bradley.train_rl_agents()
     except Exception as e:
         print(f'training interrupted because of:  {e}')
+        bradley.engine.quit()
         quit()
         
     end_time = time.time()

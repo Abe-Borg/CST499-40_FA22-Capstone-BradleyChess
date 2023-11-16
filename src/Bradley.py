@@ -373,15 +373,15 @@ class Bradley:
         try:
             self.environ.load_chessboard(chess_move, curr_game)
         except Exception as e:
-            self.errors_file.write(f'@ Bradley.rl_agent_plays_move. An error occurred at {curr_game}: {e}\n')
+            self.errors_file.write(f'at Bradley.rl_agent_plays_move. An error occurred at {curr_game}: {e}\n')
             self.errors_file.write(f"failed to load_chessboard with move {chess_move}\n")
             raise Exception from e
 
         try:
             self.environ.update_curr_state()
         except Exception as e:
-            self.errors_file.write(f'@ Bradley.rl_agent_plays_move. update_curr_state() failed to increment turn_index, Caught exception: {e}\n')
-            self.errors_file.write(f'current state is: {curr_state}\n')
+            self.errors_file.write(f'at Bradley.rl_agent_plays_move. update_curr_state() failed to increment turn_index, Caught exception: {e}\n')
+            self.errors_file.write(f'Current state is: {curr_state}\n')
     # end of rl_agent_plays_move
 
     def find_estimated_Q_value(self) -> int:
@@ -407,6 +407,10 @@ class Bradley:
         # it will give points for the agent, based on the agent's latest move.
         # We also need the points for the ANTICIPATED next state, 
         # given the ACTICIPATED next action. In this case, the anticipated response from opposing agent.
+
+        if self.environ.board.is_valid():
+            self.errors_file.write(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
+            raise ValueError(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
 
         try:
             analysis_results = self.analyze_board_state(self.environ.board)
@@ -437,6 +441,10 @@ class Bradley:
             return 1
 
         # this is the Q estimated value due to what the opposing agent is likely to play in response to our move.
+        if self.environ.board.is_valid():
+            self.errors_file.write(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
+            raise ValueError(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
+            
         try:
             est_Qval_analysis = self.analyze_board_state(self.environ.board)
         except Exception as e:
