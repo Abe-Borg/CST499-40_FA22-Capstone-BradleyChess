@@ -66,7 +66,7 @@ class Bradley:
         except Exception as e:
             self.errors.file.write(f'hello from Bradley.receive_opp_move, an error occurrd\n')
             self.errors_file.write(f'Error: {e}, failed to update_curr_state\n') 
-            return False
+            raise Exception from e
     ### end of receive_opp_move ###
 
     def rl_agent_selects_chess_move(self, rl_agent_color: str) -> str:
@@ -87,6 +87,11 @@ class Bradley:
             self.errors_file.write(f'Error: {e}, failed to get_curr_state\n')
             raise Exception from e
         
+        if curr_state['legal_moves'] == []:
+            self.errors_file.write('hello from Bradley.rl_agent_selects_chess_move, legal_moves is empty\n')
+            self.errors_file.write(f'curr state is: {curr_state}\n')
+            raise Exception(f'hello from Bradley.rl_agent_selects_chess_move, legal_moves is empty\n')
+        
         if rl_agent_color == 'W':    
             # W agent selects action
             chess_move: str= self.W_rl_agent.choose_action(curr_state)
@@ -101,7 +106,7 @@ class Bradley:
             raise Exception from e
 
         try:
-            self.environ.update_curr_state()            
+            self.environ.update_curr_state()
             return chess_move
         except Exception as e:
             self.errors_file.write(f'Error: {e}, failed to update_curr_state\n')
@@ -112,14 +117,10 @@ class Bradley:
         """Determines whether the game is still ongoing. this is used only
         during phase 2 of training and also during human vs agent play.
         """
-        if game_settings.PRINT_DEBUG:
-            self.debug_file.write(f"\n========== Hello from Bradley.is_game_over ==========\n\n")
-
-        if self.environ.board.is_game_over() or (self.environ.turn_index >= game_settings.max_turn_index):
+        if self.environ.board.is_game_over() or (self.environ.turn_index >= game_settings.max_turn_index) or not self.environ.get_legal_moves():
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Game over\n')
                 self.debug_file.write(f'curr turn index is: {self.environ.turn_index}\n')
-                self.debug_file.write("Bye from Bradley.is_game_over\n\n\n")
             return True
         else:
             if game_settings.PRINT_DEBUG:
@@ -184,6 +185,8 @@ class Bradley:
                     ##################### WHITE'S TURN ####################
                     # choose action a from state s, using policy
                     W_chess_move = self.W_rl_agent.choose_action(curr_state, game_num_str)
+                    if not W_chess_move:
+                        raise ValueError(f'W_chess_move is empty at turn {curr_state["curr_turn"]}')
 
                     if game_settings.PRINT_DEBUG:
                         self.debug_file.write(f'White agent picked move: {W_chess_move}\n')
@@ -213,7 +216,7 @@ class Bradley:
                         raise Exception from e
                     
                     # find the estimated Q value for White, but first check if game ended
-                    if self.environ.board.is_game_over() or curr_state['turn_index'] >= (num_chess_moves_curr_training_game):
+                    if self.environ.board.is_game_over() or curr_state['turn_index'] >= (num_chess_moves_curr_training_game) or not curr_state['legal_moves']:
                         if game_settings.PRINT_DEBUG:
                             self.debug_file.write(f'Game ended on White turn\n')
                             self.debug_file.write(f'curr_state is: {curr_state}\n')
@@ -236,10 +239,9 @@ class Bradley:
                     ##################### BLACK'S TURN ####################
                     # choose action a from state s, using policy
                     B_chess_move = self.B_rl_agent.choose_action(curr_state, game_num_str)
+                    if not B_chess_move_chess_move:
+                        raise ValueError(f'W_chess_move is empty at turn {curr_state["curr_turn"]}')
 
-                    if game_settings.PRINT_DEBUG:
-                        self.debug_file.write(f"Black chess move is: {B_chess_move}\n")
-                    
                     # assign points to Q table
                     self.assign_points_to_Q_table(B_chess_move, curr_state['curr_turn'], B_curr_Qval, self.B_rl_agent.color)
 
@@ -263,7 +265,7 @@ class Bradley:
                         raise Exception from e
 
                     # find the estimated Q value for Black, but first check if game ended
-                    if self.environ.board.is_game_over():
+                    if self.environ.board.is_game_over() or not curr_state['legal_moves']:
                         if game_settings.PRINT_DEBUG:
                             self.debug_file.write(f'Game ended on Blacks turn\n')
                             self.debug_file.write(f'curr_state is: {curr_state}\n')
@@ -342,22 +344,18 @@ class Bradley:
                 self.W_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
             except KeyError as e: 
                 # chess move is not represented in the Q table, update Q table and try again.
-                if game_settings.PRINT_DEBUG:
-                    self.errors_file.write(f'caught exception: {e} at assign_points_to_Q_table\n')
-                    self.debug_file.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
+                self.errors_file.write(f'caught exception: {e} at assign_points_to_Q_table\n')
+                self.errors_file.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
 
                 self.W_rl_agent.update_Q_table([chess_move])
                 self.W_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
-        else:
+        else: # black's turn
             try:
                 self.B_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
-                if game_settings.PRINT_DEBUG:
-                    self.debug_file.write(f'Black agent changed Q table points for move: {chess_move}\n')
             except KeyError as e: 
                 # chess move is not represented in the Q table, update Q table and try again. 
-                if game_settings.PRINT_DEBUG:
-                    self.errors_file.write(f'caught exception: {e} at assign_points_to_Q_table\n')
-                    self.debug_file.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
+                self.errors_file.write(f'caught exception: {e} at assign_points_to_Q_table\n')
+                self.errors_file.write(f'Chess move is not represented in the White Q table, updating Q table and trying again...\n')
 
                 self.B_rl_agent.update_Q_table([chess_move])
                 self.B_rl_agent.change_Q_table_pts(chess_move, curr_turn, curr_Qval)
@@ -382,6 +380,7 @@ class Bradley:
         except Exception as e:
             self.errors_file.write(f'at Bradley.rl_agent_plays_move. update_curr_state() failed to increment turn_index, Caught exception: {e}\n')
             self.errors_file.write(f'Current state is: {curr_state}\n')
+            raise Exception from e
     # end of rl_agent_plays_move
 
     def find_estimated_Q_value(self) -> int:
@@ -407,11 +406,6 @@ class Bradley:
         # it will give points for the agent, based on the agent's latest move.
         # We also need the points for the ANTICIPATED next state, 
         # given the ACTICIPATED next action. In this case, the anticipated response from opposing agent.
-
-        if self.environ.board.is_valid():
-            self.errors_file.write(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
-            raise ValueError(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
-
         try:
             analysis_results = self.analyze_board_state(self.environ.board)
         except Exception as e:
@@ -428,7 +422,7 @@ class Bradley:
             raise Exception from e
         
         # check if the game would be over with the anticipated next move
-        if self.environ.board.is_game_over():
+        if self.environ.board.is_game_over() or not self.environ.get_legal_moves():
             if game_settings.PRINT_DEBUG:
                 self.debug_file.write(f'Game would be over with the anticipated next move\n')
                 self.debug_file.write(f'board looks like this:\n{self.environ.board}\n\n')
@@ -438,13 +432,9 @@ class Bradley:
                 self.errors_file.write(f'at Bradley.find_estimated_Q_value. An error occurred: {e}\n')
                 self.errors_file.write(f'failed at self.environ.pop_chessboard\n')
                 raise Exception from e
-            return 1
-
-        # this is the Q estimated value due to what the opposing agent is likely to play in response to our move.
-        if self.environ.board.is_valid():
-            self.errors_file.write(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
-            raise ValueError(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
+            return 1 # just return some value, doesn't matter.
             
+        # this is the Q estimated value due to what the opposing agent is likely to play in response to our move.    
         try:
             est_Qval_analysis = self.analyze_board_state(self.environ.board)
         except Exception as e:
@@ -495,6 +485,10 @@ class Bradley:
         Returns:
             dict: Analysis results, including the mate score, centipawn score, and the anticipated next move. 
         """
+        if not self.environ.board.is_valid():
+            self.errors_file.write(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
+            raise ValueError(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
+        
         try: 
             analysis_result = self.engine.analyse(board, game_settings.search_limit, multipv=game_settings.num_moves_to_return)
         except Exception as e:

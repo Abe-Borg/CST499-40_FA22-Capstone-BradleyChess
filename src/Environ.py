@@ -47,9 +47,6 @@ class Environ:
         """Updates the current state of the chessboard.
         The state is updated each time a chess move is loaded to the chessboard. 
         Only the index needs to be updated here. The board is updated by other methods.
-
-        Raises:
-            IndexError: If the maximum turn index is reached.
         """
         if self.turn_index < game_settings.max_turn_index:
             self.turn_index += 1

@@ -54,6 +54,10 @@ class Agent:
         Returns:
             str: A string representing the chess move chosen by the agent.
         """
+        if environ_state['legal_moves'] == []:
+            self.errors_file.write(f'Agent.choose_action: legal_moves is empty. curr_game: {curr_game}\n')
+            return ''
+
         # check if any of the legal moves is not already in the Q table
         moves_not_in_Q_table: list[str] = [move for move in environ_state['legal_moves'] if move not in self.Q_table.index]
 
