@@ -234,13 +234,13 @@ class Bradley:
                             self.errors_file.write(f"at White turn {curr_state['curr_turn']}, failed to find_estimated_Q_value\n")
                             self.errors_file.write(f'curr state is:{curr_state}\n')
                             self.errors_file.write(f'curr board is:\n{self.environ.board}\n\n')
-                            raise Exception from e
+                            break
 
                     ##################### BLACK'S TURN ####################
                     # choose action a from state s, using policy
                     B_chess_move = self.B_rl_agent.choose_action(curr_state, game_num_str)
-                    if not B_chess_move_chess_move:
-                        raise ValueError(f'W_chess_move is empty at turn {curr_state["curr_turn"]}')
+                    if not B_chess_move:
+                        raise ValueError(f'B_chess_move is empty at turn {curr_state["curr_turn"]}')
 
                     # assign points to Q table
                     self.assign_points_to_Q_table(B_chess_move, curr_state['curr_turn'], B_curr_Qval, self.B_rl_agent.color)
@@ -283,7 +283,7 @@ class Bradley:
                             self.errors_file.write(f'curr turn is:{curr_state["curr_turn"]}\n')
                             self.errors_file.write(f'turn index is: {curr_state["turn_index"]}\n')
                             self.errors_file.write(f'curr game is: {game_num_str}\n')
-                            raise Exception from e
+                            break # too many issues with this step, simply jump to next game.
 
                     # ***CRITICAL STEP***, this is the main part of the SARSA algorithm.
                     W_next_Qval: int = self.find_next_Qval(W_curr_Qval, self.W_rl_agent.learn_rate, W_reward, self.W_rl_agent.discount_factor, W_est_Qval)

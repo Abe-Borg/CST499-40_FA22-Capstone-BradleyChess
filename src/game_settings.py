@@ -122,3 +122,6 @@ chess_pd_dataframe_file_path_part_16 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\C
 chess_pd_dataframe_file_path_part_17 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_17.pkl"
 chess_pd_dataframe_file_path_part_18 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_18.pkl"
 chess_pd_dataframe_file_path_part_19 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_19.pkl"
+
+chess_pgn_file_path_1_small = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_Part_1 - small.pgn"
+chess_pd_dataframe_file_path_part_1_small = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_1 - small.pkl"
