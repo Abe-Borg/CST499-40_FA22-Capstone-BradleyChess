@@ -38,11 +38,33 @@ def pgn_to_dataframe(input_file_path):
 if __name__ == '__main__':
     start_time = time.time()
     
-    df = pgn_to_dataframe(game_settings.chess_pgn_file_path_1)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_1)
+
+    df = pgn_to_dataframe(game_settings.chess_pgn_file_path_2)
+
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_3)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_4)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_5)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_6)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_7)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_8)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_9)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_10)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_11)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_12)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_13)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_14)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_15)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_16)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_17)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_18)
+    # df = pgn_to_dataframe(game_settings.chess_pgn_file_path_19)
 
 
     # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_1, compression='zip')
+
     df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_2, compression='zip')
+
     # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_3, compression='zip')
     # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_4, compression='zip')
     # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_5, compression='zip')
@@ -52,6 +74,15 @@ if __name__ == '__main__':
     # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_9, compression='zip')
     # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_10, compression='zip')
     # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_11, compression='zip')
+    # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_12, compression='zip')
+    # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_13, compression='zip')
+    # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_14, compression='zip')
+    # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_15, compression='zip')
+    # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_16, compression='zip')
+    # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_17, compression='zip')
+    # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_18, compression='zip')
+    # df.to_pickle(game_settings.chess_pd_dataframe_file_path_part_19, compression='zip')
+
 
     
     

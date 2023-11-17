@@ -58,10 +58,6 @@ environ_debug_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CS
 environ_errors_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\environ_errors_log.txt'
 
 q_est_log_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\debug\q_est_log.txt'
-chess_data_cleaned_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\chess_data\chess_data_cleaned.pkl'
-
-CB_chess_data_filepath = r'C:\Users\Abrah\Dropbox\PC (2)\Desktop\GitHub Repos\CST499-40_FA22-Capstone-BradleyChess\chess_data\Chess_Games_DB_pd_df_Part_1.pkl'
-
 
 chess_pgn_file_path_1 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_Part_1.pgn"
 chess_pgn_file_path_2 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_Part_2.pgn"
@@ -83,7 +79,6 @@ chess_pgn_file_path_17 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Dat
 chess_pgn_file_path_18 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_Part_18.pgn"
 chess_pgn_file_path_19 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_Part_19.pgn"
 
-
 chess_pd_dataframe_file_path_part_1 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_1.pkl"
 chess_pd_dataframe_file_path_part_2 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_2.pkl"
 chess_pd_dataframe_file_path_part_3 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_3.pkl"
@@ -103,6 +98,3 @@ chess_pd_dataframe_file_path_part_16 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\C
 chess_pd_dataframe_file_path_part_17 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_17.pkl"
 chess_pd_dataframe_file_path_part_18 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_18.pkl"
 chess_pd_dataframe_file_path_part_19 = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_19.pkl"
-
-chess_pgn_file_path_1_small = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_Part_1 - small.pgn"
-chess_pd_dataframe_file_path_part_1_small = r"C:\Users\Abrah\Dropbox\PC (2)\Desktop\Chess_Games_Database\Chess_Games_DB_pd_df_Part_1 - small.pkl"

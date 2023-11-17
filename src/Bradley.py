@@ -321,7 +321,6 @@ class Bradley:
         
         finally:
             self.engine.quit()
-
     ### end of train_rl_agents
 
     # @log_config.log_execution_time_every_N()
