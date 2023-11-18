@@ -165,7 +165,7 @@ class Bradley:
         try:
             ### FOR EACH GAME IN THE TRAINING SET ###
             for game_num_str in self.chess_data.index:
-                num_chess_moves_curr_training_game: int = self.chess_data.at[game_num_str, 'Num Moves']
+                num_chess_moves_curr_training_game: int = self.chess_data.at[game_num_str, 'PlyCount']
 
                 W_curr_Qval: int = game_settings.initial_q_val
                 B_curr_Qval: int = game_settings.initial_q_val
@@ -485,9 +485,9 @@ class Bradley:
             dict: Analysis results, including the mate score, centipawn score, and the anticipated next move. 
         """
         if not self.environ.board.is_valid():
-            self.errors_file.write(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
-            raise ValueError(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
-            
+            self.errors_file.write(f'at Bradley.analyze_board_state. Board is in invalid state\n')
+            raise ValueError(f'at Bradley.analyze_board_state. Board is in invalid state\n')
+
         try: 
             analysis_result = self.engine.analyse(board, game_settings.search_limit, multipv=game_settings.num_moves_to_return)
         except Exception as e:

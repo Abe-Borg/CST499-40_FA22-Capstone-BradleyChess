@@ -28,9 +28,7 @@ class Agent:
         - Q_table (pd.DataFrame): A Pandas DataFrame containing the Q-values for the agent.
     """
     def __init__(self, color: str, chess_data: pd.DataFrame, learn_rate = 0.6, discount_factor = 0.35):
-        self.debug_file = open(game_settings.agent_debug_filepath, 'a')
         self.errors_file = open(game_settings.agent_errors_filepath, 'a')
-
         # too high num here means too focused on recent knowledge, 
         self.learn_rate = learn_rate
         # lower discount_factor number means more opportunistic, but not good long term planning
@@ -43,7 +41,6 @@ class Agent:
 
     def __del__(self):
         self.errors_file.close()
-        self.debug_file.close()
     ### end of __del__ ###
 
     def choose_action(self, environ_state: dict[str, str, list[str]], curr_game: str = 'Game 1') -> str:
@@ -91,33 +88,15 @@ class Agent:
         Returns:
             str: A string representing the chess move chosen by the agent.
         """
-        def debug_log(message: str):
-            self.debug_file.write(message)
-
-        debug_log('\n========== Hello from Agent policy_game_mode ==========\n')
-        debug_log(f'{self.color} Agent is choosing an action\n')
-        debug_log("going to helper_methods get_number_with_probability\n\n")
-
         dice_roll = helper_methods.get_number_with_probability(game_settings.chance_for_random_move)
-        debug_log(f'back to Agent.policy_game_mode, arrived from helper_methods get_number_with_probability\n')
-        debug_log(f'dice roll val is: {dice_roll}\n')
-
         legal_moves_in_q_table = self.Q_table[curr_turn].loc[self.Q_table[curr_turn].index.intersection(legal_moves)]
-        debug_log(f'legal_moves_in_q_table: {legal_moves_in_q_table}\n')
 
         if dice_roll == 1:
             chess_move = legal_moves_in_q_table.sample().index[0]
-            debug_log('Dice Roll was a 1, random move will be selected.\n')
         else:
             chess_move = legal_moves_in_q_table.idxmax()
-            debug_log('Dice roll was not a 1\n')
-
-        debug_log(f'chess_move_str: {chess_move}\n')
-        debug_log(f'========== bye from Agent policy_game_mode ==========\n\n\n')
-
         return chess_move
     ### end of policy_game_mode ###
-
 
     def init_Q_table(self, chess_data: pd.DataFrame) -> pd.DataFrame:
         """Creates the Q table so the agent can be trained.
@@ -127,7 +106,7 @@ class Agent:
             chess_data: A pandas dataframe containing chess data.
         Returns:
             A pandas dataframe representing the Q table.
-    """
+        """
         # Generate the list of turns (columns) W1, W2, ..., W100 or B1, B2, ..., n
         turns_list = [f'{self.color}{i + 1}' for i in range(game_settings.max_num_turns_per_player)]
 
@@ -155,7 +134,6 @@ class Agent:
     def update_Q_table(self, new_chess_moves: list[str]) -> None:
         """Updates the Q table with new chess moves.
         This method creates a new DataFrame with the new chess moves, and appends it to the Q table. 
-
         Args:
             new_chess_moves (list[str]): A list of chess moves (strings) that are not already in the Q table.
         """
