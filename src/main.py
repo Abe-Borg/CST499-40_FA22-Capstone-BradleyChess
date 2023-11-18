@@ -11,31 +11,78 @@ import Bradley
 
  
 if __name__ == '__main__':
-    # ========================= train new agents ========================= # 
-    # read chess data from pkl file
+
+    # ========== GENERATE Q ESTIMATES ==========
     chess_data_file_path = game_settings.chess_pd_dataframe_file_path_part_1
     chess_data = pd.read_pickle(chess_data_file_path, compression = 'zip')
+    sample_chess_data = chess_data.sample(game_settings.training_sample_size)
+
+    bradley = Bradley.Bradley(sample_chess_data)
     
-    bradley = Bradley.Bradley(chess_data)
     start_time = time.time()
 
     try:
-        bradley.train_rl_agents()
+        bradley.generate_Q_est_df()
+        bradley.engine.quit()
     except Exception as e:
-        print(f'training interrupted because of:  {e}')
+        print(f'geneate q est interrupted because of:  {e}')
         quit()
-        
-    end_time = time.time()
-    helper_methods.pikl_q_table(bradley, 'W',game_settings.bradley_agent_q_table_path)
-    helper_methods.pikl_q_table(bradley, 'B', game_settings.imman_agent_q_table_path)
     
+    end_time = time.time()
     total_time = end_time - start_time
-    print('training is complete')
+    print('generate q est is complete')
     print(f'it took: {total_time} for {game_settings.training_sample_size} games\n')
-    print('removing corrupted games from training set\n')
-    # chess database has corrupted games within the millions. remove them.
-    bradley.remove_corrupted_games(chess_data_file_path)
-    quit()
+    
+    
+    # ========== IDENTIFY AND REMOVE CORRUPTED GAMES FROM CHESS DATABASE ==========
+    # chess_data_file_path = game_settings.chess_pd_dataframe_file_path_part_1
+    # chess_data = pd.read_pickle(chess_data_file_path, compression = 'zip')
+    # sample_chess_data = chess_data.sample(game_settings.training_sample_size)
+
+    # bradley = Bradley.Bradley(sample_chess_data)
+    
+    # start_time = time.time()
+
+    # try:
+    #     bradley.identify_corrupted_games()
+    #     bradley.engine.quit()
+
+    #     chess_data.drop(bradley.corrupted_games_list, inplace = True)
+    # except Exception as e:
+    #     print(f'corrupted games identification interrupted because of:  {e}')
+    #     quit()
+    
+    # end_time = time.time()
+    # total_time = end_time - start_time
+    # print('corrupted games identification is complete')
+    # print(f'it took: {total_time} for {game_settings.training_sample_size} games\n')
+
+    # chess_data.to_pickle(chess_data_file_path, compression = 'zip')
+
+
+    # # ========================= train new agents ========================= # 
+    # # read chess data from pkl file
+    # chess_data_file_path = game_settings.chess_pd_dataframe_file_path_part_1
+    # chess_data = pd.read_pickle(chess_data_file_path, compression = 'zip')
+    
+    # bradley = Bradley.Bradley(chess_data)
+    
+
+    # start_time = time.time()
+    # try:
+    #     bradley.train_rl_agents()
+    # except Exception as e:
+    #     print(f'training interrupted because of:  {e}')
+    #     quit()
+        
+    # end_time = time.time()
+    # helper_methods.pikl_q_table(bradley, 'W',game_settings.bradley_agent_q_table_path)
+    # helper_methods.pikl_q_table(bradley, 'B', game_settings.imman_agent_q_table_path)
+    
+    # total_time = end_time - start_time
+    # print('training is complete')
+    # print(f'it took: {total_time} for {game_settings.training_sample_size} games\n')
+    # quit()
 
     # # # # # ========================= bootstrap and continue training agents ========================= #
     # bradley = helper_methods.init_bradley(training_chess_data)    # the size of the training set in this step doesnt matter. It's just for initializing the object.

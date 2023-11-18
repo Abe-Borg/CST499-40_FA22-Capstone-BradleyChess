@@ -5,7 +5,7 @@ pd.set_option('display.max_columns', None)
 
 PRINT_DEBUG: bool = True
 PRINT_TRAINING_RESULTS = False
-PRINT_Q_EST = False
+PRINT_Q_EST = True
 
 # the following numbers are based on centipawn scores
 CHESS_MOVE_VALUES: dict[str, int] = {
