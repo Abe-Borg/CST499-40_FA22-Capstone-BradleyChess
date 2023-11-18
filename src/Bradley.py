@@ -487,7 +487,7 @@ class Bradley:
         if not self.environ.board.is_valid():
             self.errors_file.write(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
             raise ValueError(f'at Bradley.find_estimated_Q_value. Board is in invalid state\n')
-        
+            
         try: 
             analysis_result = self.engine.analyse(board, game_settings.search_limit, multipv=game_settings.num_moves_to_return)
         except Exception as e:
