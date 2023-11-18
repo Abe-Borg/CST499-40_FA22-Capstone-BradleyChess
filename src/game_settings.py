@@ -3,7 +3,7 @@ import pandas as pd
 
 pd.set_option('display.max_columns', None)
 
-PRINT_DEBUG: bool = False
+PRINT_DEBUG: bool = True
 PRINT_TRAINING_RESULTS = False
 PRINT_Q_EST = False
 

@@ -7,13 +7,16 @@ import Bradley
 # import logging
 # import log_config
 # logger = logging.getLogger(__name__)
+# training_chess_data = chess_data.sample(game_settings.training_sample_size)
 
-chess_data = pd.read_pickle(game_settings.chess_pd_dataframe_file_path_part_1, compression = 'zip')
-training_chess_data = chess_data.sample(game_settings.training_sample_size) 
-
+ 
 if __name__ == '__main__':
     # ========================= train new agents ========================= # 
-    bradley = Bradley.Bradley(training_chess_data)
+    # read chess data from pkl file
+    chess_data_file_path = game_settings.chess_pd_dataframe_file_path_part_1
+    chess_data = pd.read_pickle(chess_data_file_path, compression = 'zip')
+    
+    bradley = Bradley.Bradley(chess_data)
     start_time = time.time()
 
     try:
@@ -28,7 +31,10 @@ if __name__ == '__main__':
     
     total_time = end_time - start_time
     print('training is complete')
-    print(f'it took: {total_time} for {game_settings.training_sample_size} games')
+    print(f'it took: {total_time} for {game_settings.training_sample_size} games\n')
+    print('removing corrupted games from training set\n')
+    # chess database has corrupted games within the millions. remove them.
+    bradley.remove_corrupted_games(chess_data_file_path)
     quit()
 
     # # # # # ========================= bootstrap and continue training agents ========================= #
