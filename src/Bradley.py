@@ -66,7 +66,7 @@ class Bradley:
             self.environ.update_curr_state()
             return True
         except Exception as e:
-            self.errors.file.write(f'hello from Bradley.receive_opp_move, an error occurrd\n')
+            self.errors_file.write(f'hello from Bradley.receive_opp_move, an error occurrd\n')
             self.errors_file.write(f'Error: {e}, failed to update_curr_state\n') 
             raise Exception from e
     ### end of receive_opp_move ###
@@ -632,12 +632,13 @@ class Bradley:
             ### FOR EACH GAME IN THE TRAINING SET ###
             for game_num_str in self.chess_data.index:
                 num_chess_moves_curr_training_game: int = self.chess_data.at[game_num_str, 'PlyCount']
+                self.debug_file.write(f'at game: {game_num_str}\n')
 
                 try:
                     curr_state = self.environ.get_curr_state()
                 except Exception as e:
                     self.errors_file.write(f'An error occurred at self.environ.get_curr_state: {e}\n')
-                    self.errord_file.write(f'at: {game_num_str}\n')
+                    self.errors_file.write(f'at: {game_num_str}\n')
                     break
 
                 ### LOOP PLAYS THROUGH ONE GAME ###
@@ -696,7 +697,7 @@ class Bradley:
                         self.rl_agent_plays_move(B_chess_move, game_num_str)
                     except Exception as e:
                         self.errors_file.write(f'An error occurred at rl_agent_plays_move: {e}\n')
-                        self.errors.file_write(f'at: {game_num_str}\n')
+                        self.errors_file.write(f'at: {game_num_str}\n')
                         break 
 
                     # get latest curr_state since self.rl_agent_plays_move updated the chessboard
