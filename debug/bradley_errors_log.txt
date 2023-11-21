@@ -755,3 +755,59 @@ at Bradley.rl_agent_plays_move. An error occurred at Game 93879:
 failed to load_chessboard with move Re1
 An error occurred at rl_agent_plays_move: 
 at game: Game 93879
+at Bradley.rl_agent_plays_move. An error occurred at Game 1429: 
+failed to load_chessboard with move Rb5
+An error occurred at rl_agent_plays_move: 
+at Game 1429
+at Bradley.rl_agent_plays_move. An error occurred at Game 5707: 
+failed to load_chessboard with move f5
+An error occurred at rl_agent_plays_move: 
+at game: Game 5707
+at Bradley.rl_agent_plays_move. An error occurred at Game 27105: 
+failed to load_chessboard with move Nxe5
+An error occurred at rl_agent_plays_move: 
+at game: Game 27105
+at Bradley.rl_agent_plays_move. An error occurred at Game 27177: 
+failed to load_chessboard with move h5
+An error occurred at rl_agent_plays_move: 
+at game: Game 27177
+at Bradley.rl_agent_plays_move. An error occurred at Game 27178: 
+failed to load_chessboard with move Qe3
+An error occurred at rl_agent_plays_move: 
+at game: Game 27178
+at Bradley.rl_agent_plays_move. An error occurred at Game 27181: 
+failed to load_chessboard with move Qxh5+
+An error occurred at rl_agent_plays_move: 
+at game: Game 27181
+at Bradley.rl_agent_plays_move. An error occurred at Game 27195: 
+failed to load_chessboard with move Qc1+
+An error occurred at rl_agent_plays_move: 
+at Game 27195
+at Bradley.rl_agent_plays_move. An error occurred at Game 27211: 
+failed to load_chessboard with move e5
+An error occurred at rl_agent_plays_move: 
+at game: Game 27211
+at Bradley.rl_agent_plays_move. An error occurred at Game 27218: 
+failed to load_chessboard with move c5
+An error occurred at rl_agent_plays_move: 
+at game: Game 27218
+at Bradley.rl_agent_plays_move. An error occurred at Game 71601: 
+failed to load_chessboard with move Rg3+
+An error occurred at rl_agent_plays_move: 
+at game: Game 71601
+at Bradley.rl_agent_plays_move. An error occurred at Game 71602: 
+failed to load_chessboard with move Qxd6
+An error occurred at rl_agent_plays_move: 
+at Game 71602
+at Bradley.rl_agent_plays_move. An error occurred at Game 79294: 
+failed to load_chessboard with move Rd1
+An error occurred at rl_agent_plays_move: 
+at game: Game 79294
+at Bradley.rl_agent_plays_move. An error occurred at Game 90430: 
+failed to load_chessboard with move Ba3
+An error occurred at rl_agent_plays_move: 
+at game: Game 90430
+at Bradley.rl_agent_plays_move. An error occurred at Game 90597: 
+failed to load_chessboard with move Bd8
+An error occurred at rl_agent_plays_move: 
+at game: Game 90597
