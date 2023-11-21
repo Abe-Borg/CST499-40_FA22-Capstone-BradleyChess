@@ -4,9 +4,6 @@ import game_settings
 import chess
 import pandas as pd
 import re
-# import logging
-# import log_config
-# logger = logging.getLogger(__name__)
 
 class Bradley:
     """Acts as the single point of communication between the RL agent and the player.
@@ -155,7 +152,6 @@ class Bradley:
             return f'error at get_game_termination_reason: {e}'
     ### end of get_game_termination_reason
     
-    # @log_config.log_execution_time_every_N()
     def train_rl_agents(self) -> None:
         """Trains the RL agents using the SARSA algorithm and sets their `is_trained` flag to True.
         Two rl agents train each other by playing games from a database exactly as shown, and learning from that.
@@ -317,7 +313,6 @@ class Bradley:
             self.engine.quit()
     ### end of train_rl_agents
 
-    # @log_config.log_execution_time_every_N()
     def continue_training_rl_agents(self, num_games_to_play: int) -> None:
         """ continues to train the agent, this time the agents make their own decisions instead 
             of playing through the database.

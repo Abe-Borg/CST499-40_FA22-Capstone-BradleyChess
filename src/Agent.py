@@ -3,10 +3,6 @@ import pandas as pd
 import numpy as np
 import helper_methods
 
-# import logging
-# import log_config
-# logger = logging.getLogger(__name__)
-
 class Agent:
     """The `Agent` class is responsible for deciding what chess move to play 
     based on the current state. The state is passed to the agent by 

@@ -1,10 +1,6 @@
 import game_settings
 import pandas as pd
 import chess
-# import logging
-# import log_config
-# logger = logging.getLogger(__name__)
-
 
 class Environ:
     """Manages the chessboard and determines its state.
@@ -135,7 +131,6 @@ class Environ:
         self.turn_index = 0
     ### end of reset_environ
     
-    # @log_config.log_execution_time_every_N()
     def get_legal_moves(self) -> list[str]:   
         """Returns a list of legal moves at the current turn.
         Returns:
