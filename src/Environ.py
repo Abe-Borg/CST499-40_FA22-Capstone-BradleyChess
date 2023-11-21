@@ -141,11 +141,7 @@ class Environ:
         Returns:
             list[str]: A list of strings representing the legal moves at the current turn, given the board state.
         """
-        legal_moves = [self.board.san(move) for move in self.board.legal_moves]
-        
-        if len(legal_moves) == 0:
-            self.errors_file.write(f'hello from environ get_legal_moves, legal_moves is empty\n')
-        
+        legal_moves = [self.board.san(move) for move in self.board.legal_moves]    
         return legal_moves
     ### end of get_legal_moves
     
