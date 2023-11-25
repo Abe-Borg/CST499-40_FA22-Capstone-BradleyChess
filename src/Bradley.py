@@ -153,7 +153,7 @@ class Bradley:
             return f'error at get_game_termination_reason: {e}'
     ### end of get_game_termination_reason
     
-    def train_rl_agents(self) -> None:
+    def train_rl_agents(self, est_q_val_table: pd.DataFrame) -> None:
         """Trains the RL agents using the SARSA algorithm and sets their `is_trained` flag to True.
         Two rl agents train each other by playing games from a database exactly as shown, and learning from that.
         """ 
@@ -190,6 +190,8 @@ class Bradley:
                 # on W's second turn, this would be Q_next which is calculated on the first loop.                
                 self.assign_points_to_Q_table(W_chess_move, curr_state['curr_turn'], W_curr_Qval, self.W_rl_agent.color)
 
+                curr_turn_for_q_est = copy.copy(curr_state['curr_turn'])
+
                 ### WHITE AGENT PLAYS THE SELECTED MOVE ###
                 # take action a, observe r, s', and load chessboard
                 try:
@@ -217,15 +219,7 @@ class Bradley:
                     break # and go to next game
 
                 else: # current game continues
-                    try:
-                        W_est_Qval: int = self.find_estimated_Q_value()
-                        if game_settings.PRINT_Q_EST:
-                            self.q_est_log.write(f'W_est_Qval: {W_est_Qval}\n')
-                    except Exception as e:
-                        self.errors_file.write(f'An error occurred while retrieving W_est_Qval: {e}\n')
-                        self.errors_file.write(f"at White turn {curr_state['curr_turn']}, failed to find_estimated_Q_value\n")
-                        self.errors_file.write(f'curr state is:{curr_state}\n')
-                        break
+                    W_est_Qval: int = est_q_val_table.at[game_num_str, curr_turn_for_q_est]
 
                 ##################### BLACK'S TURN ####################
                 # choose action a from state s, using policy
@@ -238,6 +232,8 @@ class Bradley:
 
                 # assign points to Q table
                 self.assign_points_to_Q_table(B_chess_move, curr_state['curr_turn'], B_curr_Qval, self.B_rl_agent.color)
+
+                curr_turn_for_q_est = copy.copy(curr_state['curr_turn'])
 
                 ##### BLACK AGENT PLAYS SELECTED MOVE #####
                 # take action a, observe r, s', and load chessboard
@@ -265,16 +261,7 @@ class Bradley:
                         self.debug_file.write(f'curr_state is: {curr_state}\n')
                     break # and go to next game
                 else: # current game continues
-                    try:
-                        B_est_Qval: int = self.find_estimated_Q_value()
-                        if game_settings.PRINT_Q_EST:
-                            self.q_est_log.write(f'B_est_Qval: {B_est_Qval}\n') 
-                    except Exception as e:
-                        self.errors_file.write(f"at Black turn, failed to find_estimated_Qvalue because error: {e}\n")
-                        self.errors_file.write(f'curr turn is:{curr_state["curr_turn"]}\n')
-                        self.errors_file.write(f'turn index is: {curr_state["turn_index"]}\n')
-                        self.errors_file.write(f'curr game is: {game_num_str}\n')
-                        break
+                    B_est_Qval: int = est_q_val_table.at[game_num_str, curr_turn_for_q_est]
 
                 # ***CRITICAL STEP***, this is the main part of the SARSA algorithm.
                 W_next_Qval: int = self.find_next_Qval(W_curr_Qval, self.W_rl_agent.learn_rate, W_reward, self.W_rl_agent.discount_factor, W_est_Qval)

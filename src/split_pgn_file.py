@@ -109,7 +109,7 @@ def split_pgn_file_by_games(file_path, number_of_splits):
 if __name__ == '__main__':
     start_time = time.time()
     
-    split_pgn_file_by_games(game_settings.chess_pgn_file_path_11, 10)
+    split_pgn_file_by_games(game_settings.chess_pgn_file_path_19, 10)
 
     end_time = time.time()
     print('PGN to DataFrame conversion is complete\n')

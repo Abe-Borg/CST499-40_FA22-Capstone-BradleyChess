@@ -34,18 +34,26 @@ if __name__ == '__main__':
     
 
     # ========== IDENTIFY AND REMOVE CORRUPTED GAMES FROM CHESS DATABASE ==========
-    chess_data_file_path = game_settings.chess_pd_dataframe_file_path_part_8
-    chess_data = pd.read_pickle(chess_data_file_path, compression = 'zip')
+    chess_data_file_path_9 = game_settings.chess_pd_dataframe_file_path_part_9
+    chess_data_file_path_10 = game_settings.chess_pd_dataframe_file_path_part_10
+
+    chess_data_9 = pd.read_pickle(chess_data_file_path_9, compression = 'zip')
+    chess_data_10 = pd.read_pickle(chess_data_file_path_10, compression = 'zip')
     # sample_chess_data = chess_data.sample(game_settings.training_sample_size)
 
-    bradley = Bradley.Bradley(chess_data)
+    bradley_9 = Bradley.Bradley(chess_data_9)
+    bradley_10 = Bradley.Bradley(chess_data_10)
     start_time = time.time()
 
     try:
-        bradley.identify_corrupted_games()
-        bradley.engine.quit()
+        bradley_9.identify_corrupted_games()
+        bradley_9.engine.quit()
+        
+        bradley_10.identify_corrupted_games()
+        bradley_10.engine.quit()
 
-        chess_data.drop(bradley.corrupted_games_list, inplace = True)
+        chess_data_9.drop(bradley_9.corrupted_games_list, inplace = True)
+        chess_data_10.drop(bradley_10.corrupted_games_list, inplace = True)
     except Exception as e:
         print(f'corrupted games identification interrupted because of:  {e}')
         quit()
@@ -55,7 +63,8 @@ if __name__ == '__main__':
     print('corrupted games identification is complete')
     print(f'it took: {total_time} for {game_settings.training_sample_size} games\n')
 
-    chess_data.to_pickle(chess_data_file_path, compression = 'zip')
+    chess_data_9.to_pickle(chess_data_file_path_9, compression = 'zip')
+    chess_data_10.to_pickle(chess_data_file_path_10, compression = 'zip')
 
 
     # # ========================= train new agents ========================= # 
