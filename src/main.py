@@ -34,26 +34,18 @@ if __name__ == '__main__':
     
 
     # ========== IDENTIFY AND REMOVE CORRUPTED GAMES FROM CHESS DATABASE ==========
-    chess_data_file_path_9 = game_settings.chess_pd_dataframe_file_path_part_9
-    chess_data_file_path_10 = game_settings.chess_pd_dataframe_file_path_part_10
+    chess_data_file_path = game_settings.chess_pd_dataframe_file_path_part_11_part_1
 
-    chess_data_9 = pd.read_pickle(chess_data_file_path_9, compression = 'zip')
-    chess_data_10 = pd.read_pickle(chess_data_file_path_10, compression = 'zip')
-    # sample_chess_data = chess_data.sample(game_settings.training_sample_size)
+    chess_data = pd.read_pickle(chess_data_file_path, compression = 'zip')
 
-    bradley_9 = Bradley.Bradley(chess_data_9)
-    bradley_10 = Bradley.Bradley(chess_data_10)
+    bradley = Bradley.Bradley(chess_data)
     start_time = time.time()
 
     try:
-        bradley_9.identify_corrupted_games()
-        bradley_9.engine.quit()
+        bradley.identify_corrupted_games()
+        bradley.engine.quit()
         
-        bradley_10.identify_corrupted_games()
-        bradley_10.engine.quit()
-
-        chess_data_9.drop(bradley_9.corrupted_games_list, inplace = True)
-        chess_data_10.drop(bradley_10.corrupted_games_list, inplace = True)
+        chess_data.drop(bradley.corrupted_games_list, inplace = True)
     except Exception as e:
         print(f'corrupted games identification interrupted because of:  {e}')
         quit()
@@ -61,10 +53,9 @@ if __name__ == '__main__':
     end_time = time.time()
     total_time = end_time - start_time
     print('corrupted games identification is complete')
-    print(f'it took: {total_time} for {game_settings.training_sample_size} games\n')
+    print(f'it took: {total_time} seconds\n')
 
-    chess_data_9.to_pickle(chess_data_file_path_9, compression = 'zip')
-    chess_data_10.to_pickle(chess_data_file_path_10, compression = 'zip')
+    chess_data.to_pickle(chess_data_file_path, compression = 'zip')
 
 
     # # ========================= train new agents ========================= # 
