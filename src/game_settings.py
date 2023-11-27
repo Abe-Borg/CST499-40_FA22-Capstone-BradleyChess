@@ -6,7 +6,6 @@ base_directory = Path(__file__).parent
 
 pd.set_option('display.max_columns', None)
 
-PRINT_DEBUG: bool = True
 PRINT_TRAINING_RESULTS = False
 PRINT_Q_EST = True
 

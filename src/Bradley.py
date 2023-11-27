@@ -21,7 +21,6 @@ class Bradley:
     """
     def __init__(self, chess_data: pd.DataFrame):
         self.q_est_log = open(game_settings.q_est_log_filepath, 'a')
-        self.debug_file = open(game_settings.bradley_debug_filepath, 'a')
         self.errors_file = open(game_settings.bradley_errors_filepath, 'a')
         self.initial_training_results = open(game_settings.initial_training_results_filepath, 'a')
         self.additional_training_results = open(game_settings.additional_training_results_filepath, 'a')
@@ -39,7 +38,6 @@ class Bradley:
     ### end of Bradley constructor ###
 
     def __del__(self):
-        self.debug_file.close()
         self.errors_file.close()
         self.initial_training_results.close()
         self.additional_training_results.close()
@@ -118,15 +116,8 @@ class Bradley:
         during phase 2 of training and also during human vs agent play.
         """
         if self.environ.board.is_game_over() or (self.environ.turn_index >= game_settings.max_turn_index) or not self.environ.get_legal_moves():
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'Game over\n')
-                self.debug_file.write(f'curr turn index is: {self.environ.turn_index}\n')
             return True
         else:
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'Game is still ongoing\n')
-                self.debug_file.write(f'curr turn index is: {self.environ.turn_index}\n')
-                self.debug_file.write("========== Bye from Bradley.is_game_over ==========\n\n\n")
             return False
     ### end of is_game_over
         
@@ -213,9 +204,6 @@ class Bradley:
                 
                 # find the estimated Q value for White, but first check if game ended
                 if self.environ.board.is_game_over() or curr_state['turn_index'] >= (num_chess_moves_curr_training_game) or not curr_state['legal_moves']:
-                    if game_settings.PRINT_DEBUG:
-                        self.debug_file.write(f'Game ended on White turn\n')
-                        self.debug_file.write(f'curr_state is: {curr_state}\n')
                     break # and go to next game
 
                 else: # current game continues
@@ -256,9 +244,6 @@ class Bradley:
 
                 # find the estimated Q value for Black, but first check if game ended
                 if self.environ.board.is_game_over() or not curr_state['legal_moves']:
-                    if game_settings.PRINT_DEBUG:
-                        self.debug_file.write(f'Game ended on Blacks turn\n')
-                        self.debug_file.write(f'curr_state is: {curr_state}\n')
                     break # and go to next game
                 else: # current game continues
                     B_est_Qval: int = est_q_val_table.at[game_num_str, curr_turn_for_q_est]
@@ -397,9 +382,6 @@ class Bradley:
         
         # check if the game would be over with the anticipated next move
         if self.environ.board.is_game_over() or not self.environ.get_legal_moves():
-            if game_settings.PRINT_DEBUG:
-                self.debug_file.write(f'Game would be over with the anticipated next move\n')
-                self.debug_file.write(f'board looks like this:\n{self.environ.board}\n\n')
             try:
                 self.environ.pop_chessboard()
             except Exception as e:
