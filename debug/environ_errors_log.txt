@@ -19,3 +19,6 @@ An error occurred at environ.load_chessboard() for Game 48832: illegal san: 'Re6
 An error occurred at environ.load_chessboard() for Game 98272: illegal san: 'd8=Q' in rnbqkbnr/pppppppp/8/8/8/7P/PPPPPPP1/RNBQKBNR b KQkq - 0 1, unable to load chessboard with d8=Q========== End of Environ.load_chessboard ==========
 
 
+An error occurred at environ.load_chessboard() for Game 9113: illegal san: 'O-O-O' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with O-O-O========== End of Environ.load_chessboard ==========
+
+

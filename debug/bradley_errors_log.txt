@@ -26,3 +26,10 @@ at Bradley.rl_agent_plays_move. An error occurred at Game 98272:
 failed to load_chessboard with move d8=Q
 An error occurred at rl_agent_plays_move: 
 at Game 98272
+at Bradley.rl_agent_plays_move. An error occurred at Game 9113: 
+failed to load_chessboard with move O-O-O
+An error occurred at rl_agent_plays_move: 
+at game: Game 9113
+An error occurred at self.W_rl_agent.choose_action
+W_chess_move is empty at state: {'turn_index': 0, 'curr_turn': 'W1', 'legal_moves': ['Nh3', 'Nf3', 'Nc3', 'Na3', 'h3', 'g3', 'f3', 'e3', 'd3', 'c3', 'b3', 'a3', 'h4', 'g4', 'f4', 'e4', 'd4', 'c4', 'b4', 'a4']}
+at game: Game 60396
