@@ -19,3 +19,93 @@ An error occurred at environ.load_chessboard() for Game 48832: illegal san: 'Re6
 An error occurred at environ.load_chessboard() for Game 98272: illegal san: 'd8=Q' in rnbqkbnr/pppppppp/8/8/8/7P/PPPPPPP1/RNBQKBNR b KQkq - 0 1, unable to load chessboard with d8=Q========== End of Environ.load_chessboard ==========
 
 
+An error occurred at environ.load_chessboard() for Game 15929: illegal san: 'Bg5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Bg5========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 16702: illegal san: 'Nac6' in rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1, unable to load chessboard with Nac6========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 31521: illegal san: 'Nd7' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Nd7========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 31674: illegal san: 'Bxd6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Bxd6========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 73714: illegal san: 'Nd5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Nd5========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 30157: illegal san: 'Nc1' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Nc1========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 44297: illegal san: 'Nxf5+' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Nxf5+========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 77157: illegal san: 'Kc6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Kc6========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 12023: illegal san: 'Ke5' in rnbqkbnr/pppppppp/8/8/7P/8/PPPPPPP1/RNBQKBNR b KQkq - 0 1, unable to load chessboard with Ke5========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 15487: illegal san: 'Kg8' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Kg8========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 17805: illegal san: 'Kf4' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Kf4========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 44019: illegal san: 'Kg7' in rnbqkbnr/pppppppp/8/8/8/2P5/PP1PPPPP/RNBQKBNR b KQkq - 0 1, unable to load chessboard with Kg7========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 51779: illegal san: 'Nc5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Nc5========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 51791: illegal san: 'h5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with h5========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 51793: illegal san: 'Qf5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Qf5========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 51794: illegal san: 'Nc5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Nc5========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 8606: illegal san: 'Kf6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Kf6========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 8607: illegal san: 'Bxh7+' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Bxh7+========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 8621: illegal san: 'Rxf7' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rxf7========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 12990: illegal san: 'e5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with e5========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 12992: illegal san: 'Bb5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Bb5========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 12998: illegal san: 'Bxh6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Bxh6========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 13000: illegal san: 'Rxh5+' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rxh5+========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 13004: illegal san: 'Bxg6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Bxg6========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 13017: illegal san: 'Nxd4' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Nxd4========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 13018: illegal san: 'Bxg3' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Bxg3========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 63526: illegal san: 'O-O-O' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with O-O-O========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 74062: illegal san: 'h6' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with h6========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 63583: illegal san: 'Qxd3' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Qxd3========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 63584: illegal san: 'c5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with c5========== End of Environ.load_chessboard ==========
+
+
