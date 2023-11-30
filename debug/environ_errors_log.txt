@@ -1,6 +1,0 @@
-An error occurred at environ.load_chessboard() for Game 77055: illegal san: 'Rg3' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Rg3========== End of Environ.load_chessboard ==========
-
-
-An error occurred at environ.load_chessboard() for Game 87314: illegal san: 'Qa1+' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Qa1+========== End of Environ.load_chessboard ==========
-
-
