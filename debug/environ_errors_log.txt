@@ -1,0 +1,9 @@
+An error occurred at environ.load_chessboard() for Game 63144: illegal san: 'h5' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with h5========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 57127: illegal san: 'f3' in rnbqkbnr/pppppppp/8/8/8/6P1/PPPPPP1P/RNBQKBNR b KQkq - 0 1, unable to load chessboard with f3========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 85407: illegal san: 'Nd4' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Nd4========== End of Environ.load_chessboard ==========
+
+

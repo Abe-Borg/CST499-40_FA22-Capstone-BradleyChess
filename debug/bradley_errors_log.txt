@@ -1,0 +1,12 @@
+at Bradley.rl_agent_plays_move. An error occurred at Game 63144: 
+failed to load_chessboard with move h5
+An error occurred at rl_agent_plays_move: 
+at game: Game 63144
+at Bradley.rl_agent_plays_move. An error occurred at Game 57127: 
+failed to load_chessboard with move f3
+An error occurred at rl_agent_plays_move: 
+at Game 57127
+at Bradley.rl_agent_plays_move. An error occurred at Game 85407: 
+failed to load_chessboard with move Nd4
+An error occurred at rl_agent_plays_move: 
+at game: Game 85407
