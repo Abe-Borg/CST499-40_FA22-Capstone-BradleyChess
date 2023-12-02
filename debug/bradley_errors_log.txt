@@ -10,3 +10,50 @@ at Bradley.rl_agent_plays_move. An error occurred at Game 85407:
 failed to load_chessboard with move Nd4
 An error occurred at rl_agent_plays_move: 
 at game: Game 85407
+at Bradley.rl_agent_plays_move. An error occurred at Game 23463: 
+failed to load_chessboard with move fxe5
+An error occurred at rl_agent_plays_move: 
+at game: Game 23463
+at Bradley.rl_agent_plays_move. An error occurred at Game 31031: 
+failed to load_chessboard with move Bc3
+An error occurred at rl_agent_plays_move: 
+at game: Game 31031
+at Bradley.rl_agent_plays_move. An error occurred at Game 31046: 
+failed to load_chessboard with move Nb3
+An error occurred at rl_agent_plays_move: 
+at game: Game 31046
+at Bradley.rl_agent_plays_move. An error occurred at Game 31048: 
+failed to load_chessboard with move Nab3
+An error occurred at rl_agent_plays_move: 
+at game: Game 31048
+An error occurred at self.W_rl_agent.choose_action
+W_chess_move is empty at state: {'turn_index': 0, 'curr_turn': 'W1', 'legal_moves': ['Nh3', 'Nf3', 'Nc3', 'Na3', 'h3', 'g3', 'f3', 'e3', 'd3', 'c3', 'b3', 'a3', 'h4', 'g4', 'f4', 'e4', 'd4', 'c4', 'b4', 'a4']}
+at game: Game 46220
+at Bradley.rl_agent_plays_move. An error occurred at Game 83747: 
+failed to load_chessboard with move Qxa2
+An error occurred at rl_agent_plays_move: 
+at game: Game 83747
+at Bradley.rl_agent_plays_move. An error occurred at Game 91536: 
+failed to load_chessboard with move Ne3
+An error occurred at rl_agent_plays_move: 
+at game: Game 91536
+at Bradley.rl_agent_plays_move. An error occurred at Game 91658: 
+failed to load_chessboard with move Ng3
+An error occurred at rl_agent_plays_move: 
+at game: Game 91658
+at Bradley.rl_agent_plays_move. An error occurred at Game 91796: 
+failed to load_chessboard with move Nb3
+An error occurred at rl_agent_plays_move: 
+at game: Game 91796
+at Bradley.rl_agent_plays_move. An error occurred at Game 75451: 
+failed to load_chessboard with move Kg8
+An error occurred at rl_agent_plays_move: 
+at game: Game 75451
+at Bradley.rl_agent_plays_move. An error occurred at Game 21861: 
+failed to load_chessboard with move O-O
+An error occurred at rl_agent_plays_move: 
+at game: Game 21861
+at Bradley.rl_agent_plays_move. An error occurred at Game 27052: 
+failed to load_chessboard with move Kf6
+An error occurred at rl_agent_plays_move: 
+at game: Game 27052
