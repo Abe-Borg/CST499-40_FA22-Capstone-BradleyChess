@@ -34,7 +34,7 @@ if __name__ == '__main__':
     
 
     # ========== IDENTIFY AND REMOVE CORRUPTED GAMES FROM CHESS DATABASE ==========
-    chess_data_file_path = game_settings.chess_pd_dataframe_file_path_part_13_part_9
+    chess_data_file_path = game_settings.chess_pd_dataframe_file_path_part_14_part_6
 
     chess_data = pd.read_pickle(chess_data_file_path, compression = 'zip')
 
