@@ -514,3 +514,115 @@ at Bradley.rl_agent_plays_move. An error occurred at Game 35938:
 failed to load_chessboard with move a5
 An error occurred at rl_agent_plays_move: 
 at game: Game 35938
+at Bradley.rl_agent_plays_move. An error occurred at Game 36946: 
+failed to load_chessboard with move Bc6
+An error occurred at rl_agent_plays_move: 
+at Game 36946
+at Bradley.rl_agent_plays_move. An error occurred at Game 36947: 
+failed to load_chessboard with move Bf2
+An error occurred at rl_agent_plays_move: 
+at game: Game 36947
+at Bradley.rl_agent_plays_move. An error occurred at Game 36948: 
+failed to load_chessboard with move Bf2
+An error occurred at rl_agent_plays_move: 
+at game: Game 36948
+at Bradley.rl_agent_plays_move. An error occurred at Game 36949: 
+failed to load_chessboard with move Bc6
+An error occurred at rl_agent_plays_move: 
+at Game 36949
+at Bradley.rl_agent_plays_move. An error occurred at Game 36950: 
+failed to load_chessboard with move Bd5
+An error occurred at rl_agent_plays_move: 
+at Game 36950
+at Bradley.rl_agent_plays_move. An error occurred at Game 36951: 
+failed to load_chessboard with move Nc2
+An error occurred at rl_agent_plays_move: 
+at game: Game 36951
+at Bradley.rl_agent_plays_move. An error occurred at Game 36952: 
+failed to load_chessboard with move Nd3
+An error occurred at rl_agent_plays_move: 
+at game: Game 36952
+at Bradley.rl_agent_plays_move. An error occurred at Game 36953: 
+failed to load_chessboard with move Ne3
+An error occurred at rl_agent_plays_move: 
+at game: Game 36953
+at Bradley.rl_agent_plays_move. An error occurred at Game 36954: 
+failed to load_chessboard with move Nb6
+An error occurred at rl_agent_plays_move: 
+at Game 36954
+at Bradley.rl_agent_plays_move. An error occurred at Game 36955: 
+failed to load_chessboard with move Re1
+An error occurred at rl_agent_plays_move: 
+at game: Game 36955
+at Bradley.rl_agent_plays_move. An error occurred at Game 36956: 
+failed to load_chessboard with move Nb6
+An error occurred at rl_agent_plays_move: 
+at Game 36956
+at Bradley.rl_agent_plays_move. An error occurred at Game 36957: 
+failed to load_chessboard with move Re1
+An error occurred at rl_agent_plays_move: 
+at game: Game 36957
+at Bradley.rl_agent_plays_move. An error occurred at Game 36958: 
+failed to load_chessboard with move O-O
+An error occurred at rl_agent_plays_move: 
+at game: Game 36958
+at Bradley.rl_agent_plays_move. An error occurred at Game 36959: 
+failed to load_chessboard with move O-O
+An error occurred at rl_agent_plays_move: 
+at Game 36959
+at Bradley.rl_agent_plays_move. An error occurred at Game 36960: 
+failed to load_chessboard with move Bxd5
+An error occurred at rl_agent_plays_move: 
+at Game 36960
+at Bradley.rl_agent_plays_move. An error occurred at Game 36961: 
+failed to load_chessboard with move O-O
+An error occurred at rl_agent_plays_move: 
+at game: Game 36961
+at Bradley.rl_agent_plays_move. An error occurred at Game 36962: 
+failed to load_chessboard with move O-O
+An error occurred at rl_agent_plays_move: 
+at game: Game 36962
+at Bradley.rl_agent_plays_move. An error occurred at Game 36963: 
+failed to load_chessboard with move O-O
+An error occurred at rl_agent_plays_move: 
+at game: Game 36963
+at Bradley.rl_agent_plays_move. An error occurred at Game 36964: 
+failed to load_chessboard with move Nd6
+An error occurred at rl_agent_plays_move: 
+at Game 36964
+at Bradley.rl_agent_plays_move. An error occurred at Game 36965: 
+failed to load_chessboard with move O-O
+An error occurred at rl_agent_plays_move: 
+at game: Game 36965
+at Bradley.rl_agent_plays_move. An error occurred at Game 36966: 
+failed to load_chessboard with move Nb6
+An error occurred at rl_agent_plays_move: 
+at Game 36966
+at Bradley.rl_agent_plays_move. An error occurred at Game 36967: 
+failed to load_chessboard with move Nb3
+An error occurred at rl_agent_plays_move: 
+at game: Game 36967
+at Bradley.rl_agent_plays_move. An error occurred at Game 36968: 
+failed to load_chessboard with move Nb3
+An error occurred at rl_agent_plays_move: 
+at game: Game 36968
+at Bradley.rl_agent_plays_move. An error occurred at Game 36969: 
+failed to load_chessboard with move O-O-O
+An error occurred at rl_agent_plays_move: 
+at Game 36969
+at Bradley.rl_agent_plays_move. An error occurred at Game 36970: 
+failed to load_chessboard with move Ne3
+An error occurred at rl_agent_plays_move: 
+at game: Game 36970
+at Bradley.rl_agent_plays_move. An error occurred at Game 36971: 
+failed to load_chessboard with move Bxe5
+An error occurred at rl_agent_plays_move: 
+at Game 36971
+at Bradley.rl_agent_plays_move. An error occurred at Game 36972: 
+failed to load_chessboard with move Ne3
+An error occurred at rl_agent_plays_move: 
+at game: Game 36972
+at Bradley.rl_agent_plays_move. An error occurred at Game 36973: 
+failed to load_chessboard with move Nd3
+An error occurred at rl_agent_plays_move: 
+at game: Game 36973
