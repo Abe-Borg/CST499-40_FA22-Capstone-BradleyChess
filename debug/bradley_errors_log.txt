@@ -812,3 +812,23 @@ at Bradley.rl_agent_plays_move. An error occurred at Game 104787:
 failed to load_chessboard with move Ne2
 An error occurred at rl_agent_plays_move: 
 at game: Game 104787
+at Bradley.rl_agent_plays_move. An error occurred at Game 49625: 
+failed to load_chessboard with move Nd7
+An error occurred at rl_agent_plays_move: 
+at Game 49625
+at Bradley.rl_agent_plays_move. An error occurred at Game 49626: 
+failed to load_chessboard with move Kf7
+An error occurred at rl_agent_plays_move: 
+at Game 49626
+at Bradley.rl_agent_plays_move. An error occurred at Game 49627: 
+failed to load_chessboard with move Rd1
+An error occurred at rl_agent_plays_move: 
+at game: Game 49627
+at Bradley.rl_agent_plays_move. An error occurred at Game 49628: 
+failed to load_chessboard with move Nf7
+An error occurred at rl_agent_plays_move: 
+at Game 49628
+at Bradley.rl_agent_plays_move. An error occurred at Game 49629: 
+failed to load_chessboard with move Nd7
+An error occurred at rl_agent_plays_move: 
+at Game 49629

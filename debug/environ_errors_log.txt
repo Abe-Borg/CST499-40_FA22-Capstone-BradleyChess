@@ -604,3 +604,18 @@ An error occurred at environ.load_chessboard() for Game 56962: illegal san: 'Rxf
 An error occurred at environ.load_chessboard() for Game 104787: illegal san: 'Ne2' in rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1, unable to load chessboard with Ne2========== End of Environ.load_chessboard ==========
 
 
+An error occurred at environ.load_chessboard() for Game 49625: ambiguous san: 'Nd7' in rn1qkb1r/pbp2ppp/1p2pn2/3pP3/8/2PP1N2/PP1N1PPP/R1BQKB1R b KQkq - 0 6, unable to load chessboard with Nd7========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 49626: illegal san: 'Kf7' in r3kb1r/ppp2ppp/5p2/3P4/4Q3/2P1B3/Pq3PPP/R3K2R b KQkq - 1 13, unable to load chessboard with Kf7========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 49627: ambiguous san: 'Rd1' in rn1q1rk1/pb2bppp/1p2p3/2pp4/2P1n3/1PN1PN2/PBQPBPPP/R4RK1 w - - 4 10, unable to load chessboard with Rd1========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 49628: illegal san: 'Nf7' in 2br1r1k/p3bp1p/1pq1p1pn/3pP1N1/2pP1PP1/PnP1B1QN/1P3R1P/3B1R1K b - - 1 27, unable to load chessboard with Nf7========== End of Environ.load_chessboard ==========
+
+
+An error occurred at environ.load_chessboard() for Game 49629: ambiguous san: 'Nd7' in rnbqkb1r/ppp2ppp/4pn2/3pP3/8/2N2N2/PPPP1PPP/R1BQKB1R b KQkq - 0 4, unable to load chessboard with Nd7========== End of Environ.load_chessboard ==========
+
+
